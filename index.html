@@ -2665,7 +2665,10 @@ h1 { margin: 0; font-size: 24px; font-weight: 700; text-wrap: balance; }
 .weeknav .label { font-size: 15px; font-weight: 600; text-align: center; flex: 1; min-width: 0; }
 .iconbtn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: grid; place-items: center; cursor: pointer; flex-shrink: 0; }
 .iconbtn svg { width: 20px; height: 20px; }
-.thisweek { display: block; margin: 4px auto 0; color: var(--muted); background: transparent; border: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 4px 8px; font-size: 13px; }
+.wkmid { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 44px; }   /* «back to this week» sits under the week's dates, inside the same row: nothing below moves */
+.wkmid .label { flex: none; line-height: 1.3; }
+.thisweek[hidden] { display: none; }
+.thisweek { display: block; margin: 0 auto; line-height: 1.3; font-size: 12.5px !important; padding: 0 6px !important; color: var(--muted); background: transparent; border: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 4px 8px; font-size: 13px; }
 
 .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding-block: 12px 4px; }
 .day { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 12px; padding: 8px 2px; min-height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
@@ -3349,10 +3352,9 @@ html.is-locked body > *:not(.lockscreen):not(script):not(style):not(link):not(ti
   <section id="view-track" role="tabpanel" aria-labelledby="tab-track">
     <div class="weeknav">
       <button class="iconbtn" id="prev" type="button" aria-label="الأسبوع السابق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
-      <div class="label" id="weekLabel">الأسبوع</div>
+      <div class="wkmid"><div class="label" id="weekLabel">الأسبوع</div><button class="thisweek" id="thisWeek" type="button" hidden>العودة إلى هذا الأسبوع</button></div>
       <button class="iconbtn" id="next" type="button" aria-label="الأسبوع التالي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
     </div>
-    <button class="thisweek" id="thisWeek" type="button" hidden>العودة إلى هذا الأسبوع</button>
     <div class="days" id="days" role="group" aria-label="أيام الأسبوع"></div>
     <div class="status" id="status" aria-live="polite"></div>
     <div class="trackbody"><div class="stack" id="list"></div><aside class="weekside" id="weekside" aria-label="ملخّص الأسبوع"></aside></div>
