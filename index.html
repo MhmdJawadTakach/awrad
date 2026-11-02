@@ -3605,6 +3605,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   })();
 
   /* ---------- tabs ---------- */
+  var lastView = 'track';
   function setView(v) {
     if (v !== 'log') { muhUnlocked = false; muhLogUndo = null; }
     view = v;
@@ -3614,10 +3615,18 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     if (v === 'progress') renderProgress();
     if (v === 'log') renderLog();
     if (v === 'settings') renderSettings();
-    window.scrollTo(0, 0);   // the new page starts at its top at once; it fades in, rather than scrolling over it
-    var panel = $('view-' + v); stagger(panel, '.weekside > *'); var nside = panel.querySelectorAll('.weekside > *').length;
-    Array.prototype.forEach.call(panel.querySelectorAll('.stack > :not(.pcols), .pcol > *'), function (c, i) { c.style.setProperty('--i', Math.min(i + (isWide() ? 0 : nside), 7)); });   // every card of the page enters the same way, top to bottom replay(panel, 'view-in');
-    clearTimeout(viewTimer); viewTimer = setTimeout(function () { panel.classList.remove('view-in'); }, 600);
+    window.scrollTo(0, 0);   // the new page starts at its top at once, then slides in
+    // pages sit side by side in the order of the tabs: the new one slides in from the side of the tab I pressed; Settings rises from below
+    var panel = $('view-' + v), order = { track: 0, progress: 1, log: 2 }, from = lastView;
+    lastView = v;
+    if (REDUCED || !panel.animate || from === v) return;
+    var kf;
+    if (v === 'settings') kf = [{ opacity: 0, transform: 'translateY(28px)' }, { opacity: 1, transform: 'none' }];
+    else if (from === 'settings') kf = [{ opacity: 0, transform: 'translateY(-18px)' }, { opacity: 1, transform: 'none' }];
+    else { var fwd = order[v] > order[from], sx = (document.documentElement.dir === 'rtl' ? -1 : 1) * (fwd ? 1 : -1);
+      kf = [{ opacity: 0, transform: 'translateX(' + (sx * 56) + 'px)' }, { opacity: 1, transform: 'none' }]; }
+    panel.getAnimations().forEach(function (a) { a.cancel(); });
+    panel.animate(kf, { duration: 380, easing: 'cubic-bezier(.2,.85,.25,1)' });
   }
   ['track', 'progress', 'log'].forEach(function (x) { $('tab-' + x).addEventListener('click', function () { setView(x); }); });
   var lastTab = 'track';
@@ -4172,8 +4181,24 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   }
   window.addEventListener('pagehide', flushSaves);
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushSaves(); });
-  function go(ws, sd) { if (ws > thisMonday) return; if (key(ws) === key(thisMonday) && sd > (today.getDay() + 6) % 7) sd = (today.getDay() + 6) % 7; var dir = ws > weekStart ? 'slide-next' : ws < weekStart ? 'slide-prev' : ''; weekStart = ws; selDay = sd; renderHeader(); renderList();
-    if (dir) { ['days', 'list'].forEach(function (x) { var n = $(x); n.classList.remove('slide-next', 'slide-prev'); replay(n, dir); setTimeout(function () { n.classList.remove(dir); }, 300); }); } }
+  var weekTurn = 0;
+  function go(ws, sd, now) {   // now: render at once, without the page turn (opening a day from the Log)
+    if (ws > thisMonday) return; if (key(ws) === key(thisMonday) && sd > (today.getDay() + 6) % 7) sd = (today.getDay() + 6) % 7;
+    var fwd = ws > weekStart, moved = key(ws) !== key(weekStart); weekStart = ws; selDay = sd;
+    var els = ['weekLabel', 'days', 'list', 'weekside'].map($).filter(Boolean);
+    if (now) weekTurn++;
+    if (!moved || now || REDUCED || !els[0].animate) { renderHeader(); renderList(); return; }
+    // like turning a page: the shown week slides out and fades, the other comes in from the opposite side
+    var sx = (document.documentElement.dir === 'rtl' ? 1 : -1) * (fwd ? 1 : -1), t = ++weekTurn;
+    var outs = els.map(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = 'none';
+      return e.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(' + (sx * (e.id === 'weekLabel' ? 14 : 36)) + 'px)' }], { duration: 140, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' }); });
+    outs[0].onfinish = function () {
+      if (t !== weekTurn) return;
+      renderHeader(); renderList();
+      els.forEach(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = '';
+        e.animate([{ opacity: 0, transform: 'translateX(' + (-sx * (e.id === 'weekLabel' ? 14 : 36)) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.2,.85,.25,1)' }); });
+    };
+  }
   $('prev').addEventListener('click', function () { go(addDays(weekStart, -7), 0); });
   $('next').addEventListener('click', function () { go(addDays(weekStart, 7), 0); });
   $('thisWeek').addEventListener('click', function () { go(thisMonday, (today.getDay() + 6) % 7); });
@@ -4962,7 +4987,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
         var hd = document.createElement('div'); hd.className = 'muhhead';
         var dd = document.createElement('span'); dd.className = 'ld'; dd.textContent = DAY_NAMES[(x.d.getDay() + 6) % 7] + ' ' + dayNum(x.d); hd.appendChild(dd);
         var ob = document.createElement('button'); ob.type = 'button'; ob.className = 'muhopen'; ob.textContent = 'فتح اليوم';
-        ob.addEventListener('click', function () { muhOpen = true; setView('track'); go(mondayOf(x.d), (x.d.getDay() + 6) % 7); var f = $('muh-mg'); if (f) { f.scrollIntoView({ block: 'center' }); f.focus({ preventScroll: true }); } });
+        ob.addEventListener('click', function () { muhOpen = true; setView('track'); go(mondayOf(x.d), (x.d.getDay() + 6) % 7, true); var f = $('muh-mg'); if (f) { f.scrollIntoView({ block: 'center' }); f.focus({ preventScroll: true }); } });
         var acts = document.createElement('span'); acts.className = 'muhacts';
         var tb = document.createElement('button'); tb.type = 'button'; tb.className = 'muhdel'; tb.setAttribute('aria-label', 'حذف هذه المحاسبة'); tb.title = 'حذف هذه المحاسبة';
         tb.appendChild(icon('trash', 'tic'));
