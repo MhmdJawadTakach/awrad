@@ -2747,6 +2747,7 @@ label.btn { cursor: pointer; }
 /* frosted glass behind the header's buttons and the tab bar: what lies behind shows through, blurred */
 html, body { overflow-x: clip; }   /* a card sliding in never widens the page (on a phone the whole page would sway) */
 .gear, .tabs { -webkit-backdrop-filter: blur(8px) saturate(1.2); backdrop-filter: blur(8px) saturate(1.2); }
+@media (max-width: 640px) { .toast { bottom: calc(108px + env(safe-area-inset-bottom, 0px)); } }   /* above the tab bar, with room to breathe */
 @media (max-width: 640px) { .tabs { background: color-mix(in srgb, var(--band) 86%, transparent) !important; } }
 @media (prefers-reduced-motion: reduce) { .gear { transition: none; } }
 .seglabel { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
@@ -3320,7 +3321,7 @@ html.is-locked body > *:not(.lockscreen):not(script):not(style):not(link):not(ti
 .card.sec.gilded { animation: gild .6s ease-out; }
 .strip i { transition: background-color .2s, transform .2s; }
 .strip i.on { transform: scale(1.15); }
-.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--band); color: var(--band-ink); border: 1px solid var(--gold-soft); border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.25); z-index: 50; animation: toastIn .3s cubic-bezier(.3,1.4,.5,1); width: max-content; max-width: calc(100vw - 32px); white-space: normal; }
+.toast { position: fixed; left: 50%; bottom: calc(56px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--band); color: var(--band-ink); border: 1px solid var(--gold-soft); border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.25); z-index: 50; animation: toastIn .3s cubic-bezier(.3,1.4,.5,1); width: max-content; max-width: calc(100vw - 32px); white-space: normal; }
 .toast.out { animation: toastOut .25s ease-in forwards; }
 .toast svg { width: 24px; height: 24px; color: var(--gold-soft); flex-shrink: 0; }
 .spark { position: fixed; width: 14px; height: 14px; color: var(--gold-soft); pointer-events: none; z-index: 49; animation: burst .75s cubic-bezier(.2,.7,.3,1) forwards; will-change: transform, opacity; }
