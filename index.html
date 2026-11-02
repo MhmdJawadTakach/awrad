@@ -2675,6 +2675,11 @@ h1 { margin: 0; font-size: 24px; font-weight: 700; text-wrap: balance; }
 .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding-block: 12px 4px; }
 .day { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 12px; padding: 8px 2px; min-height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
 .day .dn { font-size: 11.5px; font-weight: 500; color: var(--muted); }
+.days { position: relative; }
+.day { position: relative; z-index: 1; }
+.day .dd, #weekLabel .lp { display: inline-block; }
+.dayglide { position: absolute; z-index: 0; border-radius: 12px; background: var(--band); box-shadow: 0 0 0 1px var(--gold-soft); border: 1px solid var(--gold-soft); box-sizing: border-box; pointer-events: none; }
+.day.glidewait[aria-pressed="true"] { background: transparent; border-color: transparent; box-shadow: none; }
 .day .dd { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .day.today { border-color: var(--gold); }
 .day.later { opacity: .45; cursor: default; }
@@ -4033,8 +4038,24 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
   /* ---------- tracking view ---------- */
+  var rollDir = 0;   // set just before a week change: 1 = later week, -1 = earlier; the numbers roll that way
+  var NUM_RE = /([0-9\u0660-\u0669\u06F0-\u06F9]+)/;
+  function plainDigits(t) { return t.replace(/[\u200e\u200f\u061c\u2066-\u2069]/g, '').replace(/[\u0660-\u0669\u06F0-\u06F9]/g, function (c) { return String((c.charCodeAt(0) - 0x660) % 0x90 % 16); }).trim(); }   // the page may show these in Persian digits
+  function rollIn(el, dir, delay) {
+    if (!el.animate || REDUCED) return;
+    el.animate([{ opacity: 0, transform: 'translateY(' + (dir > 0 ? 0.75 : -0.75) + 'em)' }, { opacity: 1, transform: 'none' }], { duration: 380, delay: delay || 0, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' });
+  }
   function renderHeader() {
-    $('weekLabel').textContent = fShort.format(weekStart) + ' – ' + fLong.format(addDays(weekStart, 6));
+    var lab = $('weekLabel'), txt = fShort.format(weekStart) + ' – ' + fLong.format(addDays(weekStart, 6));
+    var oldParts = Array.prototype.map.call(lab.querySelectorAll('.lp'), function (x) { return plainDigits(x.textContent); });
+    lab.textContent = '';
+    txt.split(NUM_RE).forEach(function (part) {   // numbers and words in their own pieces; the spaces stay between them, outside
+      var m = part.match(/^(\s*)([\s\S]*?)(\s*)$/);
+      if (m[1]) lab.appendChild(document.createTextNode(m[1]));
+      if (m[2]) { var sp = document.createElement('span'); sp.className = 'lp'; sp.textContent = m[2]; lab.appendChild(sp); }
+      if (m[3]) lab.appendChild(document.createTextNode(m[3]));
+    });
+    if (rollDir) Array.prototype.forEach.call(lab.querySelectorAll('.lp'), function (sp, k) { if (oldParts[k] !== plainDigits(sp.textContent)) rollIn(sp, rollDir, k * 25); });
     $('thisWeek').hidden = key(weekStart) === key(thisMonday);
     var days = $('days'); days.textContent = '';
     for (var i = 0; i < 7; i++) {
@@ -4046,10 +4067,20 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var dd = document.createElement('span'); dd.className = 'dd'; dd.textContent = dayNum(d);
       b.appendChild(dn); b.appendChild(dd);
       if (d > today) { b.disabled = true; b.classList.add('later'); }   // a day still to come cannot be ticked
-      b.addEventListener('click', (function (idx) { return function () { selDay = idx; renderHeader(); renderList(); }; })(i));
+      b.addEventListener('click', (function (idx) { return function () { if (idx === selDay) return; var from = days.children[selDay]; var fr = from && from.getBoundingClientRect(); selDay = idx; renderHeader(); renderList(); glideDay(fr); }; })(i));
       days.appendChild(b);
+      if (rollDir) rollIn(dd, rollDir, 40 + i * 35);   // the dates roll, day after day
     }
     $('next').disabled = key(weekStart) >= key(thisMonday);
+  }
+  function glideDay(fr) {
+    var days = $('days'), to = days.children[selDay]; if (!fr || !to || REDUCED || !to.animate) return;
+    var tr = to.getBoundingClientRect(), base = days.getBoundingClientRect();
+    var g = document.createElement('span'); g.className = 'dayglide'; g.setAttribute('aria-hidden', 'true');
+    g.style.left = (tr.left - base.left) + 'px'; g.style.top = (tr.top - base.top) + 'px'; g.style.width = tr.width + 'px'; g.style.height = tr.height + 'px';
+    days.appendChild(g); to.classList.add('glidewait');
+    var a = g.animate([{ transform: 'translateX(' + (fr.left - tr.left) + 'px)' }, { transform: 'none' }], { duration: 340, easing: 'cubic-bezier(.3,.7,.2,1)' });
+    a.onfinish = a.oncancel = function () { g.remove(); to.classList.remove('glidewait'); };
   }
   function isOn(id, i) { return !!cur()[id + '_' + i]; }
   function renderList() {
@@ -4188,22 +4219,34 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   window.addEventListener('pagehide', flushSaves);
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushSaves(); });
   var weekTurn = 0;
+  // after the cards arrive, the week's ticks and dots fill in, row after row
+  function fillWave() {
+    if (REDUCED) return;
+    var rows = Array.prototype.filter.call(document.querySelectorAll('#list .row'), function (r) { var b = r.getBoundingClientRect(); return b.height && b.top < innerHeight; });
+    rows.forEach(function (row, n) {
+      var t0 = 260 + n * 28, inp = row.querySelector('input'), box = row.querySelector('.box');
+      if (box && inp && inp.checked && box.animate) box.animate([{ transform: 'scale(.4)', opacity: .2 }, { transform: 'scale(1.12)', offset: .7 }, { transform: 'none', opacity: 1 }], { duration: 360, delay: t0, easing: 'ease-out', fill: 'backwards' });
+      var item = row.closest('.item') || row.parentNode;
+      Array.prototype.forEach.call((item || row).querySelectorAll('.strip i.on'), function (dot, j) { if (dot.animate) dot.animate([{ transform: 'scale(0)' }, { transform: 'scale(1.15)' }], { duration: 260, delay: t0 + 60 + j * 30, easing: 'cubic-bezier(.3,1.4,.5,1)', fill: 'backwards' }); });
+    });
+  }
   function go(ws, sd, now) {   // now: render at once, without the page turn (opening a day from the Log)
     if (ws > thisMonday) return; if (key(ws) === key(thisMonday) && sd > (today.getDay() + 6) % 7) sd = (today.getDay() + 6) % 7;
     var fwd = ws > weekStart, moved = key(ws) !== key(weekStart); weekStart = ws; selDay = sd;
-    var els = ['weekLabel', 'days', 'list', 'weekside'].map($).filter(Boolean);
+    var els = ['list', 'weekside'].map($).filter(Boolean);
     if (now) weekTurn++;
     if (!moved || now || REDUCED || !els[0].animate) { renderHeader(); renderList(); return; }
+    rollDir = fwd ? 1 : -1; renderHeader(); rollDir = 0;
     // like turning a page: the shown week slides out and fades, the other comes in from the opposite side
     var sx = (document.documentElement.dir === 'rtl' ? 1 : -1) * (fwd ? 1 : -1), t = ++weekTurn;
     var outs = els.map(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = 'none';
-      return e.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(' + (sx * (e.id === 'weekLabel' ? 14 : 36)) + 'px)' }], { duration: 180, easing: 'cubic-bezier(.45,0,.55,1)', fill: 'forwards' }); });
+      return e.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(' + (sx * 36) + 'px)' }], { duration: 180, easing: 'cubic-bezier(.45,0,.55,1)', fill: 'forwards' }); });
     outs[0].onfinish = function () {
       if (t !== weekTurn) return;
-      renderHeader(); renderList();
+      renderList();
       els.forEach(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = ''; });
-      $('weekLabel').animate([{ opacity: 0, transform: 'translateX(' + (-sx * 14) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.22,.61,.36,1)' });
-      cascade($('view-track'), '.days, .weekside > *, #list .card', [{ opacity: 0, transform: 'translateX(' + (-sx * 36) + 'px)' }, { opacity: 1, transform: 'none' }], 50, 400);
+      fillWave();
+      cascade($('view-track'), '.weekside > *, #list .card', [{ opacity: 0, transform: 'translateX(' + (-sx * 36) + 'px)' }, { opacity: 1, transform: 'none' }], 50, 400);
     };
   }
   $('prev').addEventListener('click', function () { go(addDays(weekStart, -7), 0); });
