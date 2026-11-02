@@ -37,7 +37,7 @@ a { color: var(--gold); }
 <h2>ما يُحفظ وأين</h2>
 <ul>
 <li><b>دون حساب:</b> كل شيء يبقى على جهازي، داخل المتصفح أو التطبيق، ولا يُرسل إلى أي مكان.</li>
-<li><b>مع حساب:</b> يُحفظ بريدي الإلكتروني لدى خدمة الحسابات Supabase لأتمكّن من الدخول. أما بيانات برنامجي فتُشفَّر على جهازي (AES-GCM) بمفتاح مشتق من كلمة المرور أو عبارة المرور، ثم تُرفع مشفَّرة. كلمة المرور نفسها لا تصل إلى الخادم.</li>
+<li><b>مع حساب:</b> يُحفظ بريدي الإلكتروني لدى خدمة الحسابات Supabase لأتمكّن من الدخول. أما بيانات برنامجي فتُشفَّر على جهازي (AES-GCM) بمفتاح يُصنع على جهازي ويبقى عليه، ثم تُرفع مشفَّرة. لا تصل إلى الخادم كلمة مروري ولا هذا المفتاح؛ يصل فقط المفتاح مقفلاً بكلمة المرور أو برمز الاستعادة، فلا يُفتح إلا بهما.</li>
 <li><b>الدخول بـ Google أو Apple:</b> يُستعمل لإثبات هويتي فقط. يصل إلى أوراد بريدي واسمي، ولا يصل شيء من حسابي في Google أو Apple غير ذلك.</li>
 <li><b>النسخ الاحتياطي على Google Drive (اختياري):</b> يحفظ أوراد نسخته الاحتياطية في مجلد خاص بالتطبيق مخفيّ داخل Drive الخاص بي، ولا يستطيع رؤية ملفاتي الأخرى.</li>
 </ul>
@@ -61,7 +61,7 @@ a { color: var(--gold); }
 <p>Awrad is a personal daily programme. My data is encrypted on my device before it is uploaded, so no one else can read it, not even the app's owner. No ads, no tracking, no sale of any data.</p>
 <ul>
 <li><b>Without an account:</b> everything stays on my device and is sent nowhere.</li>
-<li><b>With an account:</b> my email is kept by the account service (Supabase) so I can sign in. My programme data is encrypted on my device (AES-GCM) with a key derived from my password or passphrase, and only the encrypted copy is uploaded. The password itself never reaches the server.</li>
+<li><b>With an account:</b> my email is kept by the account service (Supabase) so I can sign in. My programme data is encrypted on my device (AES-GCM) with a key made and kept on my device, and only the encrypted copy is uploaded. Neither my password nor that key reaches the server; only the key locked by my password or my recovery code, which nothing else can open.</li>
 <li><b>Sign in with Google or Apple:</b> used only to confirm who I am. Awrad receives my email and name, nothing else from my Google or Apple account.</li>
 <li><b>Google Drive backup (optional):</b> Awrad keeps its backup in a hidden app-only folder in my Drive and cannot see my other files.</li>
 <li><b>My rights:</b> I can download my data at any time from Settings, and delete my account for good from “My account” at the top of Settings, which removes my encrypted data and email from the server at once.</li>
