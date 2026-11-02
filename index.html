@@ -2638,7 +2638,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font); font-
 .wrap { max-width: 680px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 button { font: inherit; }
 
-header { background: var(--band); color: var(--band-ink); position: relative; overflow: hidden; }
+header { background: var(--band); color: var(--band-ink); position: sticky; top: 0; z-index: 30; overflow: hidden; }   /* the band stays at the top while the page scrolls */
+html { scroll-padding-top: calc(var(--hdr-h, 0px) + 12px); }
 header svg.pat { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .2; }
 header .wrap { position: relative; padding-block: 20px 0; display: flex; flex-direction: column; gap: 14px; }
 .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -2765,12 +2766,12 @@ label.btn { cursor: pointer; }
 .sleepin input:focus { outline: none; }
 .sleepin:focus-within { border-color: var(--gold); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold-soft) 35%, transparent); }
 .sleepin.bad { border-color: var(--warn); }
-.amalbody { gap: 0; padding-top: 12px; }
-.dayof { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 4px; border-radius: 12px; background: color-mix(in srgb, var(--gold-soft) 14%, var(--surface)); color: var(--gold-ink); font-weight: 700; font-size: 15px; line-height: 1.5; text-wrap: balance; }
+.foldbody.amalbody { gap: 0; padding-top: 12px; padding-bottom: 8px; }
+.dayof { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 6px; border-radius: 12px; background: color-mix(in srgb, var(--gold-soft) 14%, var(--surface)); color: var(--gold-ink); font-weight: 700; font-size: 15px; line-height: 1.5; text-wrap: balance; }
 .dayof .sic { color: var(--gold); }
 .dayofpre { font-weight: 500; color: var(--ink); }
 .dayof .sic svg { width: 20px; height: 20px; }
-.amalrow { display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 6px 2px; border-bottom: 1px solid var(--line); }
+.amalrow { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 4px 2px; border-bottom: 1px solid var(--line); }
 .amalrow:last-child { border-bottom: 0; }
 .amalrow .iic { width: 32px; height: 32px; color: var(--gold-ink); background: color-mix(in srgb, var(--gold-soft) 14%, var(--surface)); }
 .amalrow .iic svg { width: 18px; height: 18px; }
@@ -2909,7 +2910,7 @@ footer { text-align: center; padding-block: 0 28px; color: var(--muted); font-si
   .wrap { max-width: 1240px; }
   .trackbody > .weekside { order: 0; }
   .trackbody { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
-  .weekside { position: sticky; top: 16px; padding-block: 10px; }
+  .weekside { position: sticky; top: calc(var(--hdr-h, 0px) + 16px); padding-block: 10px; }
   .secs.split { flex-direction: row; align-items: flex-start; }
   .secs.split > .seccol { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
   .days { max-width: 640px; margin-inline: auto; }
@@ -2943,7 +2944,8 @@ header .wrap.hd { display: grid; grid-template-columns: minmax(0, 1fr) auto minm
 }
 @media (min-width: 641px) and (max-width: 1023px) {
   header .wrap.hd { grid-template-columns: minmax(0, 1fr) auto; row-gap: 12px; }
-  header .wrap.hd .tabs { grid-column: 1 / -1; grid-row: 2; justify-self: center; }
+  header .wrap.hd .tabs { grid-column: 1 / -1; grid-row: 2; justify-self: stretch; }
+  header .wrap.hd .tabs .tab { flex: 1 1 0; justify-content: center; }
 }
 @media (max-width: 640px) {
   header .wrap.hd { grid-template-columns: minmax(0, 1fr) auto; padding-block: 14px; }
@@ -3238,7 +3240,7 @@ html.is-locked body > *:not(.lockscreen):not(script):not(style):not(link):not(ti
 @keyframes toastOut { to { opacity: 0; transform: translate(-50%, 16px) scale(.95); } }
 @keyframes burst { 0% { opacity: 1; transform: translate(0, 0) scale(.4) rotate(0); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1) rotate(160deg); } }
 
-.view-in .stack > *, .view-in .pcol > *, .view-in .weeknav, .view-in .days { animation: rise .28s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * 35ms); }
+.view-in .stack > *, .view-in .pcol > *, .view-in .weekside > *, .view-in .weeknav, .view-in .days { animation: rise .28s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * 35ms); }
 .view-in .stack > .pcols { animation: none; }
 .slide-next { animation: slideFromL .24s cubic-bezier(.2,.8,.2,1); }
 .slide-prev { animation: slideFromR .24s cubic-bezier(.2,.8,.2,1); }
@@ -3560,6 +3562,13 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   var savedP = 'green'; try { savedP = localStorage.getItem('tracker:palette') || 'green'; } catch (e) {}
   setPalette(savedP);
 
+  /* the band's height, for what must sit just under it (the week summary on a laptop, a field brought into view) */
+  (function () {
+    var hd = document.querySelector('header'); if (!hd) return;
+    var setH = function () { document.documentElement.style.setProperty('--hdr-h', Math.round(hd.getBoundingClientRect().height) + 'px'); };
+    setH(); if (window.ResizeObserver) new ResizeObserver(setH).observe(hd); else window.addEventListener('resize', setH);
+  })();
+
   /* ---------- tabs ---------- */
   function setView(v) {
     if (v !== 'log') { muhUnlocked = false; muhLogUndo = null; }
@@ -3571,7 +3580,8 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     if (v === 'log') renderLog();
     if (v === 'settings') renderSettings();
     window.scrollTo(0, 0);   // the new page starts at its top at once; it fades in, rather than scrolling over it
-    var panel = $('view-' + v); stagger(panel, '.stack > :not(.pcols), .pcol > *'); replay(panel, 'view-in');
+    var panel = $('view-' + v); stagger(panel, '.weekside > *'); var nside = panel.querySelectorAll('.weekside > *').length;
+    Array.prototype.forEach.call(panel.querySelectorAll('.stack > :not(.pcols), .pcol > *'), function (c, i) { c.style.setProperty('--i', Math.min(i + (isWide() ? 0 : nside), 7)); });   // every card of the page enters the same way, top to bottom replay(panel, 'view-in');
     clearTimeout(viewTimer); viewTimer = setTimeout(function () { panel.classList.remove('view-in'); }, 600);
   }
   ['track', 'progress', 'log'].forEach(function (x) { $('tab-' + x).addEventListener('click', function () { setView(x); }); });
