@@ -12,8 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="أوراد">
 <meta name="application-name" content="أوراد">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=33350834">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=33350834">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=d5270767">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=d5270767">
 <style>
 body { margin: 0; }
 [hidden] { display: none !important; }
@@ -2781,7 +2781,7 @@ label.btn { cursor: pointer; }
 .foldhead .fv.fvday { font-size: 13px; font-weight: 600; color: var(--muted); }
 .stime { font-size: 16px; font-variant-numeric: tabular-nums; color: var(--ink); }
 .sleepkpis .v { font-size: 22px; }
-.strip { display: grid; grid-template-columns: repeat(7, 7px); gap: 3px; flex-shrink: 0; }
+.strip { display: grid; grid-template-columns: repeat(7, 7px); gap: 5px; flex-shrink: 0; }   /* room between the days, so the dots never touch */
 .strip i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
 .strip i.on { background: var(--check); }
 .strip i.sel { box-shadow: 0 0 0 1.5px var(--gold); }
@@ -2830,7 +2830,7 @@ label.btn { cursor: pointer; }
 .legend i { width: 14px; height: 4px; border-radius: 2px; display: inline-block; background: var(--check); }
 .legend i.p { background: var(--muted); opacity: .45; }
 footer { text-align: center; padding-block: 0 28px; color: var(--muted); font-size: 14px; font-weight: 600; }
-@media (max-width: 400px) { .sleepin { padding-inline: 5px; gap: 2px; } .sleepin svg { display: none; } .sleepin input { width: 44px; } .strip { grid-template-columns: repeat(7, 6px); gap: 2px; } .strip i { width: 6px; height: 6px; } .rowwrap { gap: 6px; } .sleepkpis .v { font-size: 18px; } }
+@media (max-width: 400px) { .sleepin { padding-inline: 5px; gap: 2px; } .sleepin svg { display: none; } .sleepin input { width: 44px; } .strip { grid-template-columns: repeat(7, 6px); gap: 4px; } .strip i { width: 6px; height: 6px; } .rowwrap { gap: 6px; } .sleepkpis .v { font-size: 18px; } }
 .kpi .v { overflow-wrap: anywhere; }
 @media (max-width: 420px) { .kpi .v { font-size: 20px; } .bl { grid-template-columns: 84px minmax(0, 1fr) 36px; } .toprow .tm { white-space: normal; } }
 @media (prefers-reduced-motion: reduce) { .box { transition: none; } }
@@ -3019,7 +3019,14 @@ details.changes { border-top: 1px solid var(--line); }
 details.changes summary { cursor: pointer; padding: 12px 16px; font-weight: 600; font-size: 14px; color: var(--ink); }
 details.changes summary:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
 .chg { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; padding: 8px 16px 12px; font-size: 13px; color: var(--muted); line-height: 1.7; }
-.resetrow { display: flex; justify-content: center; padding-block: 4px 8px; }
+.resetrow { display: flex; justify-content: center; padding: 14px 16px 16px; }
+.sfold { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 28px; padding: 0; margin: 0; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; text-align: start; }
+.sfold .fchev { margin-inline-start: auto; color: var(--muted); }
+.sfold .fchev svg { width: 18px; height: 18px; display: block; transition: transform .2s; }
+.sfold[aria-expanded="true"] .fchev svg { transform: rotate(180deg); }
+.sfold:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; border-radius: 8px; }
+.card.shut > h2 { border-bottom: 0; }
+.sfbody[hidden] { display: none; }
 
 
 /* ---------- forties, muhasaba, khatma ---------- */
@@ -3077,13 +3084,15 @@ details.changes summary:focus-visible { outline: 3px solid var(--gold); outline-
 .dumpcard textarea { display: block; width: 100%; min-height: 64px; resize: none; overflow: hidden; font: inherit; font-size: 16px; line-height: 1.7; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
 .dumpcard textarea:focus { outline: 2px solid var(--gold); outline-offset: 0; border-color: var(--gold); }
 .muhq.filled textarea { border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
-.muhgate { align-items: center; text-align: center; gap: 8px; }
+.muhgate { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+.muhgate .gtx { display: block; max-width: 46ch; line-height: 1.7; }
 .muhgate .gic { color: var(--gold-ink); }
 .muhgate .gic svg { width: 30px; height: 30px; }
 .muhgate .btn { margin-top: 6px; }
 .muhnote { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .muhnote p { margin: 0; flex: 1 1 220px; font-size: 13px; color: var(--muted); line-height: 1.7; }
-.muhhide { display: flex; justify-content: flex-end; margin: -4px 0 -6px; }
+.muhhidebtn { margin-inline-start: auto; font-size: 13px; }
+@media (min-width: 1024px) { #logview > .muhcard, #logview > .muhnote { grid-column: 1 / -1; } }
 .muhlist { gap: 12px; }
 .muhlist .lmonth { margin-top: 4px; }
 .muhacts { display: inline-flex; align-items: center; gap: 4px; }
@@ -3883,7 +3892,14 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     c2.appendChild(sf);
 
     // categories
-    var c3 = plainCard('تصنيفات السجلّ', 'bulb');
+    var c3card = plainCard('تصنيفات السجلّ', 'bulb'); c3card.setAttribute('data-card', 'cats');
+    var c3h = c3card.querySelector('h2'), c3t = document.createElement('button'); c3t.type = 'button'; c3t.className = 'sfold'; c3t.id = 'fold-cats';
+    while (c3h.firstChild) c3t.appendChild(c3h.firstChild);
+    var c3ch = document.createElement('span'); c3ch.className = 'fchev'; c3ch.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>'; c3t.appendChild(c3ch);
+    c3h.appendChild(c3t);
+    var c3 = document.createElement('div'); c3.className = 'sfbody'; c3.id = 'catsBody'; c3t.setAttribute('aria-controls', 'catsBody'); c3card.appendChild(c3);
+    var catsShut = folded('cats', true); c3.hidden = catsShut; c3t.setAttribute('aria-expanded', catsShut ? 'false' : 'true'); c3card.classList.toggle('shut', catsShut);
+    c3t.addEventListener('click', function () { var sh = !c3.hidden; c3.hidden = sh; c3t.setAttribute('aria-expanded', sh ? 'false' : 'true'); c3card.classList.toggle('shut', sh); setFolded('cats', sh); });
     var n3 = document.createElement('div'); n3.className = 'insight'; n3.innerHTML = '<span>الأنواع التي أختار منها حين أضيف إلى سجلّي. حذف نوع لا يغيّر مدخلاتي القديمة.</span>'; c3.appendChild(n3);
     Object.keys(DEFAULT_TYPES).forEach(function (k) {
       var cfgk = LOGS[k];
@@ -3956,7 +3972,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       config.sections = config.sections.filter(function (x) { if (x.gone) return true; if (x.from === wk) return false; x.gone = wk; return true; });
       config.types = {}; saveConfig();
     });
-    rz.appendChild(rb); root.appendChild(rz);
+    rz.appendChild(rb); c3.appendChild(rz);
   }
   applyConfig();
   var logs = {};           // id -> {id,item,date,title,type,num}
@@ -4868,11 +4884,11 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var nb = document.createElement('button'); nb.type = 'button'; nb.className = 'btn sm'; nb.textContent = 'تفعيل القفل';
       nb.addEventListener('click', function () { showLock('set', function (ok) { if (ok) { muhUnlocked = true; paintLockButtons(); } renderLog(); }); });
       nt.appendChild(nb); root.appendChild(nt);
-    } else {
-      var hide = document.createElement('div'); hide.className = 'muhhide';
-      var hb2 = document.createElement('button'); hb2.type = 'button'; hb2.className = 'muhopen'; hb2.textContent = 'إخفاء محاسباتي';
+    }
+    var hb2 = null;
+    if (lockOn()) {
+      hb2 = document.createElement('button'); hb2.type = 'button'; hb2.className = 'muhopen muhhidebtn'; hb2.textContent = 'إخفاء محاسباتي';
       hb2.addEventListener('click', function () { muhUnlocked = false; renderLog(); var f = $('muhOpenLock'); if (f) f.focus(); });
-      hide.appendChild(hb2); root.appendChild(hide);
     }
     var fromKey = logPeriod === 'all' ? '0000' : key(addDays(today, -(+logPeriod) + 1));
     var all = [];
@@ -4895,7 +4911,8 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var dv = document.createElement('div'); dv.className = 'kpi'; dv.innerHTML = '<span class="k"></span><span class="v"></span>'; dv.children[0].textContent = x[0]; dv.children[1].textContent = x[1]; k.appendChild(dv);
     });
     root.appendChild(k);
-    var c3 = card('كل محاسباتي', 'pen');
+    var c3 = card('كل محاسباتي', 'pen'); c3.classList.add('muhcard');
+    if (hb2) c3.querySelector('h2').appendChild(hb2);
     var box = document.createElement('div'); box.className = 'muhlog';
     var sl = document.createElement('label'); sl.className = 'sr'; sl.setAttribute('for', 'muhSearch'); sl.textContent = 'بحث في محاسباتي'; box.appendChild(sl);
     var si = document.createElement('input'); si.type = 'search'; si.id = 'muhSearch'; si.className = 'muhsearch'; si.value = muhQuery; si.setAttribute('placeholder', 'بحث في محاسباتي'); si.setAttribute('autocomplete', 'off');

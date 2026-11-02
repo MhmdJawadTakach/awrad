@@ -1,7 +1,7 @@
 /* أوراد — keeps the app working offline. The page always tries the network first (so updates arrive by themselves)
    and falls back to the saved copy; data is never touched here, it lives in the page's own storage. */
 const VERSION = '1.0';
-const CACHE = 'app-' + VERSION + '-33350834', FONTS = 'fonts-v1';
+const CACHE = 'app-' + VERSION + '-d5270767', FONTS = 'fonts-v1';
 const CORE = ['./', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png', 'fonts/plex-arabic-400.woff', 'fonts/plex-arabic-500.woff', 'fonts/plex-arabic-600.woff', 'fonts/plex-arabic-700.woff'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE.map(u => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE && k !== FONTS).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
