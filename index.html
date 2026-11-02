@@ -2916,6 +2916,7 @@ footer { text-align: center; padding-block: 0 28px; color: var(--muted); font-si
 .sidecard .note { padding: 0; }
 @media (min-width: 1024px) {
   .wrap { max-width: 1240px; }
+  header .wrap.hd { max-width: none; padding-inline: max(32px, env(safe-area-inset-left, 0px)); }   /* on a wide screen the name sits at the right edge and the buttons at the left */
   .trackbody > .weekside { order: 0; }
   .trackbody { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
   .weekside { position: sticky; top: calc(var(--hdr-h, 0px) + 16px); padding-block: 10px; }
