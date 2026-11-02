@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>سياسة الخصوصية · أوراد</title>
+<link rel="icon" href="icons/favicon-32.png">
+<style>
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-weight: 400; font-display: swap; src: url('fonts/plex-arabic-400.woff') format('woff'); }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-weight: 700; font-display: swap; src: url('fonts/plex-arabic-700.woff') format('woff'); }
+:root { --bg: #F6F3EA; --surface: #FFFFFF; --ink: #1B1D1A; --muted: #5F6158; --line: #E1DBCB; --band: #1E3D33; --band-ink: #F6F3EA; --gold: #A87D27; --gold-soft: #D4B26A; }
+@media (prefers-color-scheme: dark) { :root { --bg: #121614; --surface: #1A201D; --ink: #ECE9E0; --muted: #A4A79C; --line: #2C3531; --band: #183129; --band-ink: #F1ECDD; --gold: #D9B868; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.75 'IBM Plex Sans Arabic', Tahoma, sans-serif; }
+header { background: var(--band); color: var(--band-ink); border-bottom: 2px solid var(--gold-soft); padding: 28px 16px; }
+header div, main { max-width: 720px; margin: 0 auto; }
+h1 { margin: 0; font-size: 26px; }
+header p { margin: 4px 0 0; color: var(--gold-soft); font-size: 14px; }
+main { padding: 8px 16px 48px; }
+section { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; margin-top: 16px; }
+h2 { font-size: 18px; margin: 0 0 6px; color: var(--gold); }
+ul { margin: 0; padding-inline-start: 22px; }
+li + li { margin-top: 4px; }
+a { color: var(--gold); }
+.en { direction: ltr; text-align: left; }
+.lang { margin-top: 32px; font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<header><div><h1>سياسة الخصوصية · أوراد</h1><p>آخر تحديث: 2 تشرين الثاني 2026</p></div></header>
+<main>
+<section>
+<h2>باختصار</h2>
+<p>أوراد برنامج شخصي يومي. بياناتي تُشفَّر على جهازي قبل أن تُرفع، ولا يستطيع أحد غيري قراءتها، ولا صاحب التطبيق. لا إعلانات، ولا تتبّع، ولا بيع لأي بيانات.</p>
+</section>
+<section>
+<h2>ما يُحفظ وأين</h2>
+<ul>
+<li><b>دون حساب:</b> كل شيء يبقى على جهازي، داخل المتصفح أو التطبيق، ولا يُرسل إلى أي مكان.</li>
+<li><b>مع حساب:</b> يُحفظ بريدي الإلكتروني لدى خدمة الحسابات Supabase لأتمكّن من الدخول. أما بيانات برنامجي فتُشفَّر على جهازي (AES-GCM) بمفتاح مشتق من كلمة المرور أو عبارة المرور، ثم تُرفع مشفَّرة. كلمة المرور نفسها لا تصل إلى الخادم.</li>
+<li><b>الدخول بـ Google أو Apple:</b> يُستعمل لإثبات هويتي فقط. يصل إلى أوراد بريدي واسمي، ولا يصل شيء من حسابي في Google أو Apple غير ذلك.</li>
+<li><b>النسخ الاحتياطي على Google Drive (اختياري):</b> يحفظ أوراد نسخته الاحتياطية في مجلد خاص بالتطبيق مخفيّ داخل Drive الخاص بي، ولا يستطيع رؤية ملفاتي الأخرى.</li>
+</ul>
+</section>
+<section>
+<h2>حقوقي</h2>
+<ul>
+<li>أنزّل نسخة من بياناتي في أي وقت من الإعدادات.</li>
+<li>أحذف حسابي نهائياً من «حسابي» في أعلى الإعدادات، فتُحذف بياناتي المشفَّرة وبريدي من الخادم فوراً.</li>
+<li>تقرير الأخطاء لا يُرسل وحده، وفيه رقم الإصدار والمتصفح ورسائل الأخطاء فقط، دون شيء من بياناتي.</li>
+</ul>
+</section>
+<section>
+<h2>التواصل</h2>
+<p>لأي سؤال عن الخصوصية: <a href="https://github.com/MhmdJawadTakach/awrad/issues">صفحة الملاحظات على GitHub</a>.</p>
+</section>
+
+<p class="lang">English</p>
+<section class="en" lang="en" dir="ltr">
+<h2>Privacy policy · Awrad</h2>
+<p>Awrad is a personal daily programme. My data is encrypted on my device before it is uploaded, so no one else can read it, not even the app's owner. No ads, no tracking, no sale of any data.</p>
+<ul>
+<li><b>Without an account:</b> everything stays on my device and is sent nowhere.</li>
+<li><b>With an account:</b> my email is kept by the account service (Supabase) so I can sign in. My programme data is encrypted on my device (AES-GCM) with a key derived from my password or passphrase, and only the encrypted copy is uploaded. The password itself never reaches the server.</li>
+<li><b>Sign in with Google or Apple:</b> used only to confirm who I am. Awrad receives my email and name, nothing else from my Google or Apple account.</li>
+<li><b>Google Drive backup (optional):</b> Awrad keeps its backup in a hidden app-only folder in my Drive and cannot see my other files.</li>
+<li><b>My rights:</b> I can download my data at any time from Settings, and delete my account for good from “My account” at the top of Settings, which removes my encrypted data and email from the server at once.</li>
+<li><b>Contact:</b> <a href="https://github.com/MhmdJawadTakach/awrad/issues">GitHub issues page</a>.</li>
+</ul>
+</section>
+</main>
+</body>
+</html>
