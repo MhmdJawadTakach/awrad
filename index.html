@@ -2744,6 +2744,9 @@ label.btn { cursor: pointer; }
 .gear:hover { background: rgba(255,255,255,.12); }
 .gear[aria-pressed="true"] { background: var(--gold-soft); color: var(--band); border-color: var(--gold-soft); transform: rotate(60deg); }
 .gear:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 2px; }
+/* frosted glass behind the header's buttons and the tab bar: what lies behind shows through, blurred */
+.gear, .tabs { -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); }
+@media (max-width: 640px) { .tabs { background: color-mix(in srgb, var(--band) 78%, transparent) !important; } }
 @media (prefers-reduced-motion: reduce) { .gear { transition: none; } }
 .seglabel { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
 .insight { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
