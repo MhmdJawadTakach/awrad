@@ -3606,6 +3606,13 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
 
   /* ---------- tabs ---------- */
   var lastView = 'track';
+  // cards come in one after another, top to bottom (then by side), each a little after the one before
+  function cascade(root, sel, kf, step, dur) {
+    var list = Array.prototype.filter.call(root.querySelectorAll(sel), function (e) { var r = e.getBoundingClientRect(); return r.height && r.top < innerHeight + 40; });
+    list.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return Math.abs(ra.top - rb.top) > 8 ? ra.top - rb.top : (document.documentElement.dir === 'rtl' ? rb.left - ra.left : ra.left - rb.left); });
+    list.forEach(function (e, i) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.animate(kf, { duration: dur, delay: Math.min(i, 8) * step, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' }); });
+  }
+  var CARDS = '.weeknav, .days, .weekside > *, #list .card, .stack > :not(.pcols):not(#list), .pcol > *';
   function setView(v) {
     if (v !== 'log') { muhUnlocked = false; muhLogUndo = null; }
     view = v;
@@ -3625,8 +3632,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     else if (from === 'settings') kf = [{ opacity: 0, transform: 'translateY(-18px)' }, { opacity: 1, transform: 'none' }];
     else { var fwd = order[v] > order[from], sx = (document.documentElement.dir === 'rtl' ? -1 : 1) * (fwd ? 1 : -1);
       kf = [{ opacity: 0, transform: 'translateX(' + (sx * 56) + 'px)' }, { opacity: 1, transform: 'none' }]; }
-    panel.getAnimations().forEach(function (a) { a.cancel(); });
-    panel.animate(kf, { duration: 600, easing: 'cubic-bezier(.22,.61,.36,1)' });
+    cascade(panel, CARDS, kf, 80, 560);
   }
   ['track', 'progress', 'log'].forEach(function (x) { $('tab-' + x).addEventListener('click', function () { setView(x); }); });
   var lastTab = 'track';
@@ -4195,8 +4201,9 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     outs[0].onfinish = function () {
       if (t !== weekTurn) return;
       renderHeader(); renderList();
-      els.forEach(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = '';
-        e.animate([{ opacity: 0, transform: 'translateX(' + (-sx * (e.id === 'weekLabel' ? 14 : 36)) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 560, easing: 'cubic-bezier(.22,.61,.36,1)' }); });
+      els.forEach(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = ''; });
+      $('weekLabel').animate([{ opacity: 0, transform: 'translateX(' + (-sx * 14) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.22,.61,.36,1)' });
+      cascade($('view-track'), '.days, .weekside > *, #list .card', [{ opacity: 0, transform: 'translateX(' + (-sx * 36) + 'px)' }, { opacity: 1, transform: 'none' }], 70, 520);
     };
   }
   $('prev').addEventListener('click', function () { go(addDays(weekStart, -7), 0); });
