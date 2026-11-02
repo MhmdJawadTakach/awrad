@@ -3626,7 +3626,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     else { var fwd = order[v] > order[from], sx = (document.documentElement.dir === 'rtl' ? -1 : 1) * (fwd ? 1 : -1);
       kf = [{ opacity: 0, transform: 'translateX(' + (sx * 56) + 'px)' }, { opacity: 1, transform: 'none' }]; }
     panel.getAnimations().forEach(function (a) { a.cancel(); });
-    panel.animate(kf, { duration: 380, easing: 'cubic-bezier(.2,.85,.25,1)' });
+    panel.animate(kf, { duration: 600, easing: 'cubic-bezier(.22,.61,.36,1)' });
   }
   ['track', 'progress', 'log'].forEach(function (x) { $('tab-' + x).addEventListener('click', function () { setView(x); }); });
   var lastTab = 'track';
@@ -4191,12 +4191,12 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     // like turning a page: the shown week slides out and fades, the other comes in from the opposite side
     var sx = (document.documentElement.dir === 'rtl' ? 1 : -1) * (fwd ? 1 : -1), t = ++weekTurn;
     var outs = els.map(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = 'none';
-      return e.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(' + (sx * (e.id === 'weekLabel' ? 14 : 36)) + 'px)' }], { duration: 140, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' }); });
+      return e.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(' + (sx * (e.id === 'weekLabel' ? 14 : 36)) + 'px)' }], { duration: 240, easing: 'cubic-bezier(.45,0,.55,1)', fill: 'forwards' }); });
     outs[0].onfinish = function () {
       if (t !== weekTurn) return;
       renderHeader(); renderList();
       els.forEach(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = '';
-        e.animate([{ opacity: 0, transform: 'translateX(' + (-sx * (e.id === 'weekLabel' ? 14 : 36)) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.2,.85,.25,1)' }); });
+        e.animate([{ opacity: 0, transform: 'translateX(' + (-sx * (e.id === 'weekLabel' ? 14 : 36)) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 560, easing: 'cubic-bezier(.22,.61,.36,1)' }); });
     };
   }
   $('prev').addEventListener('click', function () { go(addDays(weekStart, -7), 0); });
