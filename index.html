@@ -3308,6 +3308,107 @@ html.is-locked body > *:not(.lockscreen):not(script):not(style):not(link):not(ti
 .anim .fl { animation: fill .5s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * 35ms); }
 .entry.new { animation: chipIn .25s cubic-bezier(.3,1.4,.5,1); }
 .alert.anim { animation: rise .3s cubic-bezier(.2,.8,.2,1); }
+/* ---------- Progress ---------- */
+.psum { padding: 16px; display: flex; flex-direction: column; gap: 10px; border-width: 1px; }
+.psum.warn { background: var(--warn-bg); border-color: var(--warn); } .psum.good { background: var(--good-bg); border-color: var(--good); } .psum.flat { background: var(--flat-bg); border-color: var(--flat); }
+.psumh { display: flex; align-items: center; gap: 10px; } .psumh svg { width: 24px; height: 24px; flex: none; } .psumh h3 { margin: 0; font-size: 17px; }
+.psum.warn .psumh { color: var(--warn); } .psum.good .psumh { color: var(--good); } .psum.flat .psumh { color: var(--flat); }
+.psumt { margin: 0; font-size: 14.5px; line-height: 1.75; color: var(--ink); }
+.pstep { display: flex; gap: 10px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.pstep .sic { color: var(--gold-ink); margin-top: 2px; } .pstep small { display: block; font-size: 12px; color: var(--muted); font-weight: 600; } .pstep span { font-size: 14.5px; font-weight: 600; line-height: 1.6; }
+.rings { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; padding: 12px; }
+.ring { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; background: transparent; color: var(--ink); font: inherit; cursor: pointer; padding: 6px 2px 8px; border-radius: 12px; }
+.ring:hover { background: color-mix(in srgb, var(--chip) 50%, transparent); }
+.ring > svg { width: 84px; height: 84px; display: block; transform: rotate(-90deg); }
+html[dir="rtl"] .ring > svg { transform: rotate(-90deg) scaleY(-1); }
+.ring .rt { fill: none; stroke: var(--line); stroke-width: 8; }
+.ring .rv { fill: none; stroke-width: 8; stroke-linecap: round; }
+.ring.good .rv { stroke: var(--good); } .ring.mid .rv { stroke: var(--gold); } .ring.weak .rv { stroke: var(--warn); } .ring.none .rv { stroke: transparent; }
+.ring .ric { position: absolute; top: 37px; left: 50%; transform: translateX(-50%); color: var(--gold-ink); width: 22px; height: 22px; display: grid; place-items: center; }
+.ring .ric svg { width: 22px; height: 22px; display: block; }
+.ring .rn { font-size: 13px; font-weight: 600; text-align: center; line-height: 1.35; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.ring .rp { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ring .rd { font-size: 12px; font-weight: 600; } .ring .rd.up, .kpi .d.up { color: var(--good); } .ring .rd.down { color: var(--warn); } .ring .rd.same { color: var(--muted); }
+.ymap { padding: 12px 12px 10px; --ys: 13px; }
+.yscroll { overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; }
+.ymonths { display: grid; gap: 3px; margin-inline-start: 34px; font-size: 11px; color: var(--muted); height: 16px; width: max-content; }
+.ymonths span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.yrow { display: flex; gap: 6px; width: max-content; }
+.ydays { display: grid; grid-template-rows: repeat(7, var(--ys)); gap: 3px; font-size: 10px; color: var(--muted); width: 28px; flex: none; }
+.ydays span { line-height: var(--ys); }
+.ygrid { display: grid; grid-template-rows: repeat(7, var(--ys)); gap: 3px; }
+.ygrid i, .ylegend i { width: var(--ys); height: var(--ys); border-radius: 3px; display: block; background: color-mix(in srgb, var(--line) 70%, transparent); }
+.ygrid i.fut { background: transparent; }
+.ygrid i.on, .ylegend i.on { cursor: pointer; }
+.ygrid i.good, .ylegend i.good { background: color-mix(in srgb, var(--good) calc(var(--a) * 100%), var(--surface)); }
+.ygrid i.mid, .ylegend i.mid { background: color-mix(in srgb, var(--gold) calc(var(--a) * 100%), var(--surface)); }
+.ygrid i.weak, .ylegend i.weak { background: color-mix(in srgb, var(--warn) calc(var(--a) * 100%), var(--surface)); }
+.ylegend { display: flex; align-items: center; gap: 4px; justify-content: flex-end; font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+.ylegend span { margin-inline: 4px; }
+.pseg { margin: 12px 16px 0; }
+.chart .avgband { fill: var(--check); opacity: .06; } .chart .avgline { stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 5 5; } .chart .avgt { fill: var(--gold-ink); font-size: 16px; font-weight: 600; }
+.chart .pt.good { stroke: var(--good); } .chart .pt.mid { stroke: var(--gold); } .chart .pt.weak { stroke: var(--warn); fill: var(--warn-bg); }
+.chart .pt { cursor: pointer; }
+.preading { padding: 0 16px 14px; margin: 0; font-weight: 600; color: var(--ink); }
+.alist { display: flex; flex-direction: column; }
+.arow { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(60px, 34%) 42px 18px; align-items: center; gap: 10px; width: 100%; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; text-align: start; cursor: pointer; min-height: 52px; }
+.arow:hover { background: color-mix(in srgb, var(--chip) 40%, transparent); }
+.arow .an { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.arow .atr { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.arow .afl { display: block; height: 100%; border-radius: inherit; }
+.afl.good, .mbf.good, .wbf.good { background: var(--good); } .afl.mid, .mbf.mid, .wbf.mid { background: var(--gold); } .afl.weak, .mbf.weak, .wbf.weak { background: var(--warn); }
+.arow .apc { font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: end; }
+.arow .fchev { color: var(--muted); } .arow .fchev svg { width: 16px; height: 16px; display: block; transition: transform .2s; } .arow[aria-expanded="true"] .fchev svg { transform: rotate(180deg); }
+.idetail { padding: 12px 16px 14px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--chip) 25%, var(--surface)); display: flex; flex-direction: column; gap: 12px; }
+.mbars { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; align-items: end; height: 110px; }
+.mb { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; cursor: pointer; }
+.mb .mbf { width: 60%; max-width: 30px; border-radius: 6px 6px 3px 3px; min-height: 3px; display: block; }
+.mb small { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.dstrip { display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); gap: 3px; }
+.dstrip i { aspect-ratio: 1; border-radius: 50%; background: var(--line); max-width: 12px; }
+.dstrip i.on { background: var(--good); }
+.ifacts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.ifacts div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.ifacts small { display: block; font-size: 11.5px; color: var(--muted); } .ifacts b { font-size: 15px; }
+.wbars { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; padding: 14px 16px 6px; align-items: end; height: 170px; }
+.wb { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; cursor: pointer; }
+.wb .wbt { flex: 1; width: 100%; max-width: 30px; display: flex; align-items: flex-end; background: color-mix(in srgb, var(--line) 50%, transparent); border-radius: 7px; overflow: hidden; }
+.wb .wbf { width: 100%; display: block; border-radius: 7px; }
+.wb .wbv { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.wb small { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.wb.lo small, .wb.lo .wbv { color: var(--warn); font-weight: 700; } .wb.hi small, .wb.hi .wbv { color: var(--good); font-weight: 700; }
+#progress .note { padding: 0 16px 14px; margin: 0; }
+.atiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 16px 4px; }
+.atile { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.atile small { font-size: 12px; color: var(--muted); font-weight: 600; } .atile b { font-size: 20px; color: var(--gold-ink); } .atile span { font-size: 12px; color: var(--muted); }
+.badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; padding: 10px 16px 16px; }
+.badge { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; padding: 10px 8px; border-radius: 12px; border: 1px dashed var(--line); color: var(--muted); }
+.badge .bic svg { width: 26px; height: 26px; display: block; color: var(--line); }
+.badge .bt { font-size: 12.5px; font-weight: 600; line-height: 1.45; }
+.badge small { font-size: 11px; font-variant-numeric: tabular-nums; }
+.badge .bpr { width: 80%; height: 4px; border-radius: 999px; background: var(--line); overflow: hidden; } .badge .bpr i { display: block; height: 100%; background: var(--gold); }
+.badge.won { border: 1px solid var(--gold-soft); background: color-mix(in srgb, var(--gold-soft) 14%, var(--surface)); color: var(--ink); }
+.badge.won .bic svg { color: var(--gold); }
+.badge.new { animation: badgeNew 1.6s .6s cubic-bezier(.3,1.4,.5,1) both; }
+@keyframes badgeNew { 0% { transform: scale(.6); box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold-soft) 60%, transparent); } 40% { transform: scale(1.08); } 100% { transform: none; box-shadow: 0 0 0 14px transparent; } }
+.ptip { position: fixed; z-index: 60; background: var(--band); color: var(--band-ink); border: 1px solid var(--gold-soft); border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; gap: 2px; font-size: 13px; box-shadow: 0 10px 24px rgba(0,0,0,.25); pointer-events: none; max-width: 260px; }
+.ptip b { color: var(--gold-soft); font-size: 13px; }
+@media (min-width: 1024px) { #progress > .psum, #progress > [data-card="yearmap"] { grid-column: 1 / -1; } }
+/* drawing in, when the page opens */
+.pdraw .ring .rv { animation: ringIn .9s cubic-bezier(.22,.61,.36,1) backwards; animation-delay: calc(.15s + var(--i, 0) * .1s); }
+@keyframes ringIn { from { stroke-dashoffset: var(--c); } }
+.pdraw .ygrid i { animation: fadeIn .3s backwards; animation-delay: calc(.2s + var(--w, 0) * 12ms); }
+.pdraw .afl { animation: growX .7s cubic-bezier(.22,.61,.36,1) backwards; animation-delay: calc(.2s + var(--i, 0) * 60ms); }
+.pdraw .wbf, .pdraw .mbf { animation: growY .7s cubic-bezier(.22,.61,.36,1) backwards; animation-delay: calc(.2s + var(--i, 0) * 60ms); }
+.idetail .mbf { animation: growY .6s cubic-bezier(.22,.61,.36,1) backwards; animation-delay: calc(var(--i, 0) * 60ms); }
+.idetail .dstrip i { animation: growIn .6s cubic-bezier(.22,.61,.36,1) backwards; animation-delay: calc(var(--i, 0) * 30ms); }
+@keyframes growIn { from { transform: scale(0); } }
+@keyframes growX { from { transform: scaleX(0); } }
+@keyframes growY { from { transform: scaleY(0); } }
+.afl { transform-origin: right center; } html[dir="ltr"] .afl { transform-origin: left center; } .wbf, .mbf { transform-origin: bottom center; }
+.badges .badge { animation: fadeIn .35s backwards; animation-delay: calc(.3s + var(--i, 0) * 50ms); }
+@media (prefers-reduced-motion: reduce) { .pdraw *, .idetail *, .badge { animation: none !important; } }
+
 .alert.warn.anim svg { animation: pop .45s .3s; }
 .item .logform { animation: rise .2s cubic-bezier(.2,.8,.2,1); }
 .day, .swatch, .btn, .seg button, .addlog, .iconbtn, .tab { transition: transform .12s, background-color .15s, color .15s, border-color .15s, box-shadow .15s; }
@@ -4574,7 +4675,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     return { weeks: wks, logs: lg, quran: q, config: conf, first: first };
   }
   function demoGrowth(first) {
-    var a = rate(first, addDays(first, 27)), b = rate(addDays(thisMonday, -28), today);
+    var a = rate(first, addDays(first, 27)), b = rate(addDays(today, -28), addDays(today, -1));   // the last four full weeks of days (today is still going)
     return [pct(a), pct(b)];
   }
   function paintDemoBar() {
@@ -5512,14 +5613,8 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     else { kind = 'flat'; title = 'التزامي مستقر'; body = 'التزامي في آخر 7 أيام ' + pct(last7) + ' مقابل ' + pct(prev28) + ' في الأسابيع الأربعة السابقة.'; }
     if (secDrops.length && histDays >= 7) body += ' تراجع ملحوظ في: ' + secDrops.join('، ') + '.';
     if (secDrops.length && kind === 'flat' && histDays >= 7) { kind = 'warn'; title = 'تنبيه: تراجع في بعض المحاور'; }
-    a.className = 'alert ' + kind;
-    var ic = kind === 'warn' ? '<path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4M12 17.5v.5"></path>' : kind === 'good' ? '<path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path>' : '<path d="M3 12h18"></path><path d="M15 6l6 6-6 6"></path>';
-    a.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ic + '</svg><div><h3></h3><p></p></div>';
-    a.querySelector('h3').textContent = title; a.querySelector('p').textContent = body;
-    a.setAttribute('role', 'status');
-    root.appendChild(a);
-
-    // KPIs
+    // 1. summary and my step; the three figures; 2. rings; 3. the year; 4. the line; 5. where I fall short; 6. achievements; 7. goals; then the Quran and sleep
+    root.appendChild(summaryCard(kind, title));
     var thisW = rate(thisMonday, addDays(thisMonday, 6)), lastW = rate(addDays(thisMonday, -7), addDays(thisMonday, -1));
     var mStart = monthStart(today, 0), pmStart = monthStart(today, -1);
     var thisM = rate(mStart, today), lastM = rate(pmStart, addDays(mStart, -1));
@@ -5531,62 +5626,366 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       d.appendChild(kk); d.appendChild(v); d.appendChild(deltaEl(delta(x[1], x[2]), x[3])); k.appendChild(d);
     });
     root.appendChild(k);
-    root.appendChild(goalsCard());
-
-    // weekly trend (12 weeks)
-    var wp = []; for (var i = 11; i >= 0; i--) { var ws = addDays(thisMonday, -7 * i); wp.push({ v: rate(ws, addDays(ws, 6)), label: dm(ws) }); }
-    var c1 = card('الالتزام أسبوعاً بأسبوع', 'sun'); c1.setAttribute('data-card', 'trend'); var ch = document.createElement('div'); ch.className = 'chart'; ch.appendChild(lineChart(wp, 'نسبة الالتزام في آخر 12 أسبوعاً')); c1.appendChild(ch);
-    var n1 = document.createElement('p'); n1.className = 'note'; n1.textContent = 'آخر 12 أسبوعاً، الأحدث على اليسار. النقطة الذهبية هي الأسبوع الحالي حتى اليوم.'; c1.appendChild(n1);
-    root.appendChild(c1);
-
-    // sections: this week vs last week
-    var c2 = card('المحاور: هذا الأسبوع والأسبوع الماضي', 'bulb'); c2.setAttribute('data-card', 'areas');
-    var lg = document.createElement('div'); lg.className = 'legend'; lg.innerHTML = '<span><i></i>هذا الأسبوع</span><span><i class="p"></i>الأسبوع الماضي</span>'; c2.appendChild(lg);
-    var cmp = document.createElement('div'); cmp.className = 'cmp';
-    SECTIONS.forEach(function (s, si) {
-      var ids = REG.filter(function (x) { return x.key === s.key; });
-      var a1 = rate(thisMonday, addDays(thisMonday, 6), ids), b1 = rate(addDays(thisMonday, -7), addDays(thisMonday, -1), ids);
-      var r = document.createElement('div'); r.className = 'cmprow';
-      var nm = document.createElement('div'); nm.className = 'nm'; nm.appendChild(icon(s.icon, 'sic')); var sp = document.createElement('span'); sp.textContent = s.title; nm.appendChild(sp);
-      var dl = deltaEl(delta(a1, b1)); dl.className += ' dl';
-      var bars = document.createElement('div'); bars.className = 'bars';
-      [['هذا الأسبوع', a1, ''], ['الماضي', b1, ' prev']].forEach(function (x) {
-        var bl = document.createElement('div'); bl.className = 'bl' + x[2];
-        bl.innerHTML = '<span></span><span class="tr"><span class="fl"></span></span><span class="pc"></span>';
-        bl.children[0].textContent = x[0]; bl.querySelector('.fl').style.width = ((x[1] || 0) * 100) + '%'; bl.children[2].textContent = pct(x[1]);
-        bars.appendChild(bl);
-      });
-      r.appendChild(nm); r.appendChild(dl); r.appendChild(bars); cmp.appendChild(r);
-    });
-    c2.appendChild(cmp); root.appendChild(c2);
-
-    // months (6)
-    var mp = []; for (var m = 5; m >= 0; m--) { var ms = monthStart(today, -m), me = monthEnd(ms); mp.push({ v: rate(ms, me), label: fMonth.format(ms) }); }
-    var c3 = card('الالتزام شهراً بشهر', 'calendar'); c3.setAttribute('data-card', 'months'); var ch3 = document.createElement('div'); ch3.className = 'chart'; ch3.appendChild(barChart(mp, 'نسبة الالتزام في آخر 6 أشهر')); c3.appendChild(ch3);
-    root.appendChild(c3);
-
-    // items needing attention (last 28 days)
-    var from28 = addDays(today, -27);
-    var ranked = scored(ALL).map(function (it) { return { it: it, r: rate(from28, today, [it]) }; }).filter(function (x) { return x.r != null; }).sort(function (x, y) { return x.r - y.r; }).slice(0, 4);
+    if (isWide()) { root.appendChild(yearCard()); root.appendChild(ringsCard()); } else { root.appendChild(ringsCard()); root.appendChild(yearCard()); }
+    root.appendChild(trendCard());
+    root.appendChild(attentionCard());
+    root.appendChild(weekdaysCard());
+    root.appendChild(achieveCard());
+    root.appendChild(foldGoals(goalsCard()));
     root.appendChild(khatmaCard());
     root.appendChild(sleepCard());
-    var c4 = card('بنود تحتاج انتباهاً', 'flag'); c4.setAttribute('data-card', 'attention');
-    var cm4 = document.createElement('div'); cm4.className = 'cmp';
-    ranked.forEach(function (x) {
-      var r = document.createElement('div'); r.className = 'cmprow';
-      var nm = document.createElement('div'); nm.className = 'nm'; nm.appendChild(icon(x.it.icon, 'sic')); var sp = document.createElement('span'); sp.textContent = x.it.name; nm.appendChild(sp);
-      var bars = document.createElement('div'); bars.className = 'bars';
-      var bl = document.createElement('div'); bl.className = 'bl'; bl.innerHTML = '<span>آخر شهر</span><span class="tr"><span class="fl"></span></span><span class="pc"></span>';
-      bl.querySelector('.fl').style.width = (x.r * 100) + '%'; bl.children[2].textContent = pct(x.r); bars.appendChild(bl);
-      r.appendChild(nm); r.appendChild(document.createElement('span')); r.appendChild(bars); cm4.appendChild(r);
-    });
-    c4.appendChild(cm4); root.appendChild(c4); balanceCols(root);
+    balanceCols(root);
     if (!REDUCED && !quiet) {
+      root.classList.remove('pdraw'); void root.offsetWidth; root.classList.add('pdraw');   // rings fill, bars grow, the line draws, the year appears week by week
       Array.prototype.forEach.call(root.querySelectorAll('.chart'), function (c) { c.classList.add('anim'); });
-      root.querySelector('.alert').classList.add('anim');
-      Array.prototype.forEach.call(root.querySelectorAll('.cmp'), function (c) { c.classList.add('anim'); stagger(c, '.fl'); Array.prototype.forEach.call(c.querySelectorAll('.fl'), function (f, i) { f.style.setProperty('--i', i); }); });
       Array.prototype.forEach.call(root.querySelectorAll('.kpi .v'), countUp);
     }
+  }
+
+  /* ---------- Progress: helpers for the new page ----------
+     Words that carry numbers are written whole in each language (T3) and kept out of the word-by-word translation (data-raw). */
+  function T3(ar, en, fa) { var s = LANG === 'en' ? en : LANG === 'fa' ? fa : ar; return LANG === 'fa' ? faNum(s) : s; }
+  function faNum(s) { return String(s).replace(/[0-9]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[+d]; }).replace(/%/g, '٪'); }
+  function rawText(el, s) { el.textContent = LANG === 'fa' ? faNum(s) : s; el.setAttribute('data-raw', ''); return el; }
+  function trName(t) { return LANG === 'en' ? (EN_EXACT[t] || t) : LANG === 'fa' ? (FA_EXACT[t] || t) : t; }   // a built-in name inside a sentence of mine
+  function pctT(v) { return v == null ? '—' : (LANG === 'fa' ? faNum(Math.round(v * 100) + '%') : Math.round(v * 100) + '%'); }
+  function card3(ar, en, fa, iconName, k) { var c = card(T3(ar, en, fa), iconName); c.querySelector('h2').setAttribute('data-raw', ''); if (k) c.setAttribute('data-card', k); return c; }
+  function tone(v) { return v == null ? 'none' : v >= .7 ? 'good' : v >= .4 ? 'mid' : 'weak'; }   // green for good, gold between, red for weak
+  function daysAr(n) { return n === 1 ? 'يوم واحد' : n === 2 ? 'يومان' : n >= 3 && n <= 10 ? n + ' أيام' : n + ' يوماً'; }
+  function daysT(n) { return T3(daysAr(n), n === 1 ? '1 day' : n + ' days', n + ' روز'); }
+  function dayRate(d) { return d < START || d > today ? null : rate(d, d); }
+  var fDayL = fmt({ weekday: 'long', day: 'numeric', month: 'long' });
+
+  // a small card with details, beside what I tapped; a tap elsewhere or a scroll closes it
+  var tipEl = null;
+  function tipClose() { if (tipEl) { tipEl.remove(); tipEl = null; } }
+  function tip(target, lines) {
+    tipClose();
+    var t = document.createElement('div'); t.className = 'ptip'; t.setAttribute('role', 'status');
+    lines.forEach(function (ln, i) { var p = document.createElement(i ? 'span' : 'b'); rawText(p, ln); t.appendChild(p); });
+    document.body.appendChild(t); tipEl = t;
+    var r = target.getBoundingClientRect(), w = t.offsetWidth, h = t.offsetHeight;
+    var x = Math.min(innerWidth - w - 8, Math.max(8, r.left + r.width / 2 - w / 2)), y = r.top - h - 8; if (y < 70) y = r.bottom + 8;
+    t.style.left = x + 'px'; t.style.top = y + 'px';
+    if (t.animate && !REDUCED) t.animate([{ opacity: 0, transform: 'translateY(4px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 160, easing: 'ease-out' });
+  }
+  document.addEventListener('pointerdown', function (e) { if (tipEl && !e.target.closest('.ptip, [data-tip]')) tipClose(); }, true);
+  window.addEventListener('scroll', tipClose, { passive: true });
+
+  // days in a row (ending today, or yesterday while today is still going) where the day reached `min`
+  function streaks(min, ids) {
+    var cur = 0, best = 0, run = 0, d = START ? new Date(START) : null, todayR = null;
+    if (!d) return { cur: 0, best: 0 };
+    for (; d <= today; d = addDays(d, 1)) {
+      var v = ids ? rate(d, d, ids) : rate(d, d); if (key(d) === key(today)) todayR = v;
+      if (v != null && v >= min) { run++; if (run > best) best = run; } else if (key(d) !== key(today)) run = 0;
+    }
+    cur = run; return { cur: cur, best: best };
+  }
+
+  /* ---- 1. «My summary»: am I improving, and one step for this week ---- */
+  function summaryCard(kind, title) {
+    var c = document.createElement('div'); c.className = 'card psum ' + kind; c.setAttribute('data-card', 'summary'); c.setAttribute('role', 'status');
+    var ic = kind === 'warn' ? '<path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4M12 17.5v.5"></path>' : kind === 'good' ? '<path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path>' : '<path d="M3 12h18"></path><path d="M15 6l6 6-6 6"></path>';
+    var hd = document.createElement('div'); hd.className = 'psumh';
+    hd.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ic + '</svg><h3></h3>';
+    hd.querySelector('h3').textContent = title; c.appendChild(hd);
+    var thisW = rate(thisMonday, today), prev4 = rate(addDays(thisMonday, -28), addDays(thisMonday, -1)), dv = delta(thisW, prev4);
+    var secR = SECTIONS.map(function (s) { var ids = REG.filter(function (x) { return x.key === s.key; }); return { s: s, v: rate(thisMonday, today, ids) }; }).filter(function (x) { return x.v != null; });
+    secR.sort(function (a, b) { return b.v - a.v; });
+    var nm = function (s) { return s.base ? trName(s.title) : s.title; };
+    var p = document.createElement('p'); p.className = 'psumt';
+    var s1 = T3('التزامي هذا الأسبوع ' + pct(thisW), 'My commitment this week is ' + pct(thisW), 'پایبندی‌ام این هفته ' + pct(thisW));
+    if (dv != null) s1 += dv > 0 ? T3('، أعلى بـ ' + dv + ' نقطة من معدّل أسابيعي الأربعة الماضية.', ', ' + dv + ' points above my average for the past four weeks.', '، ' + dv + ' امتیاز بالاتر از میانگین چهار هفته‌ی گذشته.')
+      : dv < 0 ? T3('، أقل بـ ' + (-dv) + ' نقطة من معدّل أسابيعي الأربعة الماضية.', ', ' + (-dv) + ' points below my average for the past four weeks.', '، ' + (-dv) + ' امتیاز پایین‌تر از میانگین چهار هفته‌ی گذشته.')
+      : T3('، مثل معدّل أسابيعي الأربعة الماضية.', ', the same as my average for the past four weeks.', '، برابر میانگین چهار هفته‌ی گذشته.');
+    else s1 += '.';
+    if (secR.length > 1) s1 += T3(' أقوى محاوري «' + nm(secR[0].s) + '»، وأضعفها «' + nm(secR[secR.length - 1].s) + '».', ' My strongest area is “' + nm(secR[0].s) + '”, my weakest “' + nm(secR[secR.length - 1].s) + '”.', ' قوی‌ترین محورم «' + nm(secR[0].s) + '» و ضعیف‌ترینش «' + nm(secR[secR.length - 1].s) + '» است.');
+    rawText(p, s1); c.appendChild(p);
+    // one step for the days left this week
+    var left = 7 - ((today.getDay() + 6) % 7), wc = weeks[key(thisMonday)] || {}, step = null, iname = function (it) { return trName(itemName(it.id)); };
+    weekItems(thisMonday).forEach(function (it) {
+      var n = targetFor(it.id, thisMonday); if (n >= 7) return;
+      var done = 0; for (var i = 0; i < 7; i++) if (wc[it.id + '_' + i]) done++;
+      var need = n - done; if (need <= 0 || need > left) return;
+      if (!step || need < step.need) step = { it: it, need: need };
+    });
+    var st;
+    if (step) st = T3('«' + iname(step.it) + '»: ' + (step.need === 1 ? 'مرة واحدة' : step.need === 2 ? 'مرّتان' : step.need + ' مرات') + ' في الأيام ' + left + ' الباقية تبلغ هدفي.', '“' + iname(step.it) + '”: ' + step.need + (step.need === 1 ? ' more time' : ' more times') + ' in the ' + left + ' days left reaches my goal.', '«' + iname(step.it) + '»: ' + step.need + ' بار دیگر در ' + left + ' روز باقی‌مانده، به هدفم می‌رساند.');
+    else {
+      var from14 = addDays(today, -13), weak = scored(dailyItems(thisMonday)).map(function (it) { return { it: it, r: rate(from14, today, [it]) }; }).filter(function (x) { return x.r != null && x.r < .6; }).sort(function (a, b) { return a.r - b.r; })[0];
+      if (weak) { var dn = Math.round(weak.r * 14); st = T3('أركّز هذا الأسبوع على «' + iname(weak.it) + '»: أشّرته ' + dn + ' من آخر 14 يوماً.', 'This week I focus on “' + iname(weak.it) + '”: ticked ' + dn + ' of the last 14 days.', 'این هفته روی «' + iname(weak.it) + '» تمرکز می‌کنم: ' + dn + ' روز از ۱۴ روز اخیر علامت زدم.'); }
+      else st = T3('أحسنت، أحافظ على هذا الإيقاع.', 'Well done; I keep this rhythm.', 'آفرین، همین آهنگ را نگه می‌دارم.');
+    }
+    var sb = document.createElement('div'); sb.className = 'pstep';
+    sb.appendChild(icon('flag', 'sic'));
+    var sx = document.createElement('div'); var sl = document.createElement('small'); rawText(sl, T3('خطوتي هذا الأسبوع', 'My step this week', 'گام این هفته‌ام')); sx.appendChild(sl);
+    var stt = document.createElement('span'); rawText(stt, st); sx.appendChild(stt); sb.appendChild(sx); c.appendChild(sb);
+    return c;
+  }
+
+  /* ---- 2. one ring per area, this week, with the change from last week ---- */
+  function ringsCard() {
+    var c = card3('محاوري هذا الأسبوع', 'My areas this week', 'محورهایم این هفته', 'bulb', 'rings');
+    var g = document.createElement('div'); g.className = 'rings';
+    SECTIONS.forEach(function (s, si) {
+      var ids = REG.filter(function (x) { return x.key === s.key; });
+      var a = rate(thisMonday, today, ids), b = rate(addDays(thisMonday, -7), addDays(thisMonday, -1), ids), dv = delta(a, b);
+      var w = document.createElement('button'); w.type = 'button'; w.className = 'ring ' + tone(a); w.setAttribute('data-tip', '');
+      var R = 34, C = 2 * Math.PI * R;
+      w.innerHTML = '<svg viewBox="0 0 84 84" aria-hidden="true"><circle class="rt" cx="42" cy="42" r="' + R + '"></circle><circle class="rv" cx="42" cy="42" r="' + R + '" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - (a || 0))).toFixed(1) + '" style="--c:' + C.toFixed(1) + '; --i:' + si + '"></circle></svg>';
+      var ic = icon(s.icon, 'ric'); w.appendChild(ic);
+      var n = document.createElement('span'); n.className = 'rn'; n.textContent = s.title; if (!s.base) n.setAttribute('data-raw', ''); w.appendChild(n);
+      var v = document.createElement('span'); v.className = 'rp'; rawText(v, pctT(a)); w.appendChild(v);
+      var d = document.createElement('span'); d.className = 'rd ' + (dv == null ? 'same' : dv > 0 ? 'up' : dv < 0 ? 'down' : 'same'); rawText(d, dv == null ? '—' : T3((dv > 0 ? '↑ ' : dv < 0 ? '↓ ' : '= ') + Math.abs(dv), (dv > 0 ? '↑ ' : dv < 0 ? '↓ ' : '= ') + Math.abs(dv), (dv > 0 ? '↑ ' : dv < 0 ? '↓ ' : '= ') + Math.abs(dv))); w.appendChild(d);
+      w.setAttribute('aria-label', s.title + ' ' + pct(a));
+      w.addEventListener('click', function () { tip(w, [s.base ? trName(s.title) : s.title, T3('هذا الأسبوع ' + pct(a) + ' · الأسبوع الماضي ' + pct(b), 'This week ' + pct(a) + ' · last week ' + pct(b), 'این هفته ' + pct(a) + ' · هفته‌ی گذشته ' + pct(b))]); });
+      g.appendChild(w);
+    });
+    c.appendChild(g); return c;
+  }
+
+  /* ---- 3. the year: a square for each day of the last twelve months ---- */
+  function yearCard() {
+    var c = card3('سنتي يوماً بيوم', 'My year, day by day', 'سالم روز به روز', 'calendar', 'yearmap');
+    c.classList.add('wide');
+    var wrap = document.createElement('div'); wrap.className = 'ymap';
+    var grid = document.createElement('div'); grid.className = 'ygrid';
+    var first = addDays(thisMonday, -52 * 7), lastM = '', col = 0;
+    var mrow = document.createElement('div'); mrow.className = 'ymonths';
+    var lab = document.createElement('div'); lab.className = 'ydays';
+    [0, 2, 4].forEach(function (i) { var s = document.createElement('span'); s.style.gridRow = (i + 1); s.textContent = (LANG === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : DAY_NAMES)[i]; lab.appendChild(s); });
+    for (var ws = first; ws <= thisMonday; ws = addDays(ws, 7), col++) {
+      var mk = monthKey(addDays(ws, 6));
+      if (mk !== lastM) { lastM = mk; var m = document.createElement('span'); m.style.gridColumn = (col + 1) + ' / span 4'; m.textContent = fMonth.format(addDays(ws, 6)); mrow.appendChild(m); }   // a month's name has the room of about four weeks
+      for (var i = 0; i < 7; i++) {
+        var d = addDays(ws, i), v = dayRate(d), cell = document.createElement('i');
+        cell.style.gridColumn = (col + 1); cell.style.gridRow = (i + 1); cell.style.setProperty('--w', col);
+        if (v == null) cell.className = d > today ? 'fut' : 'none';
+        else { cell.className = 'on ' + tone(v); cell.style.setProperty('--a', (.35 + .65 * (v >= .7 ? (v - .7) / .3 : v >= .4 ? (v - .4) / .3 : 1 - v / .4)).toFixed(2)); cell.setAttribute('data-tip', ''); cell.setAttribute('data-d', key(d)); cell.setAttribute('data-v', Math.round(v * 100)); }
+        grid.appendChild(cell);
+      }
+    }
+    grid.style.gridTemplateColumns = 'repeat(' + col + ', var(--ys))'; mrow.style.gridTemplateColumns = 'repeat(' + col + ', var(--ys))';
+    grid.addEventListener('click', function (e) {
+      var t = e.target.closest('i[data-d]'); if (!t) return;
+      var d = parseKey(t.getAttribute('data-d')), n = dayCount(d), all = scored(dailyItems(mondayOf(d))).length;
+      tip(t, [fDayL.format(d), T3('التزامي ' + t.getAttribute('data-v') + '% · ' + n + ' بنداً مؤشَّراً', 'Commitment ' + t.getAttribute('data-v') + '% · ' + n + ' items ticked', 'پایبندی ' + t.getAttribute('data-v') + '% · ' + n + ' مورد علامت‌خورده')]);
+    });
+    var sc = document.createElement('div'); sc.className = 'yscroll'; sc.appendChild(mrow); var row = document.createElement('div'); row.className = 'yrow'; row.appendChild(lab); row.appendChild(grid); sc.appendChild(row);
+    wrap.appendChild(sc);
+    var lg = document.createElement('div'); lg.className = 'ylegend'; lg.setAttribute('aria-hidden', 'true');
+    var l1 = document.createElement('span'); rawText(l1, T3('ضعيف', 'Weak', 'ضعیف')); lg.appendChild(l1);
+    ['weak', 'mid', 'good'].forEach(function (k) { var x = document.createElement('i'); x.className = 'on ' + k; x.style.setProperty('--a', '.85'); lg.appendChild(x); });
+    var l2 = document.createElement('span'); rawText(l2, T3('جيّد', 'Good', 'خوب')); lg.appendChild(l2);
+    wrap.appendChild(lg); c.appendChild(wrap);
+    // the newest weeks in view (RTL: the left end)
+    setTimeout(function () {
+      if (isWide()) { var ys = Math.max(10, Math.min(18, Math.floor((wrap.clientWidth - 40) / col) - 3)); wrap.style.setProperty('--ys', ys + 'px'); }
+      sc.scrollLeft = LANG === 'en' ? sc.scrollWidth : -sc.scrollWidth;
+    }, 0);
+    return c;
+  }
+
+  /* ---- 4. my commitment over time: one smooth line, with its average ---- */
+  var trendP = (function () { try { return localStorage.getItem('tracker:trendP') || '12'; } catch (e) { return '12'; } })();
+  function smoothPath(p) {   // Catmull–Rom through the points, as cubic curves
+    if (p.length < 2) return '';
+    var d = 'M' + p[0][0].toFixed(1) + ' ' + p[0][1].toFixed(1);
+    for (var i = 0; i < p.length - 1; i++) {
+      var p0 = p[i - 1] || p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] || p2;
+      d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
+    }
+    return d;
+  }
+  function trendCard() {
+    var c = card3('التزامي عبر الزمن', 'My commitment over time', 'پایبندی‌ام در گذر زمان', 'sun', 'trend');
+    var seg = document.createElement('div'); seg.className = 'seg pseg'; seg.setAttribute('role', 'group');
+    var body = document.createElement('div');
+    [['12', T3('12 أسبوعاً', '12 weeks', '۱۲ هفته')], ['26', T3('6 أشهر', '6 months', '۶ ماه')], ['52', T3('سنة', 'A year', 'یک سال')]].forEach(function (x) {
+      var b = document.createElement('button'); b.type = 'button'; rawText(b, x[1]); b.setAttribute('aria-pressed', trendP === x[0] ? 'true' : 'false');
+      b.addEventListener('click', function () { if (trendP === x[0]) return; trendP = x[0]; try { localStorage.setItem('tracker:trendP', trendP); } catch (e) {} Array.prototype.forEach.call(seg.children, function (y) { y.setAttribute('aria-pressed', y === b ? 'true' : 'false'); }); draw(true); });
+      seg.appendChild(b);
+    });
+    c.appendChild(seg); c.appendChild(body);
+    function draw(anim) {
+      body.textContent = '';
+      var n = +trendP, pts = [];
+      for (var i = n - 1; i >= 0; i--) { var ws = addDays(thisMonday, -7 * i); pts.push({ v: rate(ws, addDays(ws, 6)), ws: ws }); }
+      var RTL = LANG !== 'en', W = 640, H = 250, L = RTL ? 12 : 52, R = RTL ? 52 : 12, T = 26, B = 34;
+      var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': T3('نسبة الالتزام أسبوعاً بأسبوع', 'Commitment week by week', 'پایبندی هفته به هفته') });
+      var xAt = function (i) { var o = n === 1 ? 0 : i * (W - L - R) / (n - 1); return RTL ? W - R - o : L + o; }, yAt = function (v) { return T + (1 - v) * (H - T - B); };
+      [0, .5, 1].forEach(function (g) { el('line', { x1: L, x2: W - R, y1: yAt(g), y2: yAt(g), class: 'grid' }, svg); var t = txt(RTL ? W - R + 8 : L - 8, yAt(g) + 5, pctT(g), RTL ? 'start' : 'end', svg); t.setAttribute('data-raw', ''); });
+      var pp = []; pts.forEach(function (p, i) { if (p.v != null) pp.push([xAt(i), yAt(p.v), i]); });
+      var vals = pts.filter(function (p) { return p.v != null; }).map(function (p) { return p.v; }), avg = vals.length ? vals.reduce(function (a, b) { return a + b; }, 0) / vals.length : null;
+      if (avg != null) {
+        el('rect', { x: L, width: W - L - R, y: yAt(Math.min(1, avg + .05)), height: Math.max(0, yAt(Math.max(0, avg - .05)) - yAt(Math.min(1, avg + .05))), class: 'avgband' }, svg);
+        el('line', { x1: L, x2: W - R, y1: yAt(avg), y2: yAt(avg), class: 'avgline' }, svg);
+        var at = txt(RTL ? W - R - 4 : L + 4, yAt(avg) - 6, T3('المعدّل ' + pct(avg), 'Average ' + pct(avg), 'میانگین ' + pct(avg)), 'start', svg, 'avgt'); at.setAttribute('data-raw', ''); if (RTL) at.setAttribute('style', 'direction: rtl; unicode-bidi: embed');
+      }
+      if (pp.length > 1) {
+        var d = smoothPath(pp);
+        el('path', { d: d + ' L' + pp[pp.length - 1][0].toFixed(1) + ' ' + yAt(0) + ' L' + pp[0][0].toFixed(1) + ' ' + yAt(0) + ' Z', class: 'area' }, svg);
+        el('path', { d: d, class: 'line', pathLength: '1' }, svg);
+      }
+      pp.forEach(function (p, j) {
+        var v = pts[p[2]].v, last = j === pp.length - 1;
+        var cc = el('circle', { cx: p[0], cy: p[1], r: last ? 6 : n > 26 ? 2.6 : 4, class: 'pt ' + tone(v) + (last ? ' last' : ''), style: '--i:' + Math.round(j * 12 / pp.length), 'data-v': Math.round(v * 1000) / 10, 'data-tip': '' }, svg);
+        cc.addEventListener('click', function () { tip(cc, [T3('أسبوع ' + fShort.format(pts[p[2]].ws), 'Week of ' + fShort.format(pts[p[2]].ws), 'هفته‌ی ' + fShort.format(pts[p[2]].ws)), T3('التزامي ' + pct(v), 'Commitment ' + pct(v), 'پایبندی ' + pct(v))]); });
+      });
+      if (pp.length) { var lp = pp[pp.length - 1], vt = txt(lp[0], lp[1] - 14, pctT(pts[lp[2]].v), 'middle', svg, 'val'); vt.setAttribute('data-raw', ''); }
+      var every = n <= 12 ? 2 : n <= 26 ? 4 : 8;
+      pts.forEach(function (p, i) { if ((n - 1 - i) % every === 0) { var t = txt(xAt(i), H - 8, dm(p.ws), 'middle', svg); t.setAttribute('data-raw', ''); } });
+      var ch = document.createElement('div'); ch.className = 'chart' + (anim && !REDUCED ? ' anim' : ''); ch.appendChild(svg); body.appendChild(ch);
+      // what the line says, in words: the last third of the period against the first
+      var k3 = Math.max(1, Math.floor(vals.length / 3)), a0 = vals.slice(0, k3), a1 = vals.slice(-k3), mean = function (a) { return a.reduce(function (x, y) { return x + y; }, 0) / a.length; };
+      var rd = document.createElement('p'); rd.className = 'note preading';
+      if (vals.length >= 3) { var dd = Math.round((mean(a1) - mean(a0)) * 100); rawText(rd, dd >= 3 ? T3('ارتفع التزامي ' + dd + ' نقطة في هذه الفترة.', 'My commitment rose ' + dd + ' points over this period.', 'پایبندی‌ام در این بازه ' + dd + ' امتیاز بالا رفت.') : dd <= -3 ? T3('تراجع التزامي ' + (-dd) + ' نقطة في هذه الفترة.', 'My commitment fell ' + (-dd) + ' points over this period.', 'پایبندی‌ام در این بازه ' + (-dd) + ' امتیاز پایین آمد.') : T3('التزامي ثابت تقريباً في هذه الفترة.', 'My commitment held about steady over this period.', 'پایبندی‌ام در این بازه تقریباً ثابت ماند.')); }
+      else rawText(rd, T3('يكتمل الرسم كلما تقدّمت الأسابيع.', 'The line fills in as the weeks go by.', 'با گذشت هفته‌ها نمودار کامل می‌شود.'));
+      body.appendChild(rd);
+    }
+    draw(false);
+    return c;
+  }
+
+  /* ---- 5. where I fall short: the weakest items (tap for their story), and my weakest weekday ---- */
+  function itemDetail(it) {
+    var box = document.createElement('div'); box.className = 'idetail';
+    // six months
+    var mp = []; for (var m = 5; m >= 0; m--) { var ms = monthStart(today, -m), me = monthEnd(ms); mp.push({ v: rate(ms, me > today ? today : me, [it]), label: fMonth.format(ms) }); }
+    var bars = document.createElement('div'); bars.className = 'mbars';
+    mp.forEach(function (p, i) {
+      var b = document.createElement('div'); b.className = 'mb'; b.setAttribute('data-tip', '');
+      var f = document.createElement('span'); f.className = 'mbf ' + tone(p.v); f.style.height = ((p.v || 0) * 100) + '%'; f.style.setProperty('--i', i); b.appendChild(f);
+      var l = document.createElement('small'); l.textContent = p.label; b.appendChild(l);
+      b.addEventListener('click', function () { tip(b, [p.label, pctT(p.v)]); });
+      bars.appendChild(b);
+    });
+    box.appendChild(bars);
+    // the last thirty days, a dot for each
+    var strip = document.createElement('div'); strip.className = 'dstrip'; strip.setAttribute('aria-hidden', 'true');
+    var lastOn = null;
+    for (var k = 29; k >= 0; k--) { var d = addDays(today, -k), wc = weeks[key(mondayOf(d))] || {}, on = !!wc[it.id + '_' + ((d.getDay() + 6) % 7)]; if (on) lastOn = d; var dot = document.createElement('i'); dot.className = on ? 'on' : ''; dot.style.setProperty('--i', 29 - k); strip.appendChild(dot); }
+    box.appendChild(strip);
+    var st = streaks(1, [it]);
+    var facts = document.createElement('div'); facts.className = 'ifacts';
+    [[T3('سلسلتي الحالية', 'Current streak', 'زنجیره‌ی فعلی'), daysT(st.cur)], [T3('أطول سلسلة', 'Longest streak', 'بلندترین زنجیره'), daysT(st.best)], [T3('آخر مرة', 'Last time', 'آخرین بار'), lastOn ? fShort.format(lastOn) : '—']].forEach(function (x) {
+      var f = document.createElement('div'); var a = document.createElement('small'); rawText(a, x[0]); var b = document.createElement('b'); rawText(b, x[1]); f.appendChild(a); f.appendChild(b); facts.appendChild(f);
+    });
+    box.appendChild(facts);
+    return box;
+  }
+  function attentionCard() {
+    var c = card('بنود تحتاج انتباهاً', 'flag'); c.setAttribute('data-card', 'attention');
+    var from28 = addDays(today, -27);
+    var ranked = scored(ALL).map(function (it) { return { it: it, r: rate(from28, today, [it]) }; }).filter(function (x) { return x.r != null; }).sort(function (x, y) { return x.r - y.r; }).slice(0, 5);
+    var list = document.createElement('div'); list.className = 'alist';
+    ranked.forEach(function (x, i) {
+      var row = document.createElement('button'); row.type = 'button'; row.className = 'arow'; row.setAttribute('aria-expanded', 'false');
+      row.appendChild(icon(x.it.icon, 'sic'));
+      var nm = document.createElement('span'); nm.className = 'an'; nm.textContent = x.it.name; if (x.it.icon === 'star') nm.setAttribute('data-raw', ''); row.appendChild(nm);
+      var tr = document.createElement('span'); tr.className = 'atr'; var fl = document.createElement('span'); fl.className = 'afl ' + tone(x.r); fl.style.width = (x.r * 100) + '%'; fl.style.setProperty('--i', i); tr.appendChild(fl); row.appendChild(tr);
+      var pc = document.createElement('span'); pc.className = 'apc'; rawText(pc, pctT(x.r)); row.appendChild(pc);
+      var ch = document.createElement('span'); ch.className = 'fchev'; ch.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>'; row.appendChild(ch);
+      var det = null;
+      row.addEventListener('click', function () {
+        var open = row.getAttribute('aria-expanded') === 'true';
+        row.setAttribute('aria-expanded', open ? 'false' : 'true');
+        if (open) { if (det) det.remove(); det = null; return; }
+        det = itemDetail(x.it); row.after(det);
+        if (det.animate && !REDUCED) det.animate([{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'ease-out' });
+      });
+      list.appendChild(row);
+    });
+    var nt = document.createElement('p'); nt.className = 'note'; rawText(nt, T3('آخر 28 يوماً. أضغط على بند لأرى قصّته.', 'Last 28 days. I tap an item to see its story.', '۲۸ روز اخیر. روی یک مورد می‌زنم تا داستانش را ببینم.'));
+    c.appendChild(list); c.appendChild(nt); return c;
+  }
+  function weekdaysCard() {
+    var c = card3('أيام أسبوعي', 'My weekdays', 'روزهای هفته‌ام', 'calendar', 'weekdays');
+    var from = addDays(thisMonday, -13 * 7), sums = [0, 0, 0, 0, 0, 0, 0], cnt = [0, 0, 0, 0, 0, 0, 0];
+    for (var d = new Date(from); d <= today; d = addDays(d, 1)) { var v = dayRate(d); if (v == null) continue; var i = (d.getDay() + 6) % 7; sums[i] += v; cnt[i]++; }
+    var av = sums.map(function (s, i) { return cnt[i] ? s / cnt[i] : null; });
+    var have = av.filter(function (v) { return v != null; });
+    var lo = have.length ? Math.min.apply(null, have) : null, hi = have.length ? Math.max.apply(null, have) : null;
+    var g = document.createElement('div'); g.className = 'wbars';
+    var names = LANG === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : DAY_NAMES;
+    av.forEach(function (v, i) {
+      var b = document.createElement('div'); b.className = 'wb' + (v != null && v === lo && have.length > 1 ? ' lo' : '') + (v != null && v === hi && have.length > 1 ? ' hi' : ''); b.setAttribute('data-tip', '');
+      var t = document.createElement('span'); t.className = 'wbv'; rawText(t, pctT(v)); b.appendChild(t);
+      var tr = document.createElement('span'); tr.className = 'wbt'; var f = document.createElement('span'); f.className = 'wbf ' + tone(v); f.style.height = ((v || 0) * 100) + '%'; f.style.setProperty('--i', i); tr.appendChild(f); b.appendChild(tr);
+      var l = document.createElement('small'); l.textContent = names[i]; b.appendChild(l);
+      b.addEventListener('click', function () { tip(b, [trName(DAY_NAMES[i]), T3('معدّل آخر 3 أشهر ' + pct(v), 'Average over 3 months ' + pct(v), 'میانگین ۳ ماه اخیر ' + pct(v))]); });
+      g.appendChild(b);
+    });
+    c.appendChild(g);
+    if (have.length > 1) {
+      var li = av.indexOf(lo), hj = av.indexOf(hi), DN = DAY_NAMES.map(trName);
+      var p = document.createElement('p'); p.className = 'note'; rawText(p, T3('أضعف أيامي ' + DN[li] + ' (' + pct(lo) + ')، وأقواها ' + DN[hj] + ' (' + pct(hi) + ').', 'My weakest day is ' + DN[li] + ' (' + pct(lo) + '), my strongest ' + DN[hj] + ' (' + pct(hi) + ').', 'ضعیف‌ترین روزم ' + DN[li] + ' (' + pct(lo) + ') و قوی‌ترینش ' + DN[hj] + ' (' + pct(hi) + ') است.'));
+      c.appendChild(p);
+    }
+    return c;
+  }
+
+  /* ---- 6. what I have achieved: streaks, best week and month, badges ---- */
+  function achieveCard() {
+    var c = card3('إنجازاتي', 'My achievements', 'دستاوردهایم', 'sparkle', 'achieve');
+    var st = streaks(.8), bestW = null, bestM = null, run4 = 0, best4 = 0, wkCount = 0, tickDays = 0;
+    for (var ws = mondayOf(START); ws <= thisMonday; ws = addDays(ws, 7)) {
+      var v = rate(ws, addDays(ws, 6)); if (v == null) continue; wkCount++;
+      if (ws < thisMonday && (!bestW || v > bestW.v)) bestW = { v: v, ws: ws };
+      if (v >= .8) { run4++; if (run4 > best4) best4 = run4; } else if (ws < thisMonday) run4 = 0;
+    }
+    for (var m = 0; m < 24; m++) { var ms = monthStart(today, -m); if (ms < monthStart(START, 0)) break; var me = monthEnd(ms); if (me > today) continue; var mv = rate(ms, me); if (mv != null && (!bestM || mv > bestM.v)) bestM = { v: mv, ms: ms }; }
+    for (var d = new Date(START); d <= today; d = addDays(d, 1)) if (dayCount(d) > 0) tickDays++;
+    var itemBest = 0; scored(ALL).forEach(function (it) { var s = streaks(1, [it]).best; if (s > itemBest) itemBest = s; });
+    var tiles = document.createElement('div'); tiles.className = 'atiles';
+    [[T3('سلسلتي الحالية', 'Current streak', 'زنجیره‌ی فعلی'), daysT(st.cur), T3('أيام متتالية فوق 80%', 'days in a row above 80%', 'روزهای پیاپی بالای ۸۰٪')],
+     [T3('أطول سلسلة', 'Longest streak', 'بلندترین زنجیره'), daysT(st.best), T3('فوق 80%', 'above 80%', 'بالای ۸۰٪')],
+     [T3('أفضل أسبوع', 'Best week', 'بهترین هفته'), bestW ? pctT(bestW.v) : '—', bestW ? fShort.format(bestW.ws) : ''],
+     [T3('أفضل شهر', 'Best month', 'بهترین ماه'), bestM ? pctT(bestM.v) : '—', bestM ? fMonthY.format(bestM.ms) : '']].forEach(function (x) {
+      var t = document.createElement('div'); t.className = 'atile';
+      var a = document.createElement('small'); rawText(a, x[0]); var b = document.createElement('b'); rawText(b, x[1]); var s2 = document.createElement('span'); rawText(s2, x[2]);
+      t.appendChild(a); t.appendChild(b); t.appendChild(s2); tiles.appendChild(t);
+    });
+    c.appendChild(tiles);
+    // badges: earned in gold; the rest show how far I am
+    var anyWeek80 = !!(bestW && bestW.v >= .8) || (rate(thisMonday, today) || 0) >= .8;
+    var B = [
+      ['w80', T3('أسبوع فوق 80%', 'A week above 80%', 'هفته‌ای بالای ۸۰٪'), anyWeek80 ? 1 : 0, 1],
+      ['s7', T3('7 أيام متتالية فوق 80%', '7 days in a row above 80%', '۷ روز پیاپی بالای ۸۰٪'), Math.min(st.best, 7), 7],
+      ['w4', T3('4 أسابيع متتالية فوق 80%', '4 weeks in a row above 80%', '۴ هفته‌ی پیاپی بالای ۸۰٪'), Math.min(best4, 4), 4],
+      ['m80', T3('شهر كامل فوق 80%', 'A whole month above 80%', 'یک ماه کامل بالای ۸۰٪'), bestM && bestM.v >= .8 ? 1 : 0, 1],
+      ['i30', T3('30 يوماً متتالية في بند', '30 days in a row on one item', '۳۰ روز پیاپی در یک مورد'), Math.min(itemBest, 30), 30],
+      ['s30', T3('30 يوماً متتالية فوق 80%', '30 days in a row above 80%', '۳۰ روز پیاپی بالای ۸۰٪'), Math.min(st.best, 30), 30],
+      ['d100', T3('100 يوم تأشير', '100 days of ticking', '۱۰۰ روز علامت‌گذاری'), Math.min(tickDays, 100), 100]
+    ];
+    var seen = {}; try { seen = JSON.parse(localStorage.getItem('tracker:badges') || '{}') || {}; } catch (e) {}
+    var bl = document.createElement('div'), fresh = []; bl.className = 'badges';
+    B.forEach(function (x, i) {
+      var won = x[2] >= x[3], b = document.createElement('div'); b.className = 'badge' + (won ? ' won' : '');
+      b.innerHTML = '<span class="bic">' + STAR + '</span>';
+      var t = document.createElement('span'); t.className = 'bt'; rawText(t, x[1]); b.appendChild(t);
+      if (!won && x[3] > 1) { var pr = document.createElement('small'); rawText(pr, T3(x[2] + ' من ' + x[3], x[2] + ' of ' + x[3], x[2] + ' از ' + x[3])); b.appendChild(pr); var bar = document.createElement('span'); bar.className = 'bpr'; var f = document.createElement('i'); f.style.width = (x[2] / x[3] * 100) + '%'; bar.appendChild(f); b.appendChild(bar); }
+      if (won && !seen[x[0]]) { b.classList.add('new'); fresh.push(x[0]); }
+      b.style.setProperty('--i', i); bl.appendChild(b);
+    });
+    if (fresh.length && mode !== 'demo') { fresh.forEach(function (k) { seen[k] = 1; }); try { localStorage.setItem('tracker:badges', JSON.stringify(seen)); } catch (e) {} }
+    c.appendChild(bl);
+    return c;
+  }
+
+  /* ---- 7. weekly goals, folded at first ---- */
+  function foldGoals(c) {
+    var h = c.querySelector('h2'), t = document.createElement('button'); t.type = 'button'; t.className = 'sfold'; t.id = 'fold-goals';
+    while (h.firstChild) t.appendChild(h.firstChild);
+    var ch = document.createElement('span'); ch.className = 'fchev'; ch.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>'; t.appendChild(ch);
+    h.appendChild(t);
+    var body = document.createElement('div'); body.className = 'sfbody'; body.id = 'goalsBody';
+    while (h.nextSibling) body.appendChild(h.nextSibling);
+    c.appendChild(body);
+    var shut = folded('goals', true); body.hidden = shut; t.setAttribute('aria-expanded', shut ? 'false' : 'true'); t.setAttribute('aria-controls', 'goalsBody'); c.classList.toggle('shut', shut);
+    t.addEventListener('click', function () { var sh = !body.hidden; body.hidden = sh; t.setAttribute('aria-expanded', sh ? 'false' : 'true'); c.classList.toggle('shut', sh); setFolded('goals', sh); });
+    return c;
   }
 
   /* ---------- boot ---------- */
