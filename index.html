@@ -12,8 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="أوراد">
 <meta name="application-name" content="أوراد">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=00c20a1e">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=00c20a1e">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=5d569cc1">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=5d569cc1">
 <style>
 body { margin: 0; }
 [hidden] { display: none !important; }
@@ -203,6 +203,32 @@ html[dir="rtl"] .gdemobtn > svg { transform: scaleX(-1); }
 /* «I saved it» is closed until the code is copied or downloaded */
 .gate .gcheck.off { opacity: .45; cursor: not-allowed; }
 .gate .gcheck.off input { cursor: not-allowed; }
+
+/* «About me»: birth date, sex, country with a search, optional phone with its code */
+.gabout { display: flex; flex-direction: column; gap: 14px; }
+.gdob { display: grid; grid-template-columns: 1fr 1.5fr 1.2fr; gap: 8px; }
+.gselect { font: inherit; font-size: 16px; min-height: 48px; padding: 0 12px; padding-inline-end: 30px; border-radius: 13px; border: 1px solid var(--line); background-color: var(--bg); color: var(--ink); width: 100%; appearance: none; -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-size: 5px 5px; background-repeat: no-repeat; background-position: 14px 21px, 19px 21px; }
+[dir="ltr"] .gselect { background-position: calc(100% - 19px) 21px, calc(100% - 14px) 21px; }
+.gselect:focus { outline: 0; border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold-soft) 35%, transparent); }
+.gseg.two { grid-template-columns: 1fr 1fr; }
+.gcbox { position: relative; }
+.gcbox input { font: inherit; font-size: 16px; min-height: 48px; padding: 0 14px; border-radius: 13px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; }
+.gcbox.has input { padding-inline-start: 46px; }
+.gcbox input:focus { outline: 0; border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold-soft) 35%, transparent); background: var(--surface); }
+.gcflag { position: absolute; inset-inline-start: 14px; top: 50%; transform: translateY(-50%); font-size: 20px; line-height: 1; pointer-events: none; }
+.gclist { position: absolute; z-index: 5; inset-inline: 0; top: calc(100% + 6px); list-style: none; margin: 0; padding: 6px; max-height: 260px; overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: 0 14px 30px -14px rgba(0,0,0,.3); }
+.gclist li { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; font-size: 15px; cursor: pointer; }
+.gclist li:hover, .gclist li.on { background: color-mix(in srgb, var(--gold-soft) 45%, transparent); }
+.gclist .fl { font-size: 20px; line-height: 1; } .gclist .cd { margin-inline-start: auto; color: var(--muted); font-size: 13px; }
+.gphone { display: flex; gap: 8px; direction: ltr; }
+.gphone input { font: inherit; font-size: 16px; min-height: 48px; padding: 0 14px; border-radius: 13px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
+.gphone input:first-child { width: 86px; flex: none; text-align: center; }
+.gphone input:last-child { flex: 1; }
+.gphone input:focus { outline: 0; border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold-soft) 35%, transparent); background: var(--surface); }
+.gopt { font-weight: 400; color: var(--muted); font-size: 12px; }
+.acctabout { padding: 4px 0 8px; }
+.acctwait { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
 
 </style>
 <script>
@@ -1715,7 +1741,7 @@ module.exports = QRCode;
   function afterProvider() {
     return readRow('rev').then(function (row) {
       if (!row) return makeVault(null, 'code').then(function (code) { maybeAsk(uidNow()); startOnboarding(code); note(null); }, function () { note({ kind: 'choose' }); });
-      note(null); return tryLink();
+      note(null); return tryLink().then(function () { if (active()) return syncNow().then(checkAbout); });
     }, function () {});
   }
   // a device code brought by the QR link, waiting for me to be signed in
@@ -1726,7 +1752,7 @@ module.exports = QRCode;
       function () { del(K.link); note({ kind: 'msg', text: T('انتهت صلاحية رمز الجهاز أو استُعمل. أطلب رمزاً جديداً من جهازي الآخر.', 'The device code has expired or was already used. I ask my other device for a new one.'), bad: true }); });
   }
   var ready = false;
-  Promise.all([keyLoaded, arrived]).then(function () { return tryLink().catch(function () {}); }).then(function () { ready = true; repaint(); if (active() && window.AWRAD_SAVE) setTimeout(function () { window.AWRAD_SAVE.sync(false); }, 0); });
+  Promise.all([keyLoaded, arrived]).then(function () { return tryLink().catch(function () {}); }).then(function () { ready = true; repaint(); if (active() && window.AWRAD_SAVE) setTimeout(function () { window.AWRAD_SAVE.sync(false).then(checkAbout, function () {}); }, 0); });
   if (ON) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { paintGate(); hello(); }); else setTimeout(function () { paintGate(); hello(); }, 0); }
 
   /* ---------- the steps ---------- */
@@ -2060,7 +2086,7 @@ module.exports = QRCode;
     }
   }
   function renderIn(s) {
-    if (['pw', 'dev', 'rc', 'out', 'all', 'del'].indexOf(view) < 0) view = 'in';
+    if (['pw', 'about', 'dev', 'rc', 'out', 'all', 'del'].indexOf(view) < 0) view = 'in';
     if (view !== 'dev' && devCode) { devCode = null; dropDeviceCode(); }
     bodyEl.appendChild(who(s));
     var st = el('p', 'acctstate'); st.id = 'acctState'; st.setAttribute('role', 'status'); st.textContent = (window.AWRAD_SAVE && window.AWRAD_SAVE.label) ? window.AWRAD_SAVE.label() : ''; bodyEl.appendChild(st);
@@ -2078,6 +2104,16 @@ module.exports = QRCode;
       item('pw', T('كلمة المرور', 'Password'), T('أغيّرها بكتابة الحالية أولاً. تبقى أجهزتي الأخرى مفتوحة.', 'I change it by typing the current one first. My other devices stay open.'), T('تغيير كلمة المرور', 'Change password'));
       if (view === 'pw') box.appendChild(form(null, [input('acCur', T('كلمة المرور الحالية', 'Current password'), 'password', 'current-password'), input('acPw', T('كلمة المرور الجديدة', 'New password'), 'password', 'new-password'), input('acPw2', T('كلمة المرور مرة ثانية', 'Password again'), 'password', 'new-password')],
         T('حفظ', 'Save'), Object.assign(function (v) { return (s.prov === 'password' ? changePassword2 : changePassword)(v.acCur, v.acPw).then(function () { view = 'in'; note({ kind: 'msg', text: T('تغيّرت كلمة المرور.', 'My password changed.') }); }); }, { check: function (v) { return pwRules(v.acPw, v.acPw2, s.email); } })));
+    }
+    var ab = about(), wait = aboutWait(ab);
+    var arow = item('about', TT('معلوماتي', 'About me', 'دربارهٔ من'), aboutDone(ab) ? aboutLine(ab) : TT('تاريخ الولادة والجنس والبلد ورقم الهاتف.', 'Date of birth, sex, country and phone number.', 'تاریخ تولد، جنسیت، کشور و شماره تلفن.'), TT('تعديل', 'Edit', 'ویرایش'));
+    if (wait && aboutDone(ab)) { var ab0 = arow.querySelector('button'); ab0.disabled = true; var dleft = Math.ceil(wait / 86400000);
+      arow.appendChild(el('small', 'acctwait', TT('يمكن التعديل بعد ', 'I can edit it in ', 'ویرایش پس از ') + faNum(dleft) + TT(dleft === 1 ? ' يوم' : dleft <= 10 ? ' أيام' : ' يوماً', dleft === 1 ? ' day' : ' days', ' روز'))); if (view === 'about') view = 'in'; }
+    if (view === 'about') {
+      var hostA = el('div', 'acctabout');
+      hostA.appendChild(para(TT('أعدّلها مرة كل أسبوعين.', 'I can change these once every two weeks.', 'هر دو هفته یک بار ویرایش می‌کنم.')));
+      aboutForm(hostA, ab, TT('حفظ', 'Save', 'ذخیره'), function (v) { saveAbout(v); view = 'in'; note({ kind: 'msg', text: TT('حُفظت معلوماتي.', 'My details were saved.', 'آگاهی‌هایم ذخیره شد.') }); render(); syncNow(); });
+      box.appendChild(hostA);
     }
     item('dev', T('إضافة جهاز', 'Add a device'), T('أفتح بياناتي على جهاز جديد دون كتابة شيء: أمسح رمز QR بكاميرته، أو أكتب رمز الجهاز فيه.', 'I open my data on a new device without typing anything: I scan the QR code with its camera, or type the device code on it.'), T('إضافة جهاز', 'Add a device'));
     if (view === 'dev') box.appendChild(deviceBox());
@@ -2206,9 +2242,132 @@ module.exports = QRCode;
     wipeLocal(); location.reload();
   }
 
+
+  /* ---------- «About me»: birth date, sex, country, an optional phone with its country code ----------
+     Kept in my (encrypted) settings like the rest of my data, so nobody but me reads it. Asked once, right after the account
+     is made (also with Google, and from accounts made before it existed); changed in Settings at most once in 14 days,
+     and not in the first 14 days. */
+  var CC = 'AF93 AX358 AL355 DZ213 AS1 AD376 AO244 AI1 AG1 AR54 AM374 AW297 AU61 AT43 AZ994 BS1 BH973 BD880 BB1 BY375 BE32 BZ501 BJ229 BM1 BT975 BO591 BA387 BW267 BR55 IO246 VG1 BN673 BG359 BF226 BI257 KH855 CM237 CA1 CV238 BQ599 KY1 CF236 TD235 CL56 CN86 CX61 CC61 CO57 KM269 CG242 CD243 CK682 CR506 CI225 HR385 CU53 CW599 CY357 CZ420 DK45 DJ253 DM1 DO1 EC593 EG20 SV503 GQ240 ER291 EE372 SZ268 ET251 FK500 FO298 FJ679 FI358 FR33 GF594 PF689 GA241 GM220 GE995 DE49 GH233 GI350 GR30 GL299 GD1 GP590 GU1 GT502 GG44 GN224 GW245 GY592 HT509 HN504 HK852 HU36 IS354 IN91 ID62 IR98 IQ964 IE353 IM44 IT39 JM1 JP81 JE44 JO962 KZ7 KE254 KI686 XK383 KW965 KG996 LA856 LV371 LB961 LS266 LR231 LY218 LI423 LT370 LU352 MO853 MG261 MW265 MY60 MV960 ML223 MT356 MH692 MQ596 MR222 MU230 YT262 MX52 FM691 MD373 MC377 MN976 ME382 MS1 MA212 MZ258 MM95 NA264 NR674 NP977 NL31 NC687 NZ64 NI505 NE227 NG234 NU683 NF672 KP850 MK389 MP1 NO47 OM968 PK92 PW680 PS970 PA507 PG675 PY595 PE51 PH63 PL48 PT351 PR1 QA974 RE262 RO40 RU7 RW250 BL590 SH290 KN1 LC1 MF590 PM508 VC1 WS685 SM378 ST239 SA966 SN221 RS381 SC248 SL232 SG65 SX1 SK421 SI386 SB677 SO252 ZA27 KR82 SS211 ES34 LK94 SD249 SR597 SJ47 SE46 CH41 SY963 TW886 TJ992 TZ255 TH66 TL670 TG228 TK690 TO676 TT1 TN216 TR90 TM993 TC1 TV688 VI1 UG256 UA380 AE971 GB44 US1 UY598 UZ998 VU678 VA39 VE58 VN84 WF681 EH212 YE967 ZM260 ZW263'.split(' ').map(function (x) { return { c: x.slice(0, 2), d: x.slice(2) }; });
+  var ABOUT_GAP = 14 * 86400000;
+  function flag(c) { return String.fromCodePoint(127397 + c.charCodeAt(0), 127397 + c.charCodeAt(1)); }
+  var dnCache = {};
+  function cname(c, l) { l = l || LANG3(); try { var d = dnCache[l] || (dnCache[l] = new Intl.DisplayNames([l], { type: 'region' })); return d.of(c) || c; } catch (e) { return c; } }
+  function fold(t) { return String(t || '').toLowerCase().replace(/[\u064B-\u0652\u0640]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىی]/g, 'ي').replace(/ک/g, 'ك').replace(/[\s\-'’.()]/g, ''); }
+  function cfind(q) {
+    var f = fold(q).replace(/^\+/, ''); if (!f) return [];
+    var hit = [];
+    CC.forEach(function (x) {
+      var raw = [cname(x.c), cname(x.c, 'ar'), cname(x.c, 'en'), cname(x.c, 'fa')], rank = 9;
+      raw.forEach(function (n) {   // the start of the name first, then the start of any word in it («كوريا الجنوبية» by «جنوب»)
+        if (fold(n).indexOf(f) === 0) rank = Math.min(rank, 0);
+        else if (String(n).split(/[\s\-]+/).some(function (w) { var g = fold(w).replace(/^ال/, ''); return fold(w).indexOf(f) === 0 || g.indexOf(f) === 0; })) rank = Math.min(rank, 2);
+      });
+      if (fold(raw[0]).replace(/^ال/, '').indexOf(f) === 0) rank = Math.min(rank, 1);
+      if (/^\d+$/.test(f) && x.d.indexOf(f) === 0) rank = Math.min(rank, x.d === f ? 0 : 1);
+      if (rank < 9) hit.push({ x: x, r: rank, n: cname(x.c) });
+    });
+    hit.sort(function (a, b) { return a.r - b.r || a.n.localeCompare(b.n, LANG3()); });
+    return hit.slice(0, 8).map(function (h) { return h.x; });
+  }
+  function ccOf(c) { for (var i = 0; i < CC.length; i++) if (CC[i].c === c) return CC[i]; return null; }
+  function about() { var A = window.AWRAD_APP; return A && A.about ? A.about() : null; }
+  function aboutDone(a) { return !!(a && a.dob && (a.g === 'm' || a.g === 'f') && a.cc); }
+  function aboutWait(a) { if (!a || !a.at) return 0; var t = Math.max(a.at, a.ed || 0) + ABOUT_GAP - now(); return t > 0 ? t : 0; }
+  function monthNames() { var l = LANG3(), o = []; for (var m = 0; m < 12; m++) { try { o.push(new Intl.DateTimeFormat(l === 'ar' ? 'ar-LB' : l, { month: 'long' }).format(new Date(2000, m, 15))); } catch (e) { o.push(String(m + 1)); } } return o; }
+  function aboutLine(a) {
+    if (!aboutDone(a)) return '';
+    var p = a.dob.split('-'), mn = monthNames()[+p[1] - 1];
+    var parts = [faNum(+p[2]) + ' ' + mn + ' ' + faNum(p[0]), a.g === 'm' ? TT('ذكر', 'Male', 'مرد') : TT('أنثى', 'Female', 'زن'), flag(a.cc) + ' ' + cname(a.cc)];
+    if (a.tel) parts.push('\u2066' + a.tel + '\u2069');
+    return parts.join(' · ');
+  }
+  // the form, shared by the first steps and by Settings; done(values) saves and moves on
+  function aboutForm(host, a, btnText, done, extra) {
+    a = a || {};
+    var w = el('div', 'gabout'), sel = function (cls, opts, val, label) { var s0 = el('select', 'gselect ' + cls); s0.setAttribute('aria-label', label); var o0 = el('option', null, label); o0.value = ''; o0.disabled = true; s0.appendChild(o0); opts.forEach(function (o) { var op = el('option', null, o[1]); op.value = o[0]; s0.appendChild(op); }); s0.value = val || ''; if (!s0.value) s0.selectedIndex = 0; return s0; };
+    var p = (a.dob || '').split('-'), y0 = new Date().getFullYear();
+    // birth date: day, month, year
+    var fd = el('div', 'gfield'); fd.appendChild(el('span', 'glabel', TT('تاريخ الولادة', 'Date of birth', 'تاریخ تولد')));
+    var row = el('div', 'gdob'), days = [], years = [], mns = monthNames();
+    for (var d = 1; d <= 31; d++) days.push([String(d), faNum(d)]);
+    for (var y = y0 - 3; y >= 1920; y--) years.push([String(y), faNum(y)]);
+    var sd = sel('gday', days, p[2] ? String(+p[2]) : '', TT('اليوم', 'Day', 'روز')), sm = sel('gmon', mns.map(function (n, k) { return [String(k + 1), n]; }), p[1] ? String(+p[1]) : '', TT('الشهر', 'Month', 'ماه')), sy = sel('gyear', years, p[0] || '', TT('السنة', 'Year', 'سال'));
+    sd.id = 'gDobD'; sm.id = 'gDobM'; sy.id = 'gDobY';
+    row.appendChild(sd); row.appendChild(sm); row.appendChild(sy); fd.appendChild(row); w.appendChild(fd);
+    // sex
+    var fg = el('div', 'gfield'); fg.appendChild(el('span', 'glabel', TT('الجنس', 'Sex', 'جنسیت')));
+    var seg = el('div', 'gseg two'), g = a.g || '';
+    [['m', TT('ذكر', 'Male', 'مرد')], ['f', TT('أنثى', 'Female', 'زن')]].forEach(function (x) { var b = el('button', null, x[1]); b.type = 'button'; b.id = 'gSex' + x[0]; b.setAttribute('aria-pressed', g === x[0] ? 'true' : 'false'); b.addEventListener('click', function () { g = x[0]; Array.prototype.forEach.call(seg.children, function (c) { c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); }); }); seg.appendChild(b); });
+    fg.appendChild(seg); w.appendChild(fg);
+    // country, with a search
+    var fc = el('div', 'gfield'), cl = el('label', null, TT('البلد', 'Country', 'کشور')); cl.setAttribute('for', 'gCountry'); fc.appendChild(cl);
+    var cbox = el('div', 'gcbox'), cin = el('input'), cflag = el('span', 'gcflag'), list = el('ul', 'gclist'), cc = a.cc || '', act = -1, items = [];
+    cin.id = 'gCountry'; cin.type = 'text'; cin.autocomplete = 'off'; cin.spellcheck = false; cin.setAttribute('role', 'combobox'); cin.setAttribute('aria-autocomplete', 'list'); cin.setAttribute('aria-controls', 'gCountryList'); cin.setAttribute('aria-expanded', 'false');
+    cin.placeholder = TT('ابحث عن بلدك', 'Search for my country', 'کشورم را جست‌وجو کن'); list.id = 'gCountryList'; list.setAttribute('role', 'listbox'); list.hidden = true;
+    var showC = function () { cin.value = cc ? cname(cc) : ''; cflag.textContent = cc ? flag(cc) : ''; cbox.classList.toggle('has', !!cc); };
+    var close = function () { list.hidden = true; cin.setAttribute('aria-expanded', 'false'); act = -1; };
+    var pick = function (x) { var old = ccOf(cc); cc = x.c; showC(); close(); if (!code.value || (old && code.value === '+' + old.d)) code.value = '+' + x.d; };
+    var paintList = function () {
+      list.textContent = ''; items = cfind(cin.value);
+      if (!items.length) { close(); return; }
+      items.forEach(function (x, k) { var li = el('li'); li.id = 'gC-' + x.c; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', k === act ? 'true' : 'false'); if (k === act) li.className = 'on';
+        li.appendChild(el('span', 'fl', flag(x.c))); li.appendChild(el('span', 'nm', cname(x.c))); var dd = el('span', 'cd', '+' + x.d); dd.dir = 'ltr'; li.appendChild(dd);
+        li.addEventListener('mousedown', function (e) { e.preventDefault(); pick(x); }); list.appendChild(li); });
+      list.hidden = false; cin.setAttribute('aria-expanded', 'true'); cin.setAttribute('aria-activedescendant', act >= 0 ? 'gC-' + items[act].c : '');
+    };
+    cin.addEventListener('focus', function () { if (cc) { cin.select(); } });
+    cin.addEventListener('input', function () { cc = ''; cflag.textContent = ''; cbox.classList.remove('has'); act = 0; paintList(); });
+    cin.addEventListener('keydown', function (e) {
+      if (list.hidden) return;
+      if (e.key === 'ArrowDown') { act = Math.min(items.length - 1, act + 1); paintList(); e.preventDefault(); }
+      else if (e.key === 'ArrowUp') { act = Math.max(0, act - 1); paintList(); e.preventDefault(); }
+      else if (e.key === 'Enter') { if (items[act]) pick(items[act]); e.preventDefault(); }
+      else if (e.key === 'Escape') { close(); }
+    });
+    cin.addEventListener('blur', function () { setTimeout(function () { close(); if (!cc) { var one = cfind(cin.value); if (one.length === 1) pick(one[0]); else showC(); } }, 120); });
+    cbox.appendChild(cflag); cbox.appendChild(cin); cbox.appendChild(list); fc.appendChild(cbox); w.appendChild(fc);
+    // phone, optional, with its country code (the country's, unless I change it)
+    var fp = el('div', 'gfield'), pl = el('label'); pl.setAttribute('for', 'gTel'); pl.appendChild(document.createTextNode(TT('رقم الهاتف', 'Phone number', 'شماره تلفن') + ' ')); pl.appendChild(el('span', 'gopt', TT('(اختياري)', '(optional)', '(اختیاری)'))); fp.appendChild(pl);
+    var prow = el('div', 'gphone'), code = el('input'), tel = el('input');
+    code.id = 'gTelCode'; code.type = 'tel'; code.inputMode = 'tel'; code.autocomplete = 'tel-country-code'; code.setAttribute('aria-label', TT('رمز البلد', 'Country code', 'کد کشور')); code.maxLength = 5;
+    tel.id = 'gTel'; tel.type = 'tel'; tel.inputMode = 'tel'; tel.autocomplete = 'tel-national'; tel.maxLength = 18;
+    var t0 = String(a.tel || ''), m0 = /^\+(\d{1,4}) (.*)$/.exec(t0); code.value = m0 ? '+' + m0[1] : (ccOf(cc) ? '+' + ccOf(cc).d : ''); tel.value = m0 ? m0[2] : '';
+    code.addEventListener('input', function () { var v = code.value.replace(/[^\d]/g, '').slice(0, 4); code.value = v ? '+' + v : ''; });
+    prow.appendChild(code); prow.appendChild(tel); fp.appendChild(prow);
+    fp.appendChild(el('small', 'ghint', TT('رمز البلد يُوضع من البلد الذي اخترته، ويمكن تغييره.', 'The country code comes from the country I chose; I can change it.', 'کد کشور از کشوری که برگزیدم می‌آید و می‌توانم آن را تغییر دهم.')));
+    w.appendChild(fp);
+    if (extra) w.appendChild(extra);
+    var err = el('p', 'gerr'); err.setAttribute('role', 'alert'); w.appendChild(err);
+    var go = gbtn(btnText, 'primary wide', function () {
+      var D = +sd.value, M = +sm.value, Y = +sy.value, dt = new Date(Y, M - 1, D);
+      var tv = tel.value.replace(/[^\d]/g, ''), cv = code.value.replace(/[^\d]/g, '');
+      var bad = !D || !M || !Y ? TT('أختار يوم ولادتي وشهرها وسنتها.', 'I choose the day, month and year of my birth.', 'روز و ماه و سال تولدم را برمی‌گزینم.')
+        : dt.getMonth() !== M - 1 || dt > new Date() ? TT('هذا التاريخ غير موجود، أتأكّد منه.', 'That date does not exist; I check it.', 'این تاریخ وجود ندارد؛ آن را بررسی می‌کنم.')
+        : !g ? TT('أختار الجنس.', 'I choose my sex.', 'جنسیت را برمی‌گزینم.')
+        : !cc ? TT('أختار بلدي من القائمة.', 'I choose my country from the list.', 'کشورم را از فهرست برمی‌گزینم.')
+        : tv && !cv ? TT('أضع رمز البلد قبل الرقم.', 'I put the country code before the number.', 'کد کشور را پیش از شماره می‌گذارم.')
+        : tv && (tv.length < 5 || tv.length > 14) ? TT('رقم الهاتف غير صحيح.', 'The phone number is not right.', 'شماره تلفن درست نیست.') : '';
+      if (bad) { err.textContent = bad; return; }
+      err.textContent = '';
+      var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+      done({ dob: Y + '-' + pad(M) + '-' + pad(D), g: g, cc: cc, tel: tv ? '+' + cv + ' ' + tv : '' });
+    });
+    w.appendChild(go);
+    showC(); host.appendChild(w); return w;
+  }
+  function saveAbout(v) {
+    var A = window.AWRAD_APP; if (!A || !A.setAbout) return;
+    var old = about() || {}, t = now();
+    A.setAbout({ dob: v.dob, g: v.g, cc: v.cc, tel: v.tel, at: old.at || t, ed: old.at ? t : 0 });
+  }
+  // an account made before this page existed (or a device that finished syncing without it) is asked once
+  function checkAbout(r) {
+    if (r === null || !active() || onb() || aboutDone(about())) return;
+    set(K2.onb, JSON.stringify({ step: 'about', only: true })); paintGate();
+  }
   // the first steps of a new account
   function onb() { return jget(K2.onb, null); }
-  function startOnboarding(code) { set(K2.onb, JSON.stringify({ step: 'hello', code: code })); }
+  function startOnboarding(code) { set(K2.onb, JSON.stringify({ step: 'about', code: code })); }
   function onbStep(step) { var o = onb() || {}; o.step = step; set(K2.onb, JSON.stringify(o)); paintGate(); }
   function onbDone() { del(K2.onb); note(null); paintGate(); syncNow(); }
 
@@ -2233,7 +2392,7 @@ module.exports = QRCode;
     keep2(j, id); var uid = uidNow();
     return readRow('keys').then(function (row) {
       if (!row) return makeVault(d.kek, 'password').then(function (code) { sendRcv(code); maybeAsk(uid); startOnboarding(code); note(null); });
-      return tryUnwrap(d.kek, uid, [row.keys.pw, row.keys.pwNext].filter(Boolean)).then(function (raw) { return keepKey(uid, raw).then(function () { maybeAsk(uid); note(null); retryRcv(); if (active()) syncNow(); }); },
+      return tryUnwrap(d.kek, uid, [row.keys.pw, row.keys.pwNext].filter(Boolean)).then(function (raw) { return keepKey(uid, raw).then(function () { maybeAsk(uid); note(null); retryRcv(); if (active()) syncNow().then(checkAbout, function () {}); }); },
         function () { note({ kind: 'needCode' }); });
     }, function (e) { del(K.s); throw e; });
   }
@@ -2450,11 +2609,17 @@ module.exports = QRCode;
   }
   // the first steps: my name, language and colour · a lock code · where my Quran reading stands · my recovery code
   function renderGateOnb() {
-    var o = onb() || {}, A = window.AWRAD_APP || {}, steps = ['hello', 'pin', 'quran', 'code'], i = Math.max(0, steps.indexOf(o.step));
-    var dots = el('div', 'gsteps'); dots.setAttribute('aria-label', TT('الخطوة ', 'Step ', 'گام ') + faNum(i + 1) + TT(' من 4', ' of 4', ' از ۴'));
-    steps.forEach(function (x, k) { var d = el('i', k < i ? 'done' : k === i ? 'on' : ''); dots.appendChild(d); }); gateBody.appendChild(dots);
+    var o = onb() || {}, A = window.AWRAD_APP || {}, steps = ['about', 'hello', 'pin', 'quran', 'code'], i = Math.max(0, steps.indexOf(o.step));
+    if (!o.only) {
+      var dots = el('div', 'gsteps'); dots.setAttribute('aria-label', TT('الخطوة ', 'Step ', 'گام ') + faNum(i + 1) + TT(' من 5', ' of 5', ' از ۵'));
+      steps.forEach(function (x, k) { var d = el('i', k < i ? 'done' : k === i ? 'on' : ''); dots.appendChild(d); }); gateBody.appendChild(dots);
+    }
     var next = function (st) { return function () { onbStep(st); }; };
-    if (steps[i] === 'hello') {
+    if (steps[i] === 'about') {
+      gateBody.appendChild(el('h2', 'gh', TT('عرّفنا بك', 'About me', 'دربارهٔ من')));
+      gateBody.appendChild(gp(TT('معلومات قليلة تبقى مشفّرة في حسابي، لا يقرؤها أحد غيري.', 'A few details, kept encrypted in my account; nobody but me reads them.', 'چند آگاهی که رمزگذاری‌شده در حسابم می‌ماند و جز من کسی آن را نمی‌خواند.')));
+      aboutForm(gateBody, about(), o.only ? TT('حفظ', 'Save', 'ذخیره') : TT('التالي', 'Next', 'بعدی'), function (v) { saveAbout(v); if (o.only) onbDone(); else onbStep('hello'); });
+    } else if (steps[i] === 'hello') {
       gateBody.appendChild(el('h2', 'gh', TT('أهلاً بك في أوراد', 'Welcome to Awrad', 'به اوراد خوش آمدی')));
       gateBody.appendChild(gp(TT('ثلاث خطوات قصيرة ويصبح أوراد لك.', 'Three short steps and Awrad is yours.', 'سه گام کوتاه و اوراد از آنِ توست.')));
       var nf = gfield('gName', TT('بماذا أناديك؟', 'What shall I call you?', 'تو را چه صدا کنم؟'), 'text', 'nickname'); var ni = nf.querySelector('input'); ni.value = (A.name && A.name()) || ''; ni.maxLength = 40; gateBody.appendChild(nf);
@@ -3211,7 +3376,7 @@ module.exports = QRCode;
 <title>أوراد - البرنامج الشخصي اليومي</title>
 <link rel="preload" href="fonts/plex-arabic-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/plex-arabic-700.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') { var k = document.createElement('link'); k.rel = 'preload'; k.as = 'script'; k.href = 'i18n/' + l + '.js?v=00c20a1e'; document.head.appendChild(k); } })();</script>
+<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') { var k = document.createElement('link'); k.rel = 'preload'; k.as = 'script'; k.href = 'i18n/' + l + '.js?v=5d569cc1'; document.head.appendChild(k); } })();</script>
 <style>
 @font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/plex-arabic-400.woff2') format('woff2'); }
 @font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/plex-arabic-500.woff2') format('woff2'); }
@@ -3901,17 +4066,44 @@ html.is-locked body > *:not(.lockscreen):not(script):not(style):not(link):not(ti
 @keyframes toastOut { to { opacity: 0; transform: translate(-50%, 16px) scale(.95); } }
 @keyframes burst { 0% { opacity: 1; transform: translate(0, 0) scale(.4) rotate(0); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1) rotate(160deg); } }
 
-.demobar { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; padding: 10px max(16px, calc((100% - 1240px) / 2 + 16px)); background: color-mix(in srgb, var(--gold-soft) 92%, #fff); color: #1E2A22; font-size: 14px; line-height: 1.5; }
+.demobar { position: fixed; z-index: 60; left: 50%; bottom: 24px; transform: translateX(-50%); width: min(600px, calc(100% - 24px)); display: flex; align-items: center; gap: 12px; padding: 10px; padding-inline-start: 12px; border-radius: 22px; background: #1B3A2E; color: #F3EBD6; font-size: 13px; line-height: 1.5;
+  box-shadow: 0 18px 40px -16px rgba(0,0,0,.45), inset 0 0 0 1px rgba(217,184,103,.35); animation: dbIn .5s cubic-bezier(.2,.8,.2,1) backwards; }
+@keyframes dbIn { from { opacity: 0; transform: translate(-50%, 24px); } }
 .demobar[hidden] { display: none; }
-.demobar .dbtx { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; min-width: 0; }
-.demobar .dbtx > b { font-size: 15px; }
-.demobar .dbgrow b { font-variant-numeric: tabular-nums; }
-.demobar .dbnote { font-size: 12.5px; opacity: .8; }
-.demobar .dbbtns { display: flex; gap: 8px; flex: none; }
-.demobar button { min-height: 38px; padding: 0 14px; border-radius: 999px; font: 600 14px var(--font); cursor: pointer; border: 1px solid rgba(30,42,34,.35); background: transparent; color: inherit; }
-.demobar .dbend { background: #1E2A22; color: #F6F3EA; border-color: #1E2A22; }
-.demobar button:focus-visible { outline: 3px solid #1E2A22; outline-offset: 2px; }
-@media (max-width: 640px) { .demobar { padding: 8px 16px; flex-wrap: nowrap; gap: 10px; } .demobar .dbtx { flex: 1; flex-direction: column; gap: 0; } .demobar .dbtx > b { font-size: 14px; } .demobar .dbgrow { font-size: 12.5px; } .demobar .dbnote, .demobar .dbsee { display: none; } .demobar button { min-height: 36px; padding: 0 12px; font-size: 13px; } }
+.demobar .dbtag { flex: none; font-size: 11.5px; font-weight: 700; color: #1B3A2E; background: #D9B867; border-radius: 999px; padding: 3px 9px; }
+.demobar .dbtx { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1; }
+.demobar .dbgrow { opacity: .88; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demobar .dbgrow b { color: #E9CF8C; font-variant-numeric: tabular-nums; }
+.demobar .dbline { height: 5px; border-radius: 9px; background: rgba(243,235,214,.15); position: relative; overflow: hidden; }
+.demobar .dbline i { position: absolute; inset-block: 0; inset-inline-start: 0; border-radius: 9px; background: linear-gradient(90deg, #B8913F, #E9CF8C); transform-origin: right; animation: dbFill 1.2s .4s cubic-bezier(.2,.8,.2,1) backwards; }
+[dir="ltr"] .demobar .dbline i { transform-origin: left; }
+.demobar .dbline s { position: absolute; inset-block: -2px; width: 2px; background: #F3EBD6; opacity: .7; }
+@keyframes dbFill { from { transform: scaleX(0); } }
+.demobar button { flex: none; cursor: pointer; font: 700 14px var(--font); }
+.demobar .dbsee { width: 42px; height: 42px; border-radius: 14px; border: 1px solid rgba(243,235,214,.25); background: transparent; color: #F3EBD6; display: grid; place-items: center; padding: 0; }
+.demobar .dbsee svg { width: 19px; height: 19px; }
+.demobar .dbhelp { font-weight: 800; font-size: 16px; }
+.demobar .dbend { min-height: 42px; border-radius: 14px; border: 0; background: #D9B867; color: #1B3A2E; padding: 0 12px 0 14px; display: flex; align-items: center; gap: 4px; }
+.demobar .dbend svg { width: 17px; height: 17px; }
+[dir="ltr"] .demobar .dbend svg { transform: scaleX(-1); }
+.demobar button:focus-visible { outline: 3px solid #E9CF8C; outline-offset: 2px; }
+html.is-demo .wrap:not(.hd) { padding-bottom: 96px; }
+@media (max-width: 640px) { .demobar { bottom: calc(env(safe-area-inset-bottom, 0px) + 96px); gap: 8px; } .demobar .dbtag { display: none; } .demobar .dbend { padding: 0 10px 0 12px; font-size: 13.5px; } html.is-demo .wrap:not(.hd) { padding-bottom: 190px; } .demobar .dbfm, .demobar .dbsee:not(.dbhelp) { display: none; } .demobar .dbsee { width: 38px; height: 38px; } }
+/* the guided tour in the demo: a lit spot on one part, and a word beside it */
+.tourspot { position: fixed; z-index: 70; pointer-events: none; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(8,18,13,.55), 0 0 0 2px #D9B867; transition: left .35s cubic-bezier(.2,.8,.2,1), top .35s cubic-bezier(.2,.8,.2,1), width .35s cubic-bezier(.2,.8,.2,1), height .35s cubic-bezier(.2,.8,.2,1); }
+.tourtip { position: fixed; z-index: 71; width: min(320px, calc(100vw - 24px)); background: var(--surface); color: var(--ink); border-radius: 18px; padding: 14px 16px 12px; box-shadow: 0 18px 40px -12px rgba(0,0,0,.4), inset 0 0 0 1px color-mix(in srgb, #D9B867 45%, transparent); transition: left .35s cubic-bezier(.2,.8,.2,1), top .35s cubic-bezier(.2,.8,.2,1); }
+.tourtip h3 { margin: 0 0 4px; font-size: 15.5px; }
+.tourtip p { margin: 0 0 12px; font-size: 13.5px; line-height: 1.7; color: var(--muted); }
+.tourtip .tfoot { display: flex; align-items: center; gap: 8px; }
+.tourtip .tdots { display: flex; gap: 5px; margin-inline-end: auto; }
+.tourtip .tdots i { width: 6px; height: 6px; border-radius: 9px; background: var(--line); transition: width .25s, background .25s; }
+.tourtip .tdots i.on { width: 16px; background: #B8913F; }
+.tourtip button { cursor: pointer; font: 600 13.5px var(--font); min-height: 36px; border-radius: 11px; padding: 0 12px; }
+.tourtip .tskip { background: none; border: 0; color: var(--muted); }
+.tourtip .tnext { background: var(--band); color: var(--band-ink, #F3EBD6); border: 0; }
+.tourtip::before { content: ""; position: absolute; width: 12px; height: 12px; background: var(--surface); transform: rotate(45deg); left: var(--ax, 50%); margin-left: -6px; }
+.tourtip.below::before { top: -6px; } .tourtip.above::before { bottom: -6px; }
+@media (prefers-reduced-motion: reduce) { .tourspot, .tourtip { transition: none; } .demobar, .demobar .dbline i { animation: none; } }
 .view-in .stack > *, .view-in .pcol > *, .view-in .weekside > *, .view-in .weeknav, .view-in .days { animation: rise .28s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * 35ms); }
 .view-in .stack > .pcols { animation: none; }
 .slide-next { animation: slideFromL .24s cubic-bezier(.2,.8,.2,1); }
@@ -4198,7 +4390,7 @@ body { background-image: var(--tile); }
   <footer>المستقبل للإسلام وللشباب المؤمن</footer>
 </div>
 
-<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') document.write('<script src="i18n/' + l + '.js?v=00c20a1e"><\/script>'); })();</script>
+<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') document.write('<script src="i18n/' + l + '.js?v=5d569cc1"><\/script>'); })();</script>
 <script>
 var LANG = 'ar'; try { var savedLang = localStorage.getItem('tracker:lang'); if (savedLang === 'en' || savedLang === 'fa') LANG = savedLang; } catch (e) {}
 var THEME = 'auto'; try { THEME = localStorage.getItem('tracker:theme') || 'auto'; } catch (e) {}
@@ -4511,7 +4703,10 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       l = l.filter(function (e) { return Array.isArray(e) && typeof e[0] === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e[0]) && valOk(+e[1]); }).map(function (e) { return [e[0], +e[1]]; })
         .sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
       if (l.length) o[k] = l; }); return o; };
-    return { name: typeof c.name === 'string' ? c.name.replace(/[\u0000-\u001f]/g, '').trim().slice(0, 40) : '', hidden: obj(c.hidden), custom: custom, types: obj(c.types), sections: secs,
+    // about me: birth date, sex, country, optional phone (kept only when well formed)
+    var ab = obj(c.about), about = null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(ab.dob) && (ab.g === 'm' || ab.g === 'f') && /^[A-Z]{2}$/.test(ab.cc)) about = { dob: ab.dob, g: ab.g, cc: ab.cc, tel: typeof ab.tel === 'string' && /^\+\d{1,4} \d{5,14}$/.test(ab.tel) ? ab.tel : '', at: +ab.at || 0, ed: +ab.ed || 0 };
+    return { name: typeof c.name === 'string' ? c.name.replace(/[\u0000-\u001f]/g, '').trim().slice(0, 40) : '', about: about, hidden: obj(c.hidden), custom: custom, types: obj(c.types), sections: secs,
       targets: weekList(c.targets, okId, function (n) { return n === Math.round(n) && n >= 1 && n <= 7; }),
       hist: weekList(c.hist, function (k) { return okId(String(k).replace(/^sec:/, '')); }, function (n) { return n === 0 || n === 1; }) };
   }  // older saved layout and pins are dropped here
@@ -5560,21 +5755,82 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   function paintDemoBar() {
     var bar = $('demobar'); if (!bar) return;
     bar.textContent = ''; bar.hidden = !demo; if (!demo) return;
+    var NS = 'http://www.w3.org/2000/svg', svg = function (d) { var v = document.createElementNS(NS, 'svg'); v.setAttribute('viewBox', '0 0 24 24'); v.setAttribute('fill', 'none'); v.setAttribute('stroke', 'currentColor'); v.setAttribute('stroke-width', '2.2'); v.setAttribute('stroke-linecap', 'round'); v.setAttribute('stroke-linejoin', 'round'); v.setAttribute('aria-hidden', 'true'); var p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); v.appendChild(p); return v; };
+    var tag = document.createElement('span'); tag.className = 'dbtag'; tag.textContent = 'تجربة'; bar.appendChild(tag);
     var tx = document.createElement('div'); tx.className = 'dbtx';
-    var b0 = document.createElement('b'); b0.textContent = 'تجربة: خمسة أشهر مع أوراد'; tx.appendChild(b0);
     var gr = document.createElement('span'); gr.className = 'dbgrow';
-    [['الالتزام في الشهر الأول', demo.growth[0]], ['وفي الشهر الأخير', demo.growth[1]]].forEach(function (x, k) {
-      if (k) gr.appendChild(document.createTextNode(LANG === 'en' ? ' → ' : ' ← '));
-      var l = document.createElement('span'); l.textContent = x[0]; gr.appendChild(l); gr.appendChild(document.createTextNode(' '));
-      var v = document.createElement('b'); v.textContent = x[1]; gr.appendChild(v);
-    });
+    // «commitment from 44% to 83% in five months», with a line that fills to the last month and a mark at the first
+    [['الالتزام من', demo.growth[0]], ['إلى', demo.growth[1]]].forEach(function (x, k) { gr.appendChild(document.createTextNode((k ? ' ' : '') + x[0] + ' ')); var v = document.createElement('b'); v.textContent = x[1]; gr.appendChild(v); });
+    gr.appendChild(document.createTextNode(' ')); var fm = document.createElement('span'); fm.className = 'dbfm'; fm.textContent = 'في خمسة أشهر'; gr.appendChild(fm);
+    gr.title = demo.invite ? 'هكذا يبدو أوراد بعد خمسة أشهر من الالتزام. أتنقّل بين التقدّم والتأشير والسجلّ.' : 'بياناتي محفوظة كما هي، ولا يُحفظ شيء من التجربة.';
     tx.appendChild(gr);
-    var nt = document.createElement('span'); nt.className = 'dbnote'; nt.textContent = demo.invite ? 'هكذا يبدو أوراد بعد خمسة أشهر من الالتزام. أتنقّل بين التقدّم والتأشير والسجلّ.' : 'بياناتي محفوظة كما هي، ولا يُحفظ شيء من التجربة.'; tx.appendChild(nt);
-    bar.appendChild(tx);
-    var bt = document.createElement('div'); bt.className = 'dbbtns';
-    var see = document.createElement('button'); see.type = 'button'; see.className = 'dbsee'; see.textContent = 'شاهد التقدّم'; see.addEventListener('click', function () { setView('progress'); });
-    var end = document.createElement('button'); end.type = 'button'; end.className = 'dbend' + (demo.invite ? ' dbgo' : ''); end.textContent = demo.invite ? 'أبدأ رحلتي' : 'إنهاء التجربة'; end.addEventListener('click', stopDemo);
-    bt.appendChild(see); bt.appendChild(end); bar.appendChild(bt);
+    var ln = document.createElement('span'); ln.className = 'dbline'; ln.setAttribute('aria-hidden', 'true');
+    var num = function (t) { return parseInt(String(t).replace(/[۰-۹]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); }), 10) || 0; };
+    var fi = document.createElement('i'); fi.style.width = num(demo.growth[1]) + '%'; ln.appendChild(fi);
+    var mk = document.createElement('s'); mk.style.insetInlineStart = num(demo.growth[0]) + '%'; ln.appendChild(mk);
+    tx.appendChild(ln); bar.appendChild(tx);
+    var help = document.createElement('button'); help.type = 'button'; help.className = 'dbsee dbhelp'; help.textContent = '؟'; help.setAttribute('aria-label', 'جولة في أوراد'); help.title = 'جولة في أوراد'; help.addEventListener('click', function () { tourStart(); }); bar.appendChild(help);
+    var see = document.createElement('button'); see.type = 'button'; see.className = 'dbsee'; see.setAttribute('aria-label', 'شاهد التقدّم'); see.title = 'شاهد التقدّم'; see.appendChild(svg('M4 20V10M10 20V4M16 20v-7M22 20H2')); see.addEventListener('click', function () { setView('progress'); }); bar.appendChild(see);
+    var end = document.createElement('button'); end.type = 'button'; end.className = 'dbend' + (demo.invite ? ' dbgo' : '');
+    var et = document.createElement('span'); et.textContent = demo.invite ? 'أبدأ رحلتي' : 'إنهاء التجربة'; end.appendChild(et); end.appendChild(svg('M15 6l-6 6 6 6'));
+    end.addEventListener('click', stopDemo); bar.appendChild(end);
+  }
+  /* ---------- a short guided tour of the demo: one part lit at a time, a word beside it ---------- */
+  var tour = null;
+  var TOUR = [
+    ['#days', 'أيام الأسبوع', 'أضغط يوماً لأرى ما أنجزته فيه، والسهمان ينقلانني بين الأسابيع.', 'track'],
+    ['#list .item', 'التأشير', 'بلمسة أشّر ما أنجزته اليوم، والنقاط بجانبه تُظهر الأسبوع كلّه.', 'track'],
+    ['#tab-progress', 'التقدّم', 'هنا أرى التزامي أسبوعاً بعد أسبوع، وكيف ارتفع من الشهر الأول إلى الأخير.', null],
+    ['#tab-log', 'السجلّ', 'هنا قراءتي ووسائطي ونومي ومحاسبتي اليومية.', null],
+    ['#demobar .dbend', 'أبدأ رحلتي', 'حين أكون جاهزاً أبدأ رحلتي. لا يُحفظ شيء من التجربة.', null]
+  ];
+  function tourEnd() {
+    if (!tour) return;
+    window.removeEventListener('resize', tour.place); window.removeEventListener('scroll', tour.place, true); document.removeEventListener('keydown', tour.key);
+    tour.spot.remove(); tour.tip.remove(); tour = null;
+  }
+  function tourStart() {
+    tourEnd(); if (!demo) return;
+    var spot = document.createElement('div'); spot.className = 'tourspot'; spot.setAttribute('aria-hidden', 'true');
+    var tip = document.createElement('div'); tip.className = 'tourtip below'; tip.setAttribute('role', 'dialog'); tip.setAttribute('aria-live', 'polite');
+    document.body.appendChild(spot); document.body.appendChild(tip);
+    tour = { i: 0, spot: spot, tip: tip };
+    tour.place = function () {
+      if (!tour) return;
+      var st = TOUR[tour.i], t = document.querySelector(st[0]); if (!t) return;
+      var r = t.getBoundingClientRect(), pad = 6, W = innerWidth, H = innerHeight;
+      spot.style.left = (r.left - pad) + 'px'; spot.style.top = (r.top - pad) + 'px'; spot.style.width = (r.width + pad * 2) + 'px'; spot.style.height = (r.height + pad * 2) + 'px';
+      spot.style.borderRadius = Math.min(22, parseFloat(getComputedStyle(t).borderTopLeftRadius) + pad || 16) + 'px';
+      var tw = tip.offsetWidth, th = tip.offsetHeight, below = r.bottom + pad + 14 + th < H - 8 || r.top - pad - 14 - th < 8;
+      var x = Math.max(12, Math.min(W - tw - 12, r.left + r.width / 2 - tw / 2)), y = below ? r.bottom + pad + 12 : r.top - pad - 12 - th;
+      tip.classList.toggle('below', below); tip.classList.toggle('above', !below);
+      tip.style.left = x + 'px'; tip.style.top = Math.max(8, y) + 'px';
+      tip.style.setProperty('--ax', Math.max(18, Math.min(tw - 18, r.left + r.width / 2 - x)) + 'px');
+    };
+    tour.key = function (e) { if (e.key === 'Escape') tourEnd(); };
+    window.addEventListener('resize', tour.place); window.addEventListener('scroll', tour.place, true); document.addEventListener('keydown', tour.key);
+    tourShow();
+  }
+  function tourShow() {
+    if (!tour) return;
+    var st = TOUR[tour.i], tip = tour.tip;
+    if (st[3] && view !== st[3]) setView(st[3]);
+    var t = document.querySelector(st[0]); if (!t) { if (tour.i < TOUR.length - 1) { tour.i++; tourShow(); } else tourEnd(); return; }
+    tip.textContent = '';
+    var h = document.createElement('h3'); h.textContent = st[1]; tip.appendChild(h);
+    var p = document.createElement('p'); p.textContent = st[2]; tip.appendChild(p);
+    var f = document.createElement('div'); f.className = 'tfoot';
+    var dots = document.createElement('span'); dots.className = 'tdots'; dots.setAttribute('aria-label', (tour.i + 1) + ' / ' + TOUR.length);
+    TOUR.forEach(function (x, k) { var d = document.createElement('i'); if (k === tour.i) d.className = 'on'; dots.appendChild(d); }); f.appendChild(dots);
+    var last = tour.i === TOUR.length - 1;
+    if (!last) { var sk = document.createElement('button'); sk.type = 'button'; sk.className = 'tskip'; sk.textContent = 'تخطَّ'; sk.addEventListener('click', tourEnd); f.appendChild(sk); }
+    var nx = document.createElement('button'); nx.type = 'button'; nx.className = 'tnext'; nx.textContent = last ? 'فهمت' : 'التالي';
+    nx.addEventListener('click', function () { if (last) { tourEnd(); return; } tour.i++; tourShow(); }); f.appendChild(nx);
+    tip.appendChild(f);
+    var r = t.getBoundingClientRect();
+    if (r.top < 70 || r.bottom > innerHeight - 200) { t.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' }); setTimeout(tour.place, 420); }
+    tour.place(); setTimeout(function () { if (tour) tour.place(); }, 60);
+    try { nx.focus({ preventScroll: true }); } catch (e) {}
   }
   function startDemo(invite) {
     if (demo || mode === 'loading') return;
@@ -5588,10 +5844,12 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     document.documentElement.classList.add('is-demo');
     setStatus('تجربة: لا يُحفظ شيء');
     paintDemoBar(); renderHeader(); lastSig = ''; renderList(); paintQuran();
-    setView('progress');
+    setView('track');   // the demo opens on «Tick», where the days are filled in
+    setTimeout(function () { if (demo) tourStart(); }, 900);   // and a short tour shows the way
   }
   function stopDemo() {
     if (!demo) return;
+    tourEnd();
     var d = demo; demo = null; mode = d.mode;
     weeks = d.weeks; logs = d.logs; quran = d.quran; config = d.config; applyConfig();
     if (mode === 'local') { weeks = {}; fallback(); } else if (mode === 'db') setStatus('يُحفظ تلقائياً');   // read back what is kept on this device, in case it changed meanwhile (sync)
@@ -5606,6 +5864,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     lang: function () { return LANG; }, setLang: setLang,
     palette: function () { return document.documentElement.getAttribute('data-palette') || 'green'; }, setPalette: setPalette,
     name: function () { return config.name || ''; }, setName: function (n) { config.name = String(n || '').trim().slice(0, 40); saveConfig(); },
+    about: function () { return config.about ? Object.assign({}, config.about) : null; }, setAbout: function (a) { config.about = normConfig({ about: a }).about; saveConfig(); },
     quranPage: function () { return quran.page; },
     setQuranPage: function (n) { n = Math.min(604, Math.max(0, Math.round(+n) || 0)); quran.page = n; quran.start = quran.start || {}; quran.start[key(today)] = absPage(); quran.rev = (quran.rev || 0) + 1; saveQuran(); paintQuran(); },
     lockOn: lockOn, setLock: function (done) { showLock('set', function (ok) { if (done) done(!!ok); }); },
