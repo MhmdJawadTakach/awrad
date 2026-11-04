@@ -4213,7 +4213,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var dd = document.createElement('span'); dd.className = 'dd'; dd.textContent = dayNum(d);
       b.appendChild(dn); b.appendChild(dd);
       if (d > today) { b.disabled = true; b.classList.add('later'); }   // a day still to come cannot be ticked
-      b.addEventListener('click', (function (idx) { return function () { if (idx === selDay) return; var from = days.children[selDay]; var fr = from && from.getBoundingClientRect(); selDay = idx; renderHeader(); renderList(); glideDay(fr); }; })(i));
+      b.addEventListener('click', (function (idx) { return function () { if (idx === selDay) return; var from = days.children[selDay]; var fr = from && { left: from.offsetLeft }; selDay = idx; renderHeader(); renderList(); glideDay(fr); }; })(i));
       days.appendChild(b);
       if (rollDir) rollIn(dd, rollDir, i * 22);   // the dates roll, day after day
     }
@@ -4221,12 +4221,17 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   }
   function glideDay(fr) {
     var days = $('days'), to = days.children[selDay]; if (!fr || !to || REDUCED || !to.animate) return;
-    var tr = to.getBoundingClientRect(), base = days.getBoundingClientRect();
+    // layout positions, not screen boxes: a pressed day is drawn a little smaller while the finger is on it, and that threw the glide off on phones
+    var tr = { left: to.offsetLeft, top: to.offsetTop, width: to.offsetWidth, height: to.offsetHeight };
     var g = document.createElement('span'); g.className = 'dayglide'; g.setAttribute('aria-hidden', 'true');
-    g.style.left = (tr.left - base.left) + 'px'; g.style.top = (tr.top - base.top) + 'px'; g.style.width = tr.width + 'px'; g.style.height = tr.height + 'px';
+    g.style.left = tr.left + 'px'; g.style.top = tr.top + 'px'; g.style.width = tr.width + 'px'; g.style.height = tr.height + 'px';
     days.appendChild(g); to.classList.add('glidewait');
-    var a = g.animate([{ transform: 'translateX(' + (fr.left - tr.left) + 'px)' }, { transform: 'none' }], { duration: 340, easing: 'cubic-bezier(.3,.7,.2,1)' });
-    a.onfinish = a.oncancel = function () { g.remove(); to.classList.remove('glidewait'); };
+    var a = g.animate([{ transform: 'translateX(' + (fr.left - tr.left) + 'px)' }, { transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.3,.7,.2,1)' });
+    // the day's number stays dark on the light page until the highlight reaches it, then turns light on it (never light on light, nor dark on dark)
+    var ink = getComputedStyle(days).color, light = getComputedStyle(to).color;
+    to.animate([{ color: ink }, { color: ink, offset: .5 }, { color: light }], { duration: 300, easing: 'linear' });
+    // the highlight hands over to the day in the same frame: no fade in between (that read as a blink)
+    a.onfinish = a.oncancel = function () { to.style.transition = 'none'; to.classList.remove('glidewait'); g.remove(); void to.offsetWidth; to.style.transition = ''; };
   }
   function isOn(id, i) { return !!cur()[id + '_' + i]; }
   function renderList() {
