@@ -198,6 +198,12 @@ html[dir="rtl"] .gdemobtn > svg { transform: scaleX(-1); }
 .gate .glogo { width: 84px; height: 84px; margin-bottom: 10px; }
 @media (min-width: 900px) { .gate .glogo { width: 110px; height: 110px; } }
 
+/* the first step has its own language choice, so the one at the foot steps aside */
+.gate[data-state="onb"] .gfoot .glang { display: none; }
+/* «I saved it» is closed until the code is copied or downloaded */
+.gate .gcheck.off { opacity: .45; cursor: not-allowed; }
+.gate .gcheck.off input { cursor: not-allowed; }
+
 </style>
 <script>
 /* backups and tables: the share sheet on phones (save to Files, Drive, WhatsApp…), a normal download elsewhere */
@@ -1853,7 +1859,8 @@ module.exports = QRCode;
   }
   function deleteAccount(wipe) {
     return call('POST', '/rest/v1/rpc/delete_my_account', {}, true).then(function () {
-      del(K.s); del(K.at); return dropKey();
+      del(K.s); del(K.at); del(K2.onb); if (window.AWRAD_APP && window.AWRAD_APP.clearLock) window.AWRAD_APP.clearLock();   // the account is gone, so is its app lock
+      return dropKey();
     }).then(function () { note({ kind: 'msg', text: T('حُذف حسابي وكل بياناته من الخادم.', 'My account and all its data were deleted from the server.') }); if (wipe) { wipeLocal(); location.reload(); } else repaint(); });
   }
 
@@ -2383,12 +2390,12 @@ module.exports = QRCode;
     } else {
       if (gb) { gateBody.appendChild(gb); gateBody.appendChild(orLine()); }
       var fields = [gfield('gUser', TT('اسم المستخدم', 'User name', 'نام کاربری'), 'text', 'username', TT('حروف إنجليزية صغيرة وأرقام، من 3 إلى 24.', 'Small English letters and digits, 3 to 24.', 'حروف کوچک انگلیسی و عدد، ۳ تا ۲۴.'))];
-      if (mailOn) fields.push(gfield('gMail', TT('البريد (اختياري)', 'Email (optional)', 'ایمیل (اختیاری)'), 'email', 'email', TT('للدخول به لاحقاً. يصلني رمز لتأكيده.', 'To sign in with it later. A code comes to confirm it.', 'برای ورود با آن در آینده. کدی برای تأیید آن می‌رسد.')));
+      fields.push(gfield('gMail', TT('البريد الإلكتروني', 'Email', 'ایمیل'), 'email', 'email', mailOn ? TT('أدخل به أيضاً. يصلني رمز لتأكيده.', 'I can sign in with it too. A code comes to confirm it.', 'با آن هم وارد می‌شوم. کدی برای تأیید آن می‌رسد.') : TT('أدخل به أيضاً بدل اسم المستخدم.', 'I can sign in with it too, instead of the user name.', 'به‌جای نام کاربری با آن هم وارد می‌شوم.')));
       fields.push(gfield('gPw', TT('كلمة المرور', 'Password', 'گذرواژه'), 'password', 'new-password', TT('8 أحرف على الأقل. هي أيضاً مفتاح بياناتي المشفّرة.', 'At least 8 characters. It is also the key to my encrypted data.', 'دست‌کم ۸ نویسه. کلید داده‌های رمزگذاری‌شده‌ام هم هست.')));
       fields.push(gfield('gPw2', TT('كلمة المرور مرة ثانية', 'The password again', 'گذرواژه دوباره'), 'password', 'new-password'));
       var f = gform(fields, TT('أنشئ حسابي', 'Create my account', 'حسابم را بساز'), Object.assign(function (v) { return signUp2(v.gUser, v.gMail || '', v.gPw); },
         { check: function (v) { return (!USER_RE.test(normId(v.gUser)) ? TT('الاسم من 3 إلى 24 حرفاً: حروف إنجليزية صغيرة وأرقام ونقطة وشرطة سفلية.', 'The name is 3 to 24 characters: small English letters, digits, dot and underscore.', 'نام ۳ تا ۲۴ نویسه است: حروف کوچک انگلیسی، عدد، نقطه و زیرخط.') : '') ||
-          (v.gMail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v.gMail).trim()) ? TT('أكتب بريداً صحيحاً أو أتركه فارغاً.', 'I type a valid email or leave it empty.', 'ایمیل درستی می‌نویسم یا خالی می‌گذارم.') : '') || newPwRules(v.gPw, v.gPw2); } }));
+          (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v.gMail || '').trim()) ? TT('أكتب بريداً إلكترونياً صحيحاً.', 'I type a valid email.', 'ایمیل درستی می‌نویسم.') : '') || newPwRules(v.gPw, v.gPw2); } }));
       // is the name free? (asked once I pause typing)
       var ui = f.querySelector('#gUser'), hint = f.querySelector('#gUserHint'), tmr = null, base = hint.textContent;
       ui.addEventListener('input', function () {
@@ -2488,11 +2495,20 @@ module.exports = QRCode;
       gateBody.appendChild(gp(TT('بياناتي مشفّرة فلا يقرؤها أحد غيري، ولا حتى الخادم. هذا الرمز هو الطريق الوحيد إليها إن نسيت كلمة المرور أو فقدت أجهزتي. أحفظه خارج هذا الجهاز: أصوّره، أو أكتبه في دفتر، أو أنزّله.', 'My data is encrypted, so nobody but me can read it, not even the server. This code is the only way back to it if I forget my password or lose my devices. I keep it outside this device: a photo, a notebook, or a download.', 'داده‌هایم رمزگذاری شده است و هیچ‌کس جز من، حتی سرور، آن را نمی‌خواند. این کد تنها راه بازگشت به آن است اگر گذرواژه را فراموش کنم یا دستگاه‌هایم را گم کنم. آن را بیرون از این دستگاه نگه می‌دارم: عکس، دفترچه یا دانلود.')));
       var cb = el('div', 'gcode'), cc = el('code', null, o.code || ''); cc.dir = 'ltr'; cb.appendChild(cc); gateBody.appendChild(cb);
       var acts = el('div', 'gacts'), sm = el('p', 'gp gnote gcenter'); sm.setAttribute('role', 'status');
-      acts.appendChild(gbtn(TT('نسخ', 'Copy', 'کپی'), 'ghost', function () { try { navigator.clipboard.writeText(o.code).then(function () { sm.textContent = TT('نُسخ الرمز.', 'Code copied.', 'کد کپی شد.'); }, function () {}); } catch (e) {} }));
-      if (window.LOCAL_DL) acts.appendChild(gbtn(TT('تنزيل', 'Download', 'دانلود'), 'ghost', function () { var s0 = sess() || {}; window.LOCAL_DL.save({ filename: 'awrad-recovery-code.txt', data: 'Awrad — recovery code\n' + o.code + '\n' + (s0.uname || s0.email || '') + '\n' }).catch(function () {}); }));
+      // «I saved it» stays closed until the code has really left this screen: copied or downloaded
+      var ok = el('label', 'gcheck off'), ci = el('input'); ci.type = 'checkbox'; ci.id = 'gSaved'; ci.disabled = true;
+      var opened = function (msg) { sm.textContent = msg; ci.disabled = false; ok.classList.remove('off'); ok.title = ''; };
+      acts.appendChild(gbtn(TT('نسخ', 'Copy', 'کپی'), 'ghost', function () { try { navigator.clipboard.writeText(o.code).then(function () { opened(TT('نُسخ الرمز. ألصقه في مكان آمن.', 'Code copied. I paste it somewhere safe.', 'کد کپی شد. آن را جای امنی می‌چسبانم.')); }, function () { sm.textContent = TT('لم يُنسخ، فأنزّله بدلاً من ذلك.', 'It did not copy; I download it instead.', 'کپی نشد؛ به‌جایش دانلودش می‌کنم.'); }); } catch (e) {} }));
+      acts.appendChild(gbtn(TT('تنزيل', 'Download', 'دانلود'), 'ghost', function () {
+        var s0 = sess() || {}, txt = 'Awrad — recovery code\n' + o.code + '\n' + (s0.uname || s0.email || '') + '\n', name = 'awrad-recovery-code.txt';
+        var done = function () { opened(TT('نُزّل الرمز في ملف.', 'The code was downloaded to a file.', 'کد در یک فایل دانلود شد.')); };
+        if (window.LOCAL_DL) { window.LOCAL_DL.save({ filename: name, data: txt }).then(done, function () {}); return; }
+        try { var u = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); done(); } catch (e) {}
+      }));
       gateBody.appendChild(acts); gateBody.appendChild(sm);
-      var ok = el('label', 'gcheck'), ci = el('input'); ci.type = 'checkbox'; ci.id = 'gSaved'; ok.appendChild(ci); ok.appendChild(document.createTextNode(' ' + TT('حفظت الرمز في مكان آمن', 'I saved the code somewhere safe', 'کد را جای امنی نگه داشتم'))); gateBody.appendChild(ok);
-      var go = gbtn(TT('ابدأ مع أوراد', 'Start with Awrad', 'با اوراد شروع کن'), 'primary wide', function () { if (!ci.checked) { sm.textContent = TT('أؤكّد أولاً أني حفظت الرمز.', 'I first confirm I saved the code.', 'اول تأیید می‌کنم که کد را نگه داشتم.'); return; } onbDone(); });
+      ok.title = TT('أنسخ الرمز أو أنزّله أولاً', 'I copy or download the code first', 'اول کد را کپی یا دانلود می‌کنم');
+      ok.appendChild(ci); ok.appendChild(document.createTextNode(' ' + TT('حفظت الرمز في مكان آمن', 'I saved the code somewhere safe', 'کد را جای امنی نگه داشتم'))); gateBody.appendChild(ok);
+      var go = gbtn(TT('ابدأ مع أوراد', 'Start with Awrad', 'با اوراد شروع کن'), 'primary wide', function () { if (!ci.checked) { sm.textContent = ci.disabled ? TT('أنسخ الرمز أو أنزّله أولاً، ثم أؤكّد أني حفظته.', 'I copy or download the code first, then confirm I saved it.', 'اول کد را کپی یا دانلود می‌کنم، سپس تأیید می‌کنم که نگهش داشتم.') : TT('أؤكّد أولاً أني حفظت الرمز.', 'I first confirm I saved the code.', 'اول تأیید می‌کنم که کد را نگه داشتم.'); return; } onbDone(); });
       gateBody.appendChild(go); gateBody.appendChild(glink(TT('رجوع', 'Back', 'بازگشت'), next('quran')));
     }
   }
@@ -2538,6 +2554,7 @@ module.exports = QRCode;
     var st = gateOff ? 'none' : gateState();
     var show = st !== 'none';
     document.documentElement.classList.toggle('gated', show);
+    if (show && window.AWRAD_APP && window.AWRAD_APP.dropLock) window.AWRAD_APP.dropLock();   // the door is the lock while I am outside; the app lock never sits over it
     if (!show) { if (active()) { rtStart(); poll(); } if (gateEl) gateEl.hidden = true; Array.prototype.forEach.call(document.body.children, function (c) { if (c.hasAttribute('data-gate-inert')) { c.inert = false; c.removeAttribute('data-gate-inert'); } }); gShown = ''; return; }
     if (!gateEl) { if (!document.body) return; buildGate(); }
     gateEl.hidden = false;
@@ -5592,6 +5609,8 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     quranPage: function () { return quran.page; },
     setQuranPage: function (n) { n = Math.min(604, Math.max(0, Math.round(+n) || 0)); quran.page = n; quran.start = quran.start || {}; quran.start[key(today)] = absPage(); quran.rev = (quran.rev || 0) + 1; saveQuran(); paintQuran(); },
     lockOn: lockOn, setLock: function (done) { showLock('set', function (ok) { if (done) done(!!ok); }); },
+    dropLock: function () { if (lockEl && lockEl.getAttribute('data-kind') !== 'set') { setInert(false); lockEl.remove(); lockEl = null; } },
+    clearLock: function () { saveLock(null); try { localStorage.removeItem(FAIL_KEY); localStorage.removeItem(AWAY_KEY); } catch (e) {} if (window.AWRAD_APP.dropLock) window.AWRAD_APP.dropLock(); },
     startDemo: function () { startDemo(true); }, stopDemo: stopDemo, inDemo: function () { return !!demo; },
     hasLocalData: function () { try { return Object.keys(localStorage).some(function (k) { return /^tracker:(\d{4}-\d{2}-\d{2}|logs$|quran$|config$)/.test(k) && (localStorage.getItem(k) || '').length > 4; }); } catch (e) { return false; } }
   });
@@ -6937,6 +6956,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   function L(ar, en) { return LANG === 'en' ? en : ar; }
   // kind: 'unlock' · 'set' (new, then confirm) · 'change' (current, new, confirm) · 'off' (current) · 'cover' (blur only, no keypad)
   function showLock(kind, done) {
+    if (kind !== 'set' && document.documentElement.classList.contains('gated')) return;   // outside, the sign-in page is the door; no app lock over it
     if ((kind === 'unlock' || kind === 'cover') && muhUnlocked) { muhUnlocked = false; if (view === 'log') renderLog(); }   // the app locking also locks my reckonings
     if (lockEl) { if (lockEl.getAttribute('data-kind') === 'cover' && kind !== 'cover') { setInert(false); lockEl.remove(); lockEl = null; } else return; }
     var step = kind === 'set' ? 'new' : kind === 'cover' ? 'cover' : 'current', buf = '', first = '', timerId = null;
