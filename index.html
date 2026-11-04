@@ -2697,9 +2697,15 @@ h1 { margin: 0; font-size: 24px; font-weight: 700; text-wrap: balance; }
 .day .dn, .day .dd { position: relative; z-index: 1; }
 .day .dd, #weekLabel .lp { display: inline-block; }
 /* the chosen day's highlight is one lasting piece that slides under the days (drawn by the compositor, so a busy phone does not make it stutter) */
-.dayind { position: absolute; left: 0; top: 0; z-index: 0; border-radius: 12px; background: var(--band); box-shadow: 0 0 0 1px var(--gold-soft); border: 1px solid var(--gold-soft); box-sizing: border-box; pointer-events: none; z-index: 0; will-change: transform; }
+.dayind { position: absolute; left: 0; top: 0; z-index: 2; overflow: hidden; border-radius: 12px; background: var(--band); box-shadow: 0 0 0 1px var(--gold-soft); border: 1px solid var(--gold-soft); box-sizing: border-box; pointer-events: none; will-change: transform; }
+/* inside it, a light copy of the whole row stands still while the highlight moves: each day reads light exactly where the highlight covers it, dark elsewhere */
+.dayindin { position: absolute; left: -1px; top: -1px; will-change: transform; }
+.dayindc { position: absolute; box-sizing: border-box; border: 1px solid transparent; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--band-ink); }
+.dayindc .dn { font-size: 11.5px; font-weight: 500; color: var(--gold-soft); }
+.dayindc .dd { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .days.hasind .day[aria-pressed="true"]::before { background: transparent; border-color: transparent; box-shadow: none; transition: none; }
-.days.hasind .day[aria-pressed="true"] { transition: color .18s .1s; }
+.days.hasind .day[aria-pressed="true"] { color: var(--ink); }
+.days.hasind .day[aria-pressed="true"] .dn { color: var(--muted); }
 .day .dd { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .day.today::before { border-color: var(--gold); }
 .day.later { opacity: .45; cursor: default; }
@@ -4231,14 +4237,29 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   }
   var dayInd = null, indSlide = false, dayTurn = 0;
   function placeInd(slide) {
-    var days = $('days'), b = days.querySelectorAll('.day')[selDay]; if (!b) return;
-    if (!dayInd) { dayInd = document.createElement('span'); dayInd.className = 'dayind'; dayInd.setAttribute('aria-hidden', 'true'); }
+    var days = $('days'), bs = days.querySelectorAll('.day'), b = bs[selDay]; if (!b) return;
+    if (!dayInd) { dayInd = document.createElement('span'); dayInd.className = 'dayind'; dayInd.setAttribute('aria-hidden', 'true'); dayInd.appendChild(document.createElement('span')).className = 'dayindin'; }
+    var inner = dayInd.firstChild;
     if (dayInd.parentNode !== days) { days.appendChild(dayInd); slide = false; }
     days.classList.add('hasind');
-    var from = dayInd.style.transform, to = 'translate(' + b.offsetLeft + 'px, ' + b.offsetTop + 'px)';
-    dayInd.style.width = b.offsetWidth + 'px'; dayInd.style.height = b.offsetHeight + 'px'; dayInd.style.transform = to;
-    dayInd.getAnimations().forEach(function (a) { a.cancel(); });
-    if (slide && from && from !== to && !REDUCED && dayInd.animate) dayInd.animate([{ transform: from }, { transform: to }], { duration: 320, easing: 'cubic-bezier(.3,.7,.2,1)' });
+    inner.textContent = '';
+    Array.prototype.forEach.call(bs, function (x) {
+      var c = document.createElement('span'); c.className = 'dayindc';
+      c.style.left = x.offsetLeft + 'px'; c.style.top = x.offsetTop + 'px'; c.style.width = x.offsetWidth + 'px'; c.style.height = x.offsetHeight + 'px';
+      var n = document.createElement('span'); n.className = 'dn'; n.textContent = x.children[0].textContent;
+      var d = document.createElement('span'); d.className = 'dd'; d.textContent = x.children[1].textContent;
+      c.appendChild(n); c.appendChild(d); inner.appendChild(c);
+    });
+    var T = function (x, y) { return 'translate(' + x + 'px, ' + y + 'px)'; };
+    var fx = dayInd._x, fy = dayInd._y, tx = b.offsetLeft, ty = b.offsetTop; dayInd._x = tx; dayInd._y = ty;
+    dayInd.style.width = b.offsetWidth + 'px'; dayInd.style.height = b.offsetHeight + 'px'; dayInd.style.borderRadius = getComputedStyle(b).borderTopLeftRadius;
+    dayInd.style.transform = T(tx, ty); inner.style.transform = T(-tx, -ty);
+    dayInd.getAnimations().forEach(function (a) { a.cancel(); }); inner.getAnimations().forEach(function (a) { a.cancel(); });
+    if (slide && fx != null && (fx !== tx || fy !== ty) && !REDUCED && dayInd.animate) {
+      var o = { duration: 340, easing: 'cubic-bezier(.3,.7,.2,1)' };
+      dayInd.animate([{ transform: T(fx, fy) }, { transform: T(tx, ty) }], o);
+      inner.animate([{ transform: T(-fx, -fy) }, { transform: T(-tx, -ty) }], o);
+    }
   }
   if (window.ResizeObserver) try { new ResizeObserver(function () { placeInd(false); }).observe($('days')); } catch (e) {}
   function isOn(id, i) { return !!cur()[id + '_' + i]; }
