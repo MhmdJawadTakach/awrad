@@ -3473,6 +3473,72 @@ html[dir="rtl"] .ring > svg { transform: rotate(-90deg) scaleY(-1); }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
+
+/* ================= «الإتقان»: the same Awrad, finished with more care =================
+   paper barely patterned; cards with quiet edges, a soft deep shadow and a small gold corner; a khatam for each area's number;
+   more air in the rows, hairlines that start after the icon; a count and a filling line under each area's title;
+   under each day, a thin bar of how much of it was done; on phones, a floating tab bar */
+:root { --surface: #FFFEFB; --edge: color-mix(in srgb, var(--gold-soft) 30%, var(--line)); --hair: color-mix(in srgb, var(--line) 62%, transparent);
+  --lift: 0 1px 1px rgba(70,50,15,.04), 0 10px 28px -16px rgba(70,50,15,.16); --tile: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2772%27%20height%3D%2772%27%20viewBox%3D%270%200%2072%2072%27%3E%3Cpolygon%20points%3D%2736.00%2C26.00%2038.91%2C28.98%2043.07%2C28.93%2043.02%2C33.09%2046.00%2C36.00%2043.02%2C38.91%2043.07%2C43.07%2038.91%2C43.02%2036.00%2C46.00%2033.09%2C43.02%2028.93%2C43.07%2028.98%2C38.91%2026.00%2C36.00%2028.98%2C33.09%2028.93%2C28.93%2033.09%2C28.98%27%20fill%3D%27none%27%20stroke%3D%27%23BFA978%27%20stroke-opacity%3D%27.22%27%20stroke-width%3D%27.8%27/%3E%3C/svg%3E"); }
+:root[data-palette="navy"] { --surface: #FFFFFF; }
+:root[data-theme="dark"] { --surface: #1A201D; --lift: 0 1px 1px rgba(0,0,0,.25), 0 12px 28px -18px rgba(0,0,0,.6); --tile: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2772%27%20height%3D%2772%27%20viewBox%3D%270%200%2072%2072%27%3E%3Cpolygon%20points%3D%2736.00%2C26.00%2038.91%2C28.98%2043.07%2C28.93%2043.02%2C33.09%2046.00%2C36.00%2043.02%2C38.91%2043.07%2C43.07%2038.91%2C43.02%2036.00%2C46.00%2033.09%2C43.02%2028.93%2C43.07%2028.98%2C38.91%2026.00%2C36.00%2028.98%2C33.09%2028.93%2C28.93%2033.09%2C28.98%27%20fill%3D%27none%27%20stroke%3D%27%23D9B868%27%20stroke-opacity%3D%27.07%27%20stroke-width%3D%27.8%27/%3E%3C/svg%3E"); }
+:root[data-theme="dark"][data-palette="navy"] { --surface: #181E28; } :root[data-theme="dark"][data-palette="burgundy"] { --surface: #211919; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --surface: #1A201D; --lift: 0 1px 1px rgba(0,0,0,.25), 0 12px 28px -18px rgba(0,0,0,.6); --tile: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2772%27%20height%3D%2772%27%20viewBox%3D%270%200%2072%2072%27%3E%3Cpolygon%20points%3D%2736.00%2C26.00%2038.91%2C28.98%2043.07%2C28.93%2043.02%2C33.09%2046.00%2C36.00%2043.02%2C38.91%2043.07%2C43.07%2038.91%2C43.02%2036.00%2C46.00%2033.09%2C43.02%2028.93%2C43.07%2028.98%2C38.91%2026.00%2C36.00%2028.98%2C33.09%2028.93%2C28.93%2033.09%2C28.98%27%20fill%3D%27none%27%20stroke%3D%27%23D9B868%27%20stroke-opacity%3D%27.07%27%20stroke-width%3D%27.8%27/%3E%3C/svg%3E"); }
+  :root[data-palette="navy"]:not([data-theme="light"]) { --surface: #181E28; } :root[data-palette="burgundy"]:not([data-theme="light"]) { --surface: #211919; }
+}
+body { background-image: var(--tile); }
+.card { border-color: var(--edge); border-radius: 18px; box-shadow: var(--lift); position: relative; }
+.card::before, .card::after { content: ''; position: absolute; top: 7px; width: 12px; height: 12px; background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2040%2040%27%3E%3Cpath%20d%3D%27M3%2020%20V9%20Q3%203%209%203%20H20%27%20fill%3D%27none%27%20stroke%3D%27%23C9A55A%27%20stroke-width%3D%271.6%27/%3E%3Ccircle%20cx%3D%2711%27%20cy%3D%2711%27%20r%3D%272.2%27%20fill%3D%27%23C9A55A%27/%3E%3C/svg%3E") no-repeat center / contain; opacity: .55; pointer-events: none; z-index: 1; }
+.card::before { left: 7px; } .card::after { right: 7px; transform: scaleX(-1); }
+.card h2 { font-size: 16.5px; padding: 16px 20px 14px; border-bottom: 0; position: relative; }
+.card h2::after { content: ''; position: absolute; left: 20px; right: 20px; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--edge) 15%, var(--edge) 85%, transparent); }
+.card.shut > h2::after { display: none; }
+.num { width: 30px; height: 30px; border-radius: 0; position: relative; font-size: 12.5px; background: none; color: var(--band-ink); isolation: isolate; }
+.num::before, .num::after { content: ''; position: absolute; inset: 0; z-index: -1; }
+.num::before { background: var(--band); -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2040%2040%27%3E%3Cpolygon%20points%3D%2720.00%2C0.50%2025.89%2C5.77%2033.79%2C6.21%2034.23%2C14.11%2039.50%2C20.00%2034.23%2C25.89%2033.79%2C33.79%2025.89%2C34.23%2020.00%2C39.50%2014.11%2C34.23%206.21%2C33.79%205.77%2C25.89%200.50%2C20.00%205.77%2C14.11%206.21%2C6.21%2014.11%2C5.77%27/%3E%3C/svg%3E") no-repeat center / contain; mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2040%2040%27%3E%3Cpolygon%20points%3D%2720.00%2C0.50%2025.89%2C5.77%2033.79%2C6.21%2034.23%2C14.11%2039.50%2C20.00%2034.23%2C25.89%2033.79%2C33.79%2025.89%2C34.23%2020.00%2C39.50%2014.11%2C34.23%206.21%2C33.79%205.77%2C25.89%200.50%2C20.00%205.77%2C14.11%206.21%2C6.21%2014.11%2C5.77%27/%3E%3C/svg%3E") no-repeat center / contain; }
+.num::after { background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2040%2040%27%3E%3Cpolygon%20points%3D%2720.00%2C2.80%2025.20%2C7.44%2032.16%2C7.84%2032.56%2C14.80%2037.20%2C20.00%2032.56%2C25.20%2032.16%2C32.16%2025.20%2C32.56%2020.00%2C37.20%2014.80%2C32.56%207.84%2C32.16%207.44%2C25.20%202.80%2C20.00%207.44%2C14.80%207.84%2C7.84%2014.80%2C7.44%27%20fill%3D%27none%27%20stroke%3D%27%23D4B26A%27%20stroke-opacity%3D%27.75%27%20stroke-width%3D%27.9%27/%3E%3C/svg%3E") no-repeat center / contain; }
+.card.sec.done h2 .num { background: none; color: #FFFFFF; }
+.card.sec.done h2 .num::before { background: var(--gold); }
+.card.sec.done { border-color: color-mix(in srgb, var(--gold) 55%, var(--edge)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 45%, transparent), 0 12px 30px -16px rgba(140,100,25,.28); }
+.card.sec.done h2 { background: transparent; }
+/* each area: how many of its items are ticked today, and a line that fills under the title */
+.card.sec h2 .cnt { margin-inline-start: auto; font-size: 12.5px; font-weight: 600; color: var(--muted); background: var(--chip); border-radius: 999px; padding: 3px 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.card.sec.done h2 .cnt { color: var(--gold-ink); background: color-mix(in srgb, var(--gold-soft) 22%, var(--surface)); }
+.card.sec h2 .sfill { position: absolute; inset-inline-start: 20px; bottom: -.5px; height: 2px; width: calc((100% - 40px) * var(--f, 0)); border-radius: 2px; background: var(--check); z-index: 1; transition: width .45s cubic-bezier(.22,.61,.36,1), background-color .3s; }
+.card.sec.done h2 .sfill { background: var(--gold); }
+/* rows: more air; the hairline starts after the icon */
+.item { border-bottom: 0; position: relative; background: transparent; }
+.item + .item::before { content: ''; position: absolute; top: 0; inset-inline-start: 104px; inset-inline-end: 18px; height: 1px; background: var(--hair); }
+.row { min-height: 60px; padding-inline: 16px 4px; gap: 12px; }
+.rowwrap { padding-inline-end: 12px; }
+.iic { width: 36px; height: 36px; border-radius: 12px; }
+.iic svg { width: 19px; height: 19px; }
+.box { width: 26px; height: 26px; border-radius: 8px; border-width: 1.6px; border-color: color-mix(in srgb, var(--check) 45%, var(--line)); background: var(--surface); }
+.row input:checked + .box { background: var(--check); border-color: var(--check); box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--check) 60%, transparent), inset 0 1px 0 rgba(255,255,255,.18); }
+.item.done .row input:checked + .box { box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--gold) 65%, transparent), inset 0 1px 0 rgba(255,255,255,.25); }
+@media (max-width: 340px) { .row { gap: 10px; } .iic { width: 34px; height: 34px; } .txt small { overflow-wrap: anywhere; } }   /* the narrowest phones keep room for the item's words */
+@media (min-width: 341px) { .strip { grid-template-columns: repeat(7, 6px); gap: 4px; } .strip i { width: 6px; height: 6px; } }
+.strip i.sel { box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.2px var(--gold-soft); }
+/* the week */
+.day::before { border-color: var(--edge); border-radius: 16px; box-shadow: 0 1px 1px rgba(70,50,15,.04); }
+.day, .dayind { border-radius: 16px; }
+.day .dd { font-size: 18px; }
+.dayind { background: linear-gradient(180deg, color-mix(in srgb, var(--band) 88%, #FFFFFF), var(--band)); border-color: var(--gold-soft); box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--band) 70%, transparent), 0 0 0 1px var(--gold-soft); }
+.weeknav .iconbtn { border-color: var(--edge); box-shadow: 0 1px 1px rgba(70,50,15,.04); }
+.weekside { gap: 12px; }
+/* under each day: a thin bar of how much of it was done */
+.day .dp, .dayindc .dp { position: relative; z-index: 1; width: 22px; height: 3px; border-radius: 2px; margin-top: 3px; overflow: hidden; background: color-mix(in srgb, var(--line) 75%, transparent); }
+.day .dp i, .dayindc .dp i { position: absolute; top: 0; bottom: 0; inset-inline-start: 0; border-radius: 2px; background: var(--check); transition: width .4s cubic-bezier(.22,.61,.36,1); }
+.day .dp[hidden], .dayindc .dp[hidden] { visibility: hidden; display: block; }
+.dayindc .dp { background: rgba(255,255,255,.2); } .dayindc .dp i { background: var(--gold-soft); }
+/* phones: the tab bar floats */
+@media (max-width: 640px) {
+  .tabs { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 4px 6px; border-radius: 22px; border: 1px solid color-mix(in srgb, var(--gold-soft) 38%, transparent); box-shadow: 0 14px 30px -10px rgba(20,40,32,.55); }
+  .tab { min-height: 54px; border-top: 0; border-radius: 16px; margin: 2px; padding: 7px 4px 8px; }
+  .tab[aria-selected="true"] { border-top-color: transparent; background: color-mix(in srgb, var(--gold-soft) 16%, transparent); }
+  body { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+}
 </style>
 
 <header>
@@ -4224,7 +4290,8 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       b.setAttribute('aria-label', DAY_NAMES[i] + ' ' + fShort.format(d));
       var dn = document.createElement('span'); dn.className = 'dn'; dn.textContent = LANG === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i] : DAY_NAMES[i];
       var dd = document.createElement('span'); dd.className = 'dd'; dd.textContent = dayNum(d);
-      b.appendChild(dn); b.appendChild(dd);
+      var dp = document.createElement('span'); dp.className = 'dp'; dp.setAttribute('aria-hidden', 'true'); dp.appendChild(document.createElement('i'));
+      b.appendChild(dn); b.appendChild(dd); b.appendChild(dp);
       if (d > today) { b.disabled = true; b.classList.add('later'); }   // a day still to come cannot be ticked
       b.addEventListener('click', (function (idx) { return function () { if (idx === selDay) return; selDay = idx; indSlide = true; renderHeader(); indSlide = false;
         // the list is drawn in the next frame, once the highlight is on its way
@@ -4233,9 +4300,18 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       if (rollDir) rollIn(dd, rollDir, i * 22);   // the dates roll, day after day
     }
     $('next').disabled = key(weekStart) >= key(thisMonday);
+    paintDayBars();
     placeInd(indSlide);
   }
   var dayInd = null, indSlide = false, dayTurn = 0;
+  // under each day, a thin bar of how much of it was done (the same measure as the Progress page)
+  function paintDayBars() {
+    var bs = $('days').querySelectorAll('.day'), cs = dayInd ? dayInd.querySelectorAll('.dayindc .dp') : [];
+    Array.prototype.forEach.call(bs, function (b, i) {
+      var d = addDays(weekStart, i), r = d > today ? null : rate(d, d), w = r == null ? '' : Math.round(r * 100) + '%';
+      [b.querySelector('.dp'), cs[i]].forEach(function (dp) { if (!dp) return; dp.hidden = r == null; dp.firstChild.style.width = w || '0'; });
+    });
+  }
   function placeInd(slide) {
     var days = $('days'), bs = days.querySelectorAll('.day'), b = bs[selDay]; if (!b) return;
     if (!dayInd) { dayInd = document.createElement('span'); dayInd.className = 'dayind'; dayInd.setAttribute('aria-hidden', 'true'); dayInd.appendChild(document.createElement('span')).className = 'dayindin'; }
@@ -4248,7 +4324,9 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       c.style.left = x.offsetLeft + 'px'; c.style.top = x.offsetTop + 'px'; c.style.width = x.offsetWidth + 'px'; c.style.height = x.offsetHeight + 'px';
       var n = document.createElement('span'); n.className = 'dn'; n.textContent = x.children[0].textContent;
       var d = document.createElement('span'); d.className = 'dd'; d.textContent = x.children[1].textContent;
-      c.appendChild(n); c.appendChild(d); inner.appendChild(c);
+      c.appendChild(n); c.appendChild(d);
+      var xp = x.querySelector('.dp'); if (xp) { var cp = xp.cloneNode(true); cp.hidden = xp.hidden; c.appendChild(cp); }
+      inner.appendChild(c);
     });
     var T = function (x, y) { return 'translate(' + x + 'px, ' + y + 'px)'; };
     var fx = dayInd._x, fy = dayInd._y, tx = b.offsetLeft, ty = b.offsetTop; dayInd._x = tx; dayInd._y = ty;
@@ -4271,7 +4349,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var h = document.createElement('h2');
       var n = document.createElement('span'); n.className = 'num'; n.textContent = String(si + 1);
       var stt = document.createElement('span'); stt.textContent = sec.title; if (typeof sec.key === 'string') stt.setAttribute('data-raw', '');
-      h.appendChild(n); h.appendChild(icon(sec.icon, 'sic')); h.appendChild(stt); s.appendChild(h);
+      h.appendChild(n); h.appendChild(icon(sec.icon, 'sic')); h.appendChild(stt); secMeter(h, si); s.appendChild(h);
       sec.items.forEach(function (it) {
         var id = it[0], wrapItem = document.createElement('div'); wrapItem.className = 'item'; wrapItem.id = 'it-' + id;
         var rw = document.createElement('div'); rw.className = 'rowwrap';
@@ -4325,6 +4403,12 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     return (isWide() ? 'W' : 'N') + key(weekStart) + '|' + selDay + '|' + JSON.stringify(cur()) + '|' + ents + '|' + openForm + '|' + ALL.map(function (x) { return x.id; }).join(',') + '|' + JSON.stringify(mushOn(addDays(weekStart, selDay)).map(function (m) { return [m.t, m.kept]; }));
   }
   // sync checkbox, week dots and gold "done" states without rebuilding the DOM
+  // an area's heading: how many of its items are ticked on the chosen day, and a line that fills under it
+  function secMeter(h, si) {
+    var c = document.createElement('span'); c.className = 'cnt'; c.id = 'sc-' + si;
+    var f = document.createElement('span'); f.className = 'sfill'; f.id = 'sf-' + si; f.setAttribute('aria-hidden', 'true');
+    h.appendChild(c); h.appendChild(f);
+  }
   function paintStates() {
     paintGrid();
     ALL.forEach(function (x) {
@@ -4339,7 +4423,12 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var card = $('sec-' + si); if (!card) return;
       var need = sec.items.filter(function (it) { return !EXTRA[it[0]] && targetFor(it[0], weekStart) >= 7 && activeIn({ id: it[0] }, key(weekStart)); });
       card.classList.toggle('done', need.length > 0 && need.every(function (it) { return isOn(it[0], selDay); }));
+      var shown = ALL.filter(function (x) { return x.sec === si && ($('it-' + x.id) || $('gr-' + x.id)); }), on = shown.filter(function (x) { return isOn(x.id, selDay); }).length;
+      var sc = $('sc-' + si), sf = $('sf-' + si);
+      if (sc) { sc.hidden = !shown.length; rawText(sc, T3(on + ' من ' + shown.length, on + ' of ' + shown.length, on + ' از ' + shown.length)); }
+      if (sf) sf.style.setProperty('--f', shown.length ? (on / shown.length).toFixed(3) : '0');
     });
+    paintDayBars();
     var mb = $('muhMiss'); if (mb) paintMiss(mb);
   }
   function toggle(id, i, on) {
@@ -4454,7 +4543,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var card = document.createElement('div'); card.className = 'card sec'; card.id = 'sec-' + si;
       var h = document.createElement('h2');
       var n = document.createElement('span'); n.className = 'num'; n.textContent = String(si + 1);
-      h.appendChild(n); h.appendChild(icon(sec.icon, 'sic')); h.appendChild(document.createTextNode(sec.title)); card.appendChild(h);
+      h.appendChild(n); h.appendChild(icon(sec.icon, 'sic')); h.appendChild(document.createTextNode(sec.title)); secMeter(h, si); card.appendChild(h);
       var t = document.createElement('table'); t.className = 'wk'; t.innerHTML = colgroup();
       var tb = document.createElement('tbody');
       sec.items.forEach(function (it) {
