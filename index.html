@@ -3158,7 +3158,7 @@ details.changes summary:focus-visible { outline: 3px solid var(--gold); outline-
 .muhhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .muhhead .ld { font-weight: 700; font-size: 14px; }
 .muhans { font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; white-space: pre-wrap; }
-.muhans b { color: var(--gold-ink); font-size: 13px; margin-inline-end: 6px; }
+.muhans b { display: inline-block; vertical-align: 1px; color: var(--gold-ink); font-size: 12.5px; font-weight: 700; line-height: 1.5; padding: 1px 9px; margin-inline-end: 8px; border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent); background: color-mix(in srgb, var(--gold-soft) 22%, var(--surface)); border-radius: 7px; white-space: nowrap; min-width: 4.6em; text-align: center; box-sizing: border-box; }
 .muhopen { border: 0; background: transparent; color: var(--gold-ink); font: inherit; font-size: 13px; font-weight: 600; min-height: 36px; padding: 0 6px; border-radius: 8px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .muhopen:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .dumpstat { min-height: 20px; padding: 8px 16px 14px; font-size: 13px; color: var(--gold-ink); font-weight: 600; }
@@ -3368,7 +3368,8 @@ html[dir="rtl"] .ring > svg { transform: rotate(-90deg) scaleY(-1); }
 .alist { display: flex; flex-direction: column; }
 .arow { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(60px, 34%) 42px 18px; align-items: center; gap: 10px; width: 100%; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font: inherit; text-align: start; cursor: pointer; min-height: 52px; }
 .arow:hover { background: color-mix(in srgb, var(--chip) 40%, transparent); }
-.arow .an { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.arow .an { font-size: 14px; font-weight: 600; line-height: 1.45; text-align: start; overflow-wrap: anywhere; text-wrap: pretty; }
+@media (max-width: 520px) { .arow { grid-template-columns: auto minmax(0, 1fr) minmax(52px, 26%) 40px 16px; gap: 8px; } }
 .arow .atr { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
 .arow .afl { display: block; height: 100%; border-radius: inherit; }
 .afl.good, .mbf.good, .wbf.good { background: var(--good); } .afl.mid, .mbf.mid, .wbf.mid { background: var(--gold); } .afl.weak, .mbf.weak, .wbf.weak { background: var(--warn); }
