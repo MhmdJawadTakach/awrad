@@ -5167,21 +5167,37 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     });
   }
   function weekSwap(olds, from) {
-    var DUR = 1000, WIPE = 'cubic-bezier(.65,0,.35,1)';
+    var DUR = 1000, WIPE = 'cubic-bezier(.65,0,.35,1)', sideB = from < 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)', last = 0;
+    // each window has its own thin gold edge: it crosses the window from the side of the arrow; behind it the old week melts into a haze,
+    // and the new one beneath comes into focus. The windows nearest the arrow go first.
+    function wipe(w, delay) {
+      if (getComputedStyle(w).position === 'static') w.style.position = 'relative';
+      w.style.overflow = 'hidden';
+      var edge = document.createElement('i'); edge.className = 'wkedge'; edge.setAttribute('aria-hidden', 'true');
+      edge.style.cssText = 'position:absolute;z-index:9;top:0;bottom:0;width:2px;pointer-events:none;background:linear-gradient(transparent,var(--gold) 20%,var(--gold) 80%,transparent);box-shadow:0 0 10px var(--gold);' + (from < 0 ? 'left:0' : 'right:0');
+      w.appendChild(edge);
+      var o = { duration: DUR, delay: delay, easing: WIPE, fill: 'both' };
+      w.animate([{ clipPath: 'inset(0 0 0 0)', filter: 'blur(0)', opacity: 1 }, { filter: 'blur(4px)', opacity: .6, offset: .6 }, { clipPath: sideB, filter: 'blur(7px)', opacity: 0 }], o);
+      edge.animate([{ transform: 'translateX(0)', opacity: 1 }, { opacity: 1, offset: .85 }, { transform: 'translateX(' + (from < 0 ? w.offsetWidth : -w.offsetWidth) + 'px)', opacity: 0 }], o);
+      last = Math.max(last, delay);
+    }
+    var X = function (w) { return w.getBoundingClientRect().left; };
+    // order the windows by column across the whole page, the column nearest the arrow first
+    function order(ws, step) {
+      var lefts = ws.map(X);
+      var cols = lefts.filter(function (x, i) { return lefts.findIndex(function (y) { return Math.abs(y - x) < 40; }) === i; }).sort(function (p, q) { return from < 0 ? p - q : q - p; });
+      ws.forEach(function (w, i) { wipe(w, Math.max(0, cols.findIndex(function (x) { return Math.abs(x - lefts[i]) < 40; })) * step); });
+    }
+    var cards = [], days = [];
     (olds || []).forEach(function (o) {
-      var g = o.ghost, el = o.el, a;
-      // a thin gold edge crosses from the side of the arrow; behind it the old week melts into a haze, and the new one beneath comes into focus
-      var sideB = from < 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)';
-      g.style.background = 'var(--bg)';
-      var edge = document.createElement('i'); edge.className = 'wkedge';
-      edge.style.cssText = 'position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(transparent,var(--gold),transparent);box-shadow:0 0 12px var(--gold);' + (from < 0 ? 'left:0' : 'right:0');
-      g.appendChild(edge);
-      a = g.animate([{ clipPath: 'inset(0 0 0 0)', filter: 'blur(0)', opacity: 1 }, { filter: 'blur(5px)', opacity: .55, offset: .6 }, { clipPath: sideB, filter: 'blur(8px)', opacity: 0 }], { duration: DUR, easing: WIPE, fill: 'forwards' });
-      edge.animate([{ transform: 'translateX(0)', opacity: 1 }, { opacity: 1, offset: .85 }, { transform: 'translateX(' + (from < 0 ? g.offsetWidth : -g.offsetWidth) + 'px)', opacity: 0 }], { duration: DUR, easing: WIPE, fill: 'forwards' });
-      el.animate([{ opacity: .2, filter: 'blur(6px)', transform: 'scale(.99)' }, { opacity: 1, filter: 'blur(0)', transform: 'none' }], { duration: 900, delay: 150, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' });
-      a.onfinish = a.oncancel = function () { g.remove(); };
-      setTimeout(function () { if (g.parentNode) g.remove(); }, DUR + 400);
+      var g = o.ghost, ind = g.querySelector('.dayind');
+      if (ind) ind.remove();   // the chosen day's highlight is the live one beneath, not a copy
+      if (g.id === 'days') days = Array.prototype.slice.call(g.querySelectorAll('.day'));
+      else Array.prototype.forEach.call(g.querySelectorAll('.card'), function (c) { if (!c.parentNode.closest('.card') && c.offsetHeight && c.getBoundingClientRect().top < innerHeight + 40) cards.push(c); });
+      o.el.animate([{ opacity: .2, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: 900, delay: 150, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' });
     });
+    order(days, 60); order(cards, 140);
+    setTimeout(function () { (olds || []).forEach(function (o) { if (o.ghost.parentNode) o.ghost.remove(); }); }, DUR + last + 60);
   }
   function go(ws, sd, now) {   // now: render at once, without the page turn (opening a day from the Log)
     if (ws > thisMonday) return; if (key(ws) === key(thisMonday) && sd > (today.getDay() + 6) % 7) sd = (today.getDay() + 6) % 7;
