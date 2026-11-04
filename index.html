@@ -3160,7 +3160,9 @@ details.changes summary:focus-visible { outline: 3px solid var(--gold); outline-
 .muhans { font-size: 15px; line-height: 1.7; overflow-wrap: anywhere; white-space: pre-wrap; }
 .muhans b { display: inline-block; vertical-align: 1px; color: var(--gold-ink); font-size: 12.5px; font-weight: 700; line-height: 1.5; padding: 1px 9px; margin-inline-end: 8px; border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent); background: color-mix(in srgb, var(--gold-soft) 22%, var(--surface)); border-radius: 7px; white-space: nowrap; min-width: 4.6em; text-align: center; box-sizing: border-box; }
 .muhopen { border: 0; background: transparent; color: var(--gold-ink); font: inherit; font-size: 13px; font-weight: 600; min-height: 36px; padding: 0 6px; border-radius: 8px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-.muhopen:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.muhdate { border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 14px; font-weight: 700; text-align: start; min-height: 36px; padding: 0 4px; margin-inline-start: -4px; border-radius: 8px; cursor: pointer; text-decoration: underline dotted color-mix(in srgb, var(--gold) 60%, transparent); text-underline-offset: 5px; }
+.muhdate:hover { color: var(--gold-ink); text-decoration-style: solid; }
+.muhopen:focus-visible, .muhdate:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .dumpstat { min-height: 20px; padding: 8px 16px 14px; font-size: 13px; color: var(--gold-ink); font-weight: 600; }
 .khatma { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
 .ktop { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
@@ -5170,8 +5172,9 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
         if (mk !== lastM) { lastM = mk; var mh = document.createElement('div'); mh.className = 'lmonth'; mh.textContent = fMonthY.format(x.d); ll.appendChild(mh); }
         var e = document.createElement('div'); e.className = 'muhent';
         var hd = document.createElement('div'); hd.className = 'muhhead';
-        var dd = document.createElement('span'); dd.className = 'ld'; dd.textContent = DAY_NAMES[(x.d.getDay() + 6) % 7] + ' ' + dayNum(x.d); hd.appendChild(dd);
-        var ob = document.createElement('button'); ob.type = 'button'; ob.className = 'muhopen'; ob.textContent = 'فتح اليوم';
+        // the date in full is the way into that day: «الأحد 2 تشرين الثاني 2026 م»
+        var ob = document.createElement('button'); ob.type = 'button'; ob.className = 'ld muhdate'; ob.setAttribute('aria-label', 'فتح اليوم'); ob.title = 'فتح اليوم';
+        rawText(ob, LANG === 'ar' ? DAY_NAMES[(x.d.getDay() + 6) % 7] + ' ' + fLong.format(x.d) + ' م' : fToday.format(x.d)); hd.appendChild(ob);
         ob.addEventListener('click', function () { muhOpen = true; setView('track'); go(mondayOf(x.d), (x.d.getDay() + 6) % 7, true); var f = $('muh-mg'); if (f) { f.scrollIntoView({ block: 'center' }); f.focus({ preventScroll: true }); } });
         var acts = document.createElement('span'); acts.className = 'muhacts';
         var tb = document.createElement('button'); tb.type = 'button'; tb.className = 'muhdel'; tb.setAttribute('aria-label', 'حذف هذه المحاسبة'); tb.title = 'حذف هذه المحاسبة';
@@ -5186,7 +5189,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
           renderLog(); var u = $('muhLogUndo'); if (u) u.focus();
         });
         tb.addEventListener('blur', function () { tb.classList.remove('armed'); });
-        acts.appendChild(tb); acts.appendChild(ob); hd.appendChild(acts); e.appendChild(hd);
+        acts.appendChild(tb); hd.appendChild(acts); e.appendChild(hd);
         MUH.forEach(function (q) {
           if (!x.o[q[0]]) return;
           var a = document.createElement('div'); a.className = 'muhans';
