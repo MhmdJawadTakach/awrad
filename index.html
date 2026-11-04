@@ -2348,7 +2348,7 @@ module.exports = QRCode;
     return b;
   }
   function orLine() { return el('div', 'gor', TT('أو', 'or', 'یا')); }
-  function idRules(v) { return !normId(v.gId) ? TT('أكتب اسم المستخدم أو البريد.', 'I type my user name or email.', 'نام کاربری یا ایمیلم را می‌نویسم.') : ''; }
+  function idRules(v) { return !normId(v.gId) ? TT('أكتب بريدي أو اسم المستخدم.', 'I type my email or user name.', 'ایمیل یا نام کاربری‌ام را می‌نویسم.') : ''; }
   function newPwRules(pw, again) {
     if (String(pw).length < 8) return TT('أختار كلمة مرور من 8 أحرف على الأقل.', 'I choose a password of at least 8 characters.', 'گذرواژه‌ای دست‌کم ۸ نویسه انتخاب می‌کنم.');
     if (again !== undefined && pw !== again) return TT('الكلمتان غير متطابقتين.', 'The two do not match.', 'دو گذرواژه یکی نیستند.');
@@ -2367,7 +2367,7 @@ module.exports = QRCode;
     if (gtab === 'in' && gview === 'forgot') {
       gateBody.appendChild(el('h2', 'gh', TT('نسيت كلمة المرور', 'I forgot my password', 'گذرواژه را فراموش کردم')));
       gateBody.appendChild(gp(TT('بياناتي مشفّرة بكلمة مروري، فلا يفتحها إلا رمز الاستعادة الذي حفظته يوم أنشأت حسابي. أكتبه مع كلمة مرور جديدة.', 'My data is encrypted with my password, so only the recovery code I saved when I made my account opens it. I type it with a new password.', 'داده‌هایم با گذرواژه‌ام رمزگذاری شده است، پس فقط کد بازیابی‌ای که هنگام ساخت حساب ذخیره کردم آن را باز می‌کند. آن را با گذرواژهٔ تازه می‌نویسم.')));
-      gateBody.appendChild(gform([gfield('gId', TT('اسم المستخدم أو البريد', 'User name or email', 'نام کاربری یا ایمیل'), 'text', 'username'), gfield('gCode', TT('رمز الاستعادة', 'Recovery code', 'کد بازیابی'), 'text', 'off'),
+      gateBody.appendChild(gform([gfield('gId', TT('البريد أو اسم المستخدم', 'Email or user name', 'ایمیل یا نام کاربری'), 'text', 'username'), gfield('gCode', TT('رمز الاستعادة', 'Recovery code', 'کد بازیابی'), 'text', 'off'),
         gfield('gPw', TT('كلمة مرور جديدة', 'New password', 'گذرواژهٔ تازه'), 'password', 'new-password'), gfield('gPw2', TT('كلمة المرور مرة ثانية', 'The password again', 'گذرواژه دوباره'), 'password', 'new-password')],
         TT('افتح حسابي', 'Open my account', 'حسابم را باز کن'), Object.assign(function (v) { return reset2(v.gId, v.gCode, v.gPw); }, { check: function (v) { return idRules(v) || (normCode(v.gCode).length < 20 ? TT('أكتب رمز الاستعادة كاملاً.', 'I type the whole recovery code.', 'کد بازیابی را کامل می‌نویسم.') : '') || newPwRules(v.gPw, v.gPw2); } }),
         glink(TT('رجوع', 'Back', 'بازگشت'), function () { gview = ''; paintGate(true); })));
@@ -2385,17 +2385,17 @@ module.exports = QRCode;
       var after = el('div', 'glinks');
       after.appendChild(glink(TT('نسيت كلمة المرور', 'I forgot my password', 'گذرواژه را فراموش کردم'), function () { gview = 'forgot'; paintGate(true); }));
       if (mailOn) after.appendChild(glink(TT('الدخول برمز على البريد', 'Sign in with a code by email', 'ورود با کد ایمیلی'), function () { gview = 'mail'; paintGate(true); }));
-      gateBody.appendChild(gform([gfield('gId', TT('اسم المستخدم أو البريد', 'User name or email', 'نام کاربری یا ایمیل'), 'text', 'username'), gfield('gPw', TT('كلمة المرور', 'Password', 'گذرواژه'), 'password', 'current-password')],
+      gateBody.appendChild(gform([gfield('gId', TT('البريد أو اسم المستخدم', 'Email or user name', 'ایمیل یا نام کاربری'), 'text', 'username'), gfield('gPw', TT('كلمة المرور', 'Password', 'گذرواژه'), 'password', 'current-password')],
         TT('دخول', 'Sign in', 'ورود'), Object.assign(function (v) { return signIn2(v.gId, v.gPw); }, { check: function (v) { return idRules(v) || (!v.gPw ? TT('أكتب كلمة المرور.', 'I type my password.', 'گذرواژه‌ام را می‌نویسم.') : ''); } }), after));
     } else {
       if (gb) { gateBody.appendChild(gb); gateBody.appendChild(orLine()); }
-      var fields = [gfield('gUser', TT('اسم المستخدم', 'User name', 'نام کاربری'), 'text', 'username', TT('حروف إنجليزية صغيرة وأرقام، من 3 إلى 24.', 'Small English letters and digits, 3 to 24.', 'حروف کوچک انگلیسی و عدد، ۳ تا ۲۴.'))];
-      fields.push(gfield('gMail', TT('البريد الإلكتروني', 'Email', 'ایمیل'), 'email', 'email', mailOn ? TT('أدخل به أيضاً. يصلني رمز لتأكيده.', 'I can sign in with it too. A code comes to confirm it.', 'با آن هم وارد می‌شوم. کدی برای تأیید آن می‌رسد.') : TT('أدخل به أيضاً بدل اسم المستخدم.', 'I can sign in with it too, instead of the user name.', 'به‌جای نام کاربری با آن هم وارد می‌شوم.')));
+      // the email first: it is the account; the user name comes after it, a shorter way in
+      var fields = [gfield('gMail', TT('البريد الإلكتروني', 'Email', 'ایمیل'), 'email', 'email', mailOn ? TT('هو أساس حسابي، وبه أدخل. يصلني رمز لتأكيده.', 'My account rests on it, and I sign in with it. A code comes to confirm it.', 'پایهٔ حسابم است و با آن وارد می‌شوم. کدی برای تأیید آن می‌رسد.') : TT('هو أساس حسابي، وبه أدخل.', 'My account rests on it, and I sign in with it.', 'پایهٔ حسابم است و با آن وارد می‌شوم.'))];
+      fields.push(gfield('gUser', TT('اسم المستخدم', 'User name', 'نام کاربری'), 'text', 'username', TT('أدخل به أيضاً بدل البريد. حروف إنجليزية صغيرة وأرقام، من 3 إلى 24.', 'I can sign in with it too, instead of the email. Small English letters and digits, 3 to 24.', 'به‌جای ایمیل با آن هم وارد می‌شوم. حروف کوچک انگلیسی و عدد، ۳ تا ۲۴.')));
       fields.push(gfield('gPw', TT('كلمة المرور', 'Password', 'گذرواژه'), 'password', 'new-password', TT('8 أحرف على الأقل. هي أيضاً مفتاح بياناتي المشفّرة.', 'At least 8 characters. It is also the key to my encrypted data.', 'دست‌کم ۸ نویسه. کلید داده‌های رمزگذاری‌شده‌ام هم هست.')));
       fields.push(gfield('gPw2', TT('كلمة المرور مرة ثانية', 'The password again', 'گذرواژه دوباره'), 'password', 'new-password'));
       var f = gform(fields, TT('أنشئ حسابي', 'Create my account', 'حسابم را بساز'), Object.assign(function (v) { return signUp2(v.gUser, v.gMail || '', v.gPw); },
-        { check: function (v) { return (!USER_RE.test(normId(v.gUser)) ? TT('الاسم من 3 إلى 24 حرفاً: حروف إنجليزية صغيرة وأرقام ونقطة وشرطة سفلية.', 'The name is 3 to 24 characters: small English letters, digits, dot and underscore.', 'نام ۳ تا ۲۴ نویسه است: حروف کوچک انگلیسی، عدد، نقطه و زیرخط.') : '') ||
-          (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v.gMail || '').trim()) ? TT('أكتب بريداً إلكترونياً صحيحاً.', 'I type a valid email.', 'ایمیل درستی می‌نویسم.') : '') || newPwRules(v.gPw, v.gPw2); } }));
+        { check: function (v) { return (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v.gMail || '').trim()) ? TT('أكتب بريداً إلكترونياً صحيحاً.', 'I type a valid email.', 'ایمیل درستی می‌نویسم.') : '') || (!USER_RE.test(normId(v.gUser)) ? TT('الاسم من 3 إلى 24 حرفاً: حروف إنجليزية صغيرة وأرقام ونقطة وشرطة سفلية.', 'The name is 3 to 24 characters: small English letters, digits, dot and underscore.', 'نام ۳ تا ۲۴ نویسه است: حروف کوچک انگلیسی، عدد، نقطه و زیرخط.') : '')  || newPwRules(v.gPw, v.gPw2); } }));
       // is the name free? (asked once I pause typing)
       var ui = f.querySelector('#gUser'), hint = f.querySelector('#gUserHint'), tmr = null, base = hint.textContent;
       ui.addEventListener('input', function () {
