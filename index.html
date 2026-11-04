@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' blob: data:; connect-src 'self' https://www.googleapis.com https://oauth2.googleapis.com https://dyttcihhurzlidgxdipl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' blob: data:; connect-src 'self' https://www.googleapis.com https://oauth2.googleapis.com https://dyttcihhurzlidgxdipl.supabase.co wss://dyttcihhurzlidgxdipl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1E3D33">
@@ -12,8 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="أوراد">
 <meta name="application-name" content="أوراد">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=e736b327">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=e736b327">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=00c20a1e">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=00c20a1e">
 <style>
 body { margin: 0; }
 [hidden] { display: none !important; }
@@ -78,6 +78,126 @@ body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: 
   header .brandtxt h1 { font-size: 18px; }
 }
 @media (max-width: 370px) { html header .brandtxt h1 { font-size: 16.5px; } }
+/* ===== the sign-in page and the first steps (installed app only) ===== */
+html.gated, html.gated body { overflow: hidden !important; }
+html.gated body > *:not(.gate):not(.lockscreen):not(.toast):not(script):not(style):not(link) { visibility: hidden !important; }
+.gate { position: fixed; inset: 0; z-index: 900; overflow-y: auto; scrollbar-width: thin; scrollbar-gutter: auto; overscroll-behavior: contain; background-color: var(--bg); background-image: var(--tile, none);
+  display: grid; grid-template-rows: auto 1fr; color: var(--ink); -webkit-tap-highlight-color: transparent; }
+.gate[hidden] { display: none; }
+.ghero { position: relative; overflow: hidden; background: var(--band); color: var(--band-ink); padding: calc(34px + env(safe-area-inset-top, 0px)) 24px 64px; text-align: center; }
+.ghero::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 14px;
+  background: radial-gradient(circle at 50% 100%, var(--bg) 0 8px, transparent 8.6px) 0 100% / 22px 14px repeat-x; }
+.gpat { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .14; pointer-events: none; }
+.ghin { position: relative; max-width: 420px; margin: 0 auto; text-align: center; }
+.ghin .gname, .ghin .gtag { text-align: inherit; }
+.gate .glogo { display: block !important; width: 68px; height: 68px; margin: 0 auto 6px; background: var(--gold-soft); animation: gIn .7s cubic-bezier(.22,.61,.36,1) backwards; }
+.gate .gname { display: block; margin: 0; font-size: 38px; font-weight: 700; line-height: 1.15; letter-spacing: -.3px; animation: gIn .7s .06s cubic-bezier(.22,.61,.36,1) backwards; }
+.gtag { margin: 4px 0 0; font-size: 15px; color: color-mix(in srgb, var(--gold-soft) 85%, var(--band-ink)); animation: gIn .7s .12s cubic-bezier(.22,.61,.36,1) backwards; }
+.gfeat { list-style: none; margin: 18px auto 0; padding: 0; display: grid; gap: 8px; max-width: 360px; text-align: start; animation: gIn .7s .18s cubic-bezier(.22,.61,.36,1) backwards; }
+.gfeat li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; line-height: 1.5; color: color-mix(in srgb, var(--band-ink) 88%, transparent); }
+.gfeat svg { width: 18px; height: 18px; flex: none; color: var(--gold-soft); }
+@media (max-width: 520px) { .gfeat { display: none; } .ghero { padding-bottom: 58px; } }
+.gmain { position: relative; width: 100%; max-width: 460px; margin: -36px auto 0; padding: 0 16px calc(24px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 14px; }
+.gcard { background: var(--surface); border: 1px solid var(--edge, var(--line)); border-radius: 22px; box-shadow: var(--lift, 0 10px 28px -16px rgba(0,0,0,.2)); padding: 20px 20px 18px; animation: gUp .6s .1s cubic-bezier(.22,.61,.36,1) backwards; }
+@keyframes gIn { from { opacity: 0; transform: translateY(8px); } }
+@keyframes gUp { from { opacity: 0; transform: translateY(18px); } }
+.gbody > * { animation: gIn .35s cubic-bezier(.22,.61,.36,1) backwards; }
+.gbody > *:nth-child(2) { animation-delay: .03s; } .gbody > *:nth-child(3) { animation-delay: .06s; } .gbody > *:nth-child(4) { animation-delay: .09s; } .gbody > *:nth-child(n+5) { animation-delay: .12s; }
+.gtabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: var(--chip); margin-bottom: 16px; }
+.gtabs button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 14.5px; font-weight: 600; min-height: 42px; border-radius: 11px; cursor: pointer; transition: background-color .2s, color .2s, box-shadow .2s; }
+.gtabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 0 0 1px var(--edge, var(--line)); }
+.gh { margin: 0 0 6px; font-size: 19px; font-weight: 700; line-height: 1.4; }
+.gp { margin: 0 0 14px; font-size: 14px; line-height: 1.75; color: var(--ink); }
+.gp.gnote { font-size: 12.5px; color: var(--muted); margin: 14px 0 0; }
+.gp.gcenter { text-align: center; }
+.gp.bad, .gerr { color: var(--warn, #B3261E); }
+.gp.ok { color: var(--check); font-weight: 600; }
+.gwho { margin: 0 0 12px; font-weight: 700; color: var(--gold-ink); }
+.gform { display: flex; flex-direction: column; gap: 12px; }
+.gfield { display: flex; flex-direction: column; gap: 5px; }
+.gfield label, .glabel { font-size: 13px; font-weight: 600; color: var(--muted); }
+.glabel { margin: 14px 0 8px; }
+.gfield input { font: inherit; font-size: 16px; min-height: 48px; padding: 0 14px; border-radius: 13px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); transition: border-color .15s, box-shadow .15s, background-color .15s; width: 100%; }
+.gfield input:focus { outline: 0; border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold-soft) 35%, transparent); background: var(--surface); }
+.ghint { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.ghint.ok { color: var(--check); font-weight: 600; } .ghint.bad { color: var(--warn, #B3261E); }
+.gerr { margin: 0; min-height: 0; font-size: 13.5px; line-height: 1.6; }
+.gerr:empty { display: none; }
+.gmsg { margin-top: 10px; }
+.gbtn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 18px; border-radius: 13px; border: 1px solid transparent; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform .12s, background-color .15s, box-shadow .15s, opacity .15s; }
+.gbtn:active { transform: scale(.98); }
+.gbtn:disabled { opacity: .65; cursor: default; }
+.gbtn.wide { width: 100%; }
+.gbtn.primary { background: linear-gradient(180deg, color-mix(in srgb, var(--band) 88%, #FFFFFF), var(--band)); color: var(--band-ink); box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--band) 80%, transparent), inset 0 1px 0 rgba(255,255,255,.12); }
+.gbtn.ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.gbtn.danger { background: var(--warn, #B3261E); color: #fff; }
+.gbtn.google { background: var(--surface); border-color: var(--line); color: var(--ink); }
+.gbtn.google svg { width: 20px; height: 20px; }
+.gbtn.round { width: 48px; padding: 0; font-size: 22px; border-radius: 50%; }
+.gbtn:focus-visible, .glink:focus-visible, .gtabs button:focus-visible, .gdemobtn:focus-visible, .gseg button:focus-visible, .gsw:focus-visible, .glang button:focus-visible { outline: 3px solid var(--gold-soft); outline-offset: 2px; }
+.gor { display: flex; align-items: center; gap: 12px; margin: 14px 0; font-size: 13px; color: var(--muted); }
+.gor::before, .gor::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.glinks { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 14px; margin-top: 2px; }
+.glink { background: none; border: 0; padding: 6px 0; min-height: 36px; font: inherit; font-size: 13.5px; color: var(--gold-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--gold) 45%, transparent); cursor: pointer; }
+.gcol { display: flex; flex-direction: column; gap: 10px; }
+.gacts { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+.gwarn { border: 1px solid color-mix(in srgb, var(--warn, #B3261E) 35%, var(--line)); background: color-mix(in srgb, var(--warn, #B3261E) 6%, var(--surface)); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.form.busy, .gform.busy { opacity: .85; }
+.gsteps { display: flex; justify-content: center; gap: 8px; margin: 0 0 16px; }
+.gsteps i { width: 8px; height: 8px; border-radius: 4px; background: var(--line); transition: width .3s, background-color .3s; }
+.gsteps i.done { background: var(--gold-soft); } .gsteps i.on { width: 24px; background: var(--check); }
+.gseg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.gseg button { min-height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-size: 14.5px; cursor: pointer; }
+.gseg button[aria-pressed="true"] { background: var(--band); color: var(--band-ink); border-color: var(--band); }
+.gswatches { display: flex; gap: 12px; margin-bottom: 18px; }
+.gsw { width: 44px; height: 44px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; box-shadow: inset 0 0 0 3px var(--surface); }
+.gsw.green { background: #1E3D33; } .gsw.navy { background: #1B2A41; } .gsw.burgundy { background: #5B2A2A; }
+.gsw[aria-pressed="true"] { border-color: var(--gold); }
+.gquran { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 6px; }
+.gquran input { width: 120px; min-height: 56px; text-align: center; font: inherit; font-size: 28px; font-weight: 700; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-variant-numeric: tabular-nums; }
+.gquran input::-webkit-outer-spin-button, .gquran input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.gquran input { -moz-appearance: textfield; appearance: textfield; }
+.gquran input:focus { outline: 0; border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold-soft) 35%, transparent); }
+.gcode { border: 1.5px dashed color-mix(in srgb, var(--gold) 55%, var(--line)); border-radius: 14px; padding: 14px 10px; text-align: center; background: color-mix(in srgb, var(--gold-soft) 8%, var(--surface)); }
+.gcode code { font: 700 17px/1.7 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .06em; overflow-wrap: anywhere; user-select: all; color: var(--ink); }
+.gcheck { display: flex; align-items: center; gap: 10px; margin: 14px 0; font-size: 14.5px; cursor: pointer; min-height: 40px; }
+.gcheck input { width: 20px; height: 20px; accent-color: var(--check); }
+.gdemo[hidden] { display: none; }
+.gdemobtn { width: 100%; display: flex; align-items: center; gap: 14px; text-align: start; padding: 14px 16px; border-radius: 18px; cursor: pointer; font: inherit; color: var(--ink);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gold-soft) 22%, var(--surface)), var(--surface)); border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--edge, var(--line))); box-shadow: var(--lift, none);
+  animation: gUp .6s .22s cubic-bezier(.22,.61,.36,1) backwards; transition: transform .15s; }
+.gdemobtn:active { transform: scale(.985); }
+.gdemobtn > svg { width: 44px; height: 44px; flex: none; padding: 12px 11px 12px 13px; border-radius: 50%; background: var(--band); color: var(--gold-soft); }
+html[dir="rtl"] .gdemobtn > svg { transform: scaleX(-1); }
+.gdt { display: flex; flex-direction: column; gap: 2px; }
+.gdt b { font-size: 15px; } .gdt small { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.gfoot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 4px 4px 0; }
+.glang { display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: var(--chip); }
+.glang button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; min-height: 34px; padding: 0 10px; border-radius: 9px; cursor: pointer; }
+.glang button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; }
+.gpriv { font-size: 12.5px; color: var(--muted); }
+/* a wide screen: the welcome on one side, the door on the other */
+@media (min-width: 900px) {
+  .gate { grid-template-rows: none; grid-template-columns: minmax(380px, 46%) 1fr; }
+  .ghero { display: grid; place-items: center; padding: 48px; text-align: start; }
+  .ghero::after { display: none; }
+  .ghin { max-width: 400px; margin: 0; text-align: start; }
+  .gate .glogo { margin: 0 0 14px; width: 84px; height: 84px; }
+  .gate .gname { font-size: 52px; } .gtag { font-size: 18px; }
+  .gfeat { margin: 28px 0 0; gap: 14px; } .gfeat li { font-size: 15px; }
+  .gmain { margin: 0 auto; align-self: center; padding: 40px 24px; }
+}
+/* the demo opened from the sign-in page: its bar invites to begin */
+.demobar .dbend.dbgo { background: var(--gold-soft); color: var(--band); font-weight: 700; border-color: transparent; }
+/* «Try Awrad» lives on the sign-in page now */
+[data-card="demo"] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .gate *, .gate .glogo { animation: none !important; transition: none !important; } }
+
+/* the mark already reads «Awrad»: the name stays only for screen readers */
+.gate .gname { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; margin: 0; padding: 0; }
+.gate .glogo { width: 84px; height: 84px; margin-bottom: 10px; }
+@media (min-width: 900px) { .gate .glogo { width: 110px; height: 110px; } }
+
 </style>
 <script>
 /* backups and tables: the share sheet on phones (save to Files, Drive, WhatsApp…), a normal download elsewhere */
@@ -1554,7 +1674,7 @@ module.exports = QRCode;
       return patchRow({ data: data, rev: rem.rev + 1, updated_at: new Date().toISOString() }, rem.rev);
     }).then(function () { set(K.at, String(now())); });
   }
-  function active() { var s = sess(); return !!(ON && s && DK && DK.uid === s.uid); }
+  function active() { var s = sess(); return !!(ON && s && DK && DK.uid === s.uid && !get('awrad:askMerge')); }   // while I am asked about this device's older data, nothing syncs
   function syncNow() { if (window.AWRAD_SAVE && window.AWRAD_SAVE.sync) return window.AWRAD_SAVE.sync(true); return Promise.resolve(null); }
 
   /* ---------- coming back from the email link or from Google / Apple ---------- */
@@ -1588,7 +1708,7 @@ module.exports = QRCode;
   // after Google / Apple: a new account chooses a data passphrase; a known one asks for it on this new device
   function afterProvider() {
     return readRow('rev').then(function (row) {
-      if (!row) return makeVault(null, 'code').then(function (code) { note({ kind: 'code', code: code, fresh: true }); }, function () { note({ kind: 'choose' }); });
+      if (!row) return makeVault(null, 'code').then(function (code) { maybeAsk(uidNow()); startOnboarding(code); note(null); }, function () { note({ kind: 'choose' }); });
       note(null); return tryLink();
     }, function () {});
   }
@@ -1596,11 +1716,12 @@ module.exports = QRCode;
   function pendingLink() { var l = jget(K.link, null); if (!l || !l.c || now() - l.t > LINK_MIN * 60000) { del(K.link); return ''; } return l.c; }
   function tryLink() {
     var c = pendingLink(); if (!c || !sess() || active()) return Promise.resolve();
-    return unlockAny(c).then(function () { del(K.link); note({ kind: 'msg', text: T('فُتحت بياناتي على هذا الجهاز.', 'My data is open on this device.') }); syncNow(); },
+    return unlockAny(c).then(function () { del(K.link); maybeAsk(uidNow()); note({ kind: 'msg', text: T('فُتحت بياناتي على هذا الجهاز.', 'My data is open on this device.') }); syncNow(); },
       function () { del(K.link); note({ kind: 'msg', text: T('انتهت صلاحية رمز الجهاز أو استُعمل. أطلب رمزاً جديداً من جهازي الآخر.', 'The device code has expired or was already used. I ask my other device for a new one.'), bad: true }); });
   }
   var ready = false;
   Promise.all([keyLoaded, arrived]).then(function () { return tryLink().catch(function () {}); }).then(function () { ready = true; repaint(); if (active() && window.AWRAD_SAVE) setTimeout(function () { window.AWRAD_SAVE.sync(false); }, 0); });
+  if (ON) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { paintGate(); hello(); }); else setTimeout(function () { paintGate(); hello(); }, 0); }
 
   /* ---------- the steps ---------- */
   function signUp(email, pw) {
@@ -1695,7 +1816,7 @@ module.exports = QRCode;
   function newRecoveryCode() {
     var uid = uidNow(), code = newCode();
     return Promise.all([fromCode(uid, code), readRow('keys')]).then(function (r) { return wrap(r[0], uid, DK.raw).then(function (w) { return patchRow({ keys: Object.assign({}, r[1].keys, { rc: w }) }); }); })
-      .then(function () { note({ kind: 'code', code: code }); });
+      .then(function () { sendRcv(code); note({ kind: 'code', code: code }); });
   }
   // no recovery code and no other device: a new data key; this device's data becomes the account's data
   function startOver(newPw) {
@@ -1759,7 +1880,7 @@ module.exports = QRCode;
 
   /* ---------- «My account», at the top of Settings ---------- */
   var cardEl = null, bodyEl = null, view = 'in', uiRef = null, manageOpen = false;
-  function repaint() { if (window.AWRAD_SAVE && window.AWRAD_SAVE.paint) window.AWRAD_SAVE.paint(); if (cardEl && document.body.contains(cardEl)) render(); }
+  function repaint() { if (window.AWRAD_SAVE && window.AWRAD_SAVE.paint) window.AWRAD_SAVE.paint(); if (cardEl && document.body.contains(cardEl)) render(); paintGate(); if (active()) { rtStart(); poll(); } else rtStop(); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function input(id, label, type, ac) {
     var f = el('div', 'field'), l = el('label', null, label), i = el('input');
@@ -1785,7 +1906,7 @@ module.exports = QRCode;
     return f;
   }
   function pwRules(pw, again, email) {
-    if (String(pw).length < 10) return T('أختار كلمة من 10 أحرف على الأقل.', 'I choose one of at least 10 characters.');
+    if (String(pw).length < 8) return T('أختار كلمة من 8 أحرف على الأقل.', 'I choose one of at least 8 characters.');
     if (again !== undefined && pw !== again) return T('الكلمتان غير متطابقتين.', 'The two do not match.');
     if (email && normEmail(pw) === normEmail(email)) return T('لا تكون كلمة المرور هي البريد نفسه.', 'The password cannot be the email itself.');
     return '';
@@ -1866,7 +1987,7 @@ module.exports = QRCode;
     } else if (view === 'up') {
       bodyEl.appendChild(form(null, [input('acEmail', T('البريد الإلكتروني', 'Email'), 'email', 'email'), input('acPw', T('كلمة المرور (10 أحرف على الأقل)', 'Password (at least 10 characters)'), 'password', 'new-password'), input('acPw2', T('كلمة المرور مرة ثانية', 'Password again'), 'password', 'new-password')],
         T('إنشاء الحساب', 'Create account'), Object.assign(function (v) { return signUp(v.acEmail, v.acPw); }, { check: function (v) { return !emailOk(v.acEmail) ? T('أكتب بريداً صحيحاً.', 'I type a valid email.') : pwRules(v.acPw, v.acPw2, v.acEmail); } })));
-      bodyEl.appendChild(para(T('كلمة المرور لا تُرسل إلى الخادم ولا تُحفظ فيه: يشتقّ منها التطبيق على جهازي ما يُدخلني وما يفتح بياناتي. لذلك لا يستطيع أحد استعادة بياناتي إن نسيتها إلا برمز الاستعادة الذي يظهر بعد إنشاء الحساب.', 'My password is never sent to or kept on the server: on my device the app derives from it what signs me in and what opens my data. So if I forget it, only the recovery code shown after creating the account can bring my data back.'), 'note'));
+      bodyEl.appendChild(para(T('كلمة المرور لا تُرسل إلى الخادم ولا تُحفظ فيه: يشتقّ منها التطبيق على جهازي ما يُدخلني وما يفتح بياناتي. لذلك لا يستطيع أحد استعادة بياناتي إن نسيتها إلا برمز الاستعادة الذي يظهر بعد إنشاء الحساب.', 'My password is never sent to or kept on the server: on my device the app derives from it what signs me in and what opens my data. So if I forget it, only the recovery code shown after creating the account can bring my data back.'), 'gnote'));
     } else {
       bodyEl.appendChild(form(null, [input('acEmail', T('البريد الإلكتروني', 'Email'), 'email', 'email'), input('acPw', T('كلمة المرور', 'Password'), 'password', 'current-password')],
         T('تسجيل الدخول', 'Sign in'), Object.assign(function (v) { return signIn(v.acEmail, v.acPw).then(function () { if (active()) syncNow(); }); }, { check: function (v) { return !emailOk(v.acEmail) ? T('أكتب بريداً صحيحاً.', 'I type a valid email.') : !v.acPw ? T('أكتب كلمة المرور.', 'I type my password.') : ''; } }),
@@ -1876,7 +1997,7 @@ module.exports = QRCode;
     outMsg = el('div', 'smsg'); outMsg.setAttribute('role', 'status'); bodyEl.appendChild(outMsg);
   }
   function who(s) {
-    var p = el('p', 'acctwho'); p.appendChild(el('bdi', null, s.email || ''));
+    var p = el('p', 'acctwho'); p.appendChild(el('bdi', null, s.uname || s.email || ''));
     if (s.prov && s.prov !== 'email') { p.appendChild(document.createTextNode(' · ' + T('عبر ', 'via '))); p.appendChild(el('bdi', null, s.prov === 'google' ? 'Google' : s.prov === 'apple' ? 'Apple' : s.prov)); }
     return p;
   }
@@ -1946,10 +2067,10 @@ module.exports = QRCode;
       b.setAttribute('aria-expanded', view === key ? 'true' : 'false'); row.appendChild(b); box.appendChild(row);
       return row;
     };
-    if (s.prov === 'email') {
+    if (s.prov === 'email' || s.prov === 'password') {
       item('pw', T('كلمة المرور', 'Password'), T('أغيّرها بكتابة الحالية أولاً. تبقى أجهزتي الأخرى مفتوحة.', 'I change it by typing the current one first. My other devices stay open.'), T('تغيير كلمة المرور', 'Change password'));
       if (view === 'pw') box.appendChild(form(null, [input('acCur', T('كلمة المرور الحالية', 'Current password'), 'password', 'current-password'), input('acPw', T('كلمة المرور الجديدة', 'New password'), 'password', 'new-password'), input('acPw2', T('كلمة المرور مرة ثانية', 'Password again'), 'password', 'new-password')],
-        T('حفظ', 'Save'), Object.assign(function (v) { return changePassword(v.acCur, v.acPw).then(function () { view = 'in'; note({ kind: 'msg', text: T('تغيّرت كلمة المرور.', 'My password changed.') }); }); }, { check: function (v) { return pwRules(v.acPw, v.acPw2, s.email); } })));
+        T('حفظ', 'Save'), Object.assign(function (v) { return (s.prov === 'password' ? changePassword2 : changePassword)(v.acCur, v.acPw).then(function () { view = 'in'; note({ kind: 'msg', text: T('تغيّرت كلمة المرور.', 'My password changed.') }); }); }, { check: function (v) { return pwRules(v.acPw, v.acPw2, s.email); } })));
     }
     item('dev', T('إضافة جهاز', 'Add a device'), T('أفتح بياناتي على جهاز جديد دون كتابة شيء: أمسح رمز QR بكاميرته، أو أكتب رمز الجهاز فيه.', 'I open my data on a new device without typing anything: I scan the QR code with its camera, or type the device code on it.'), T('إضافة جهاز', 'Add a device'));
     if (view === 'dev') box.appendChild(deviceBox());
@@ -2012,6 +2133,458 @@ module.exports = QRCode;
     return cardEl;
   }
   function lastSync() { return +get(K.at) || 0; }
+
+
+  /* ================= Awrad 2: one door in — the sign-in page, the first steps, instant sync =================
+     The app opens only signed in. Names or emails with a password go through the server function «awrad-auth»
+     (it alone can turn what my device sends into the real password, and it closes an account after five wrong tries);
+     Google goes through Supabase as before. My password still never leaves this device, and it still opens my data. */
+  var FN = BASE + '/functions/v1/awrad-auth';
+  var K2 = { ask: 'awrad:askMerge', merged: 'awrad:merged', onb: 'awrad:onboard', rcv: 'awrad:rcvPending', mail: 'awrad:mailOn' };
+  function LANG3() { var l = ''; try { l = localStorage.getItem('tracker:lang') || ''; } catch (e) {} return l === 'en' || l === 'fa' ? l : 'ar'; }
+  function TT(ar, en, fa) { var l = LANG3(); return l === 'en' ? en : l === 'fa' ? (fa || ar) : ar; }
+  function faNum(s) { return LANG3() === 'fa' ? String(s).replace(/[0-9]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; }) : String(s); }
+  function normId(id) { return String(id || '').trim().toLowerCase(); }
+  var USER_RE = /^[a-z0-9._]{3,24}$/;
+
+  function fn(op, body, authed) {
+    var go = function (tok) {
+      var h = { apikey: KEY, 'Content-Type': 'application/json' }; if (tok) h['x-awrad-token'] = tok;
+      return fetchT(FN, { method: 'POST', headers: h, body: JSON.stringify(Object.assign({ op: op }, body || {})), cache: 'no-store', credentials: 'omit' }, 25000).then(function (r) {
+        return r.text().then(function (t) {
+          var j = null; try { j = t ? JSON.parse(t) : null; } catch (e) {}
+          if (r.ok) return j;
+          var e = new Error((j && (j.error || j.message || j.msg)) || ('http ' + r.status)); e.status = r.status; e.code = (j && j.error) || '';
+          if (j && j.until) e.until = j.until; if (j && j.left != null) e.left = j.left;
+          if (r.status === 404 && !e.code) e.code = 'no_function';
+          if (r.status >= 500 || r.status === 429) e.busy = true;
+          throw e;
+        });
+      }, function () { var e3 = new Error('offline'); e3.net = true; throw e3; });
+    };
+    return authed ? token().then(go) : go(null);
+  }
+  // password + the account's public salt → { auth: what the server receives, kek: what opens my data key }
+  function fromSalt(salt, pw) {
+    return stretch(pw, 'awrad/v2/account/' + salt, ITER).then(function (m) { return Promise.all([expand(m, 'awrad/v1/sign-in'), expand(m, 'awrad/v1/wrap')]); })
+      .then(function (r) { return aes(r[1]).then(function (kek) { return { auth: 'a1.' + b64url(new Uint8Array(r[0])), kek: kek }; }); });
+  }
+  function rcHash(code) { return subtle.digest('SHA-256', te.encode('awrad/v2/rcv/' + normCode(code))).then(function (h) { return b64url(new Uint8Array(h)); }); }
+  function keep2(j, id) {
+    var s = keep(j), u = j.user || {}, md = u.user_metadata || {};
+    s.prov = 'password'; s.v2 = true; s.id = normId(id); s.salt = j.salt || s.salt; s.uname = md.username || (USER_RE.test(normId(id)) ? normId(id) : '');
+    if (/\.invalid$/.test(s.email)) s.email = '';
+    set(K.s, JSON.stringify(s)); return s;
+  }
+  function sendRcv(code) {
+    return rcHash(code).then(function (h) { set(K2.rcv, h); return fn('set_rcv', { rch: h }, true).then(function () { del(K2.rcv); }); }).catch(function () {});
+  }
+  function retryRcv() { var h = get(K2.rcv); if (h && sess()) fn('set_rcv', { rch: h }, true).then(function () { del(K2.rcv); }, function () {}); }
+
+  // data that was on this device before the account: asked once per account, before anything syncs
+  function localData() { try { return Object.keys(localStorage).some(function (k) { return /^tracker:(\d{4}-\d{2}-\d{2}|logs|quran|config)$/.test(k) && (localStorage.getItem(k) || '').length > 4; }); } catch (e) { return false; } }
+  function mergedFor(uid) { return (jget(K2.merged, []) || []).indexOf(uid) >= 0; }
+  function markMerged(uid) { var l = jget(K2.merged, []) || []; if (l.indexOf(uid) < 0) l.push(uid); set(K2.merged, JSON.stringify(l.slice(-8))); }
+  function maybeAsk(uid) {
+    if (mergedFor(uid)) return;
+    if (localData() && !get(K.at)) set(K2.ask, uid); else markMerged(uid);   // a device that already synced holds the account's own data
+  }
+  function answerAsk(add) {
+    var uid = get(K2.ask); del(K2.ask); if (uid) markMerged(uid);
+    if (add) { paintGate(); syncNow(); return; }
+    // keep a copy aside (never lost), then start from the account alone
+    var ks = []; try { for (var i = 0; i < localStorage.length; i++) ks.push(localStorage.key(i)); } catch (e) {}
+    var aside = {}; ks.forEach(function (k) { if (/^tracker:(\d{4}-\d{2}-\d{2}|logs|quran|config)$/.test(k)) aside[k] = get(k); });
+    set('awrad:beforeAccount', JSON.stringify({ t: now(), d: aside }));
+    wipeLocal(); location.reload();
+  }
+
+  // the first steps of a new account
+  function onb() { return jget(K2.onb, null); }
+  function startOnboarding(code) { set(K2.onb, JSON.stringify({ step: 'hello', code: code })); }
+  function onbStep(step) { var o = onb() || {}; o.step = step; set(K2.onb, JSON.stringify(o)); paintGate(); }
+  function onbDone() { del(K2.onb); note(null); paintGate(); syncNow(); }
+
+  /* ---------- the steps, by name or email ---------- */
+  var pendingD = null;   // between «create» and «confirm my email»: the derived keys, so I need not type the password again
+  function signUp2(username, email, pw) {
+    var salt = b64url(rand(16));
+    return fromSalt(salt, pw).then(function (d) {
+      return fn('signup', { username: normId(username), email: normId(email), salt: salt, auth: d.auth }).then(function (j) {
+        if (j && j.verify) { pendingD = { id: normId(username), d: d }; note({ kind: 'verify', id: normId(username), email: normId(email) }); return; }
+        return afterLogin(j, username, d);
+      });
+    });
+  }
+  function signIn2(id, pw) {
+    id = normId(id);
+    return fn('salt', { id: id }).then(function (r) { return fromSalt(r.salt, pw); }).then(function (d) {
+      return fn('login', { id: id, auth: d.auth }).then(function (j) { return afterLogin(j, id, d); });
+    });
+  }
+  function afterLogin(j, id, d) {
+    keep2(j, id); var uid = uidNow();
+    return readRow('keys').then(function (row) {
+      if (!row) return makeVault(d.kek, 'password').then(function (code) { sendRcv(code); maybeAsk(uid); startOnboarding(code); note(null); });
+      return tryUnwrap(d.kek, uid, [row.keys.pw, row.keys.pwNext].filter(Boolean)).then(function (raw) { return keepKey(uid, raw).then(function () { maybeAsk(uid); note(null); retryRcv(); if (active()) syncNow(); }); },
+        function () { note({ kind: 'needCode' }); });
+    }, function (e) { del(K.s); throw e; });
+  }
+  function verifyEmail(code) {
+    var p = pendingD; var n = jget(K.note, {}) || {};
+    return fn('verify_email', { id: n.id, code: code }).then(function () {
+      if (p && p.id === n.id) return fn('login', { id: p.id, auth: p.d.auth }).then(function (j) { pendingD = null; return afterLogin(j, p.id, p.d); });
+      note({ kind: 'msg', text: TT('تأكّد بريدي. أسجّل الدخول الآن.', 'My email is confirmed. I sign in now.', 'ایمیلم تأیید شد. اکنون وارد می‌شوم.') }); gtab = 'in';
+    });
+  }
+  // forgot my password: my recovery code, a new password; my data opens with the code and is re-locked with the new password
+  function reset2(id, code, pw) {
+    id = normId(id); var salt = b64url(rand(16));
+    return Promise.all([fromSalt(salt, pw), rcHash(code)]).then(function (r) {
+      var d = r[0];
+      return fn('reset', { id: id, rch: r[1], salt: salt, auth: d.auth }).then(function (j) {
+        keep2(j, id); var uid = uidNow();
+        return Promise.all([fromCode(uid, code), readRow('keys')]).then(function (x) {
+          if (!x[1]) return makeVault(d.kek, 'password').then(function (c2) { sendRcv(c2); startOnboarding(c2); });
+          return unwrap(x[0], uid, x[1].keys.rc).then(function (raw) {
+            return keepKey(uid, raw).then(function () { return wrap(d.kek, uid, raw); }).then(function (w) { var k = Object.assign({}, x[1].keys, { pw: w }); delete k.pwNext; return patchRow({ keys: k }); });
+          }).then(function () { maybeAsk(uid); if (active()) setTimeout(syncNow, 0); note({ kind: 'msg', text: TT('تغيّرت كلمة المرور، وبياناتي مفتوحة.', 'My password changed, and my data is open.', 'گذرواژه‌ام تغییر کرد و داده‌هایم باز است.') }); });
+        });
+      });
+    });
+  }
+  function changePassword2(cur, pw) {
+    var s = sess(), uid = s.uid, salt = b64url(rand(16));
+    return Promise.all([fromSalt(s.salt, cur), fromSalt(salt, pw), readRow('keys')]).then(function (r) {
+      return wrap(r[1].kek, uid, DK.raw).then(function (w) {
+        var k = Object.assign({}, r[2].keys, { pwNext: w });
+        return patchRow({ keys: k }).then(function () { return fn('set_pw', { cur: r[0].auth, salt: salt, auth: r[1].auth }, true); })
+          .then(function () { var s2 = sess(); s2.salt = salt; set(K.s, JSON.stringify(s2)); var k2 = Object.assign({}, k, { pw: w }); delete k2.pwNext; return patchRow({ keys: k2 }); });
+      });
+    });
+  }
+  function mailCode(id) { return fn('mail_code', { id: normId(id) }).then(function () { note({ kind: 'mailcode', id: normId(id) }); }); }
+  function mailLogin(code) {
+    var n = jget(K.note, {}) || {};
+    return fn('mail_login', { id: n.id, code: code }).then(function (j) { keep2(j, n.id); note({ kind: 'needCode' }); return readRow('keys').then(function (row) { if (!row) note({ kind: 'choose' }); }); });
+  }
+  var mailOn = get(K2.mail) === '1';
+  function hello() { if (!ON) return; fn('hello', {}).then(function (j) { var m = !!(j && j.mail); if (m !== mailOn) { mailOn = m; set(K2.mail, m ? '1' : '0'); paintGate(); } }, function () {}); }
+
+  function errText2(e) {
+    var c = String(e && e.code || '');
+    if (c === 'locked' && e.until) {
+      var mins = Math.max(1, Math.ceil((new Date(e.until).getTime() - now()) / 60000));
+      var t = mins >= 90 ? faNum(Math.ceil(mins / 60)) + TT(' ساعة', ' h', ' ساعت') : faNum(mins) + TT(' دقيقة', ' min', ' دقیقه');
+      return TT('أُغلق الحساب بعد محاولات خاطئة كثيرة. أحاول بعد ', 'The account is closed after too many wrong tries. I try again in ', 'حساب پس از تلاش‌های نادرست زیاد بسته شد. بعد از ') + t +
+        TT('، أو أفتحه الآن برمز الاستعادة من «نسيت كلمة المرور».', ', or open it now with my recovery code under “I forgot my password”.', ' دوباره تلاش می‌کنم، یا همین حالا با کد بازیابی از «گذرواژه را فراموش کردم» بازش می‌کنم.');
+    }
+    if (c === 'wrong') return TT('الاسم أو كلمة المرور غير صحيحة.', 'The name or password is not right.', 'نام یا گذرواژه درست نیست.') + (e.left != null && e.left <= 3 ? ' ' + TT('بقي ', 'Tries left: ', 'تلاش باقی‌مانده: ') + faNum(e.left) + TT(' قبل إغلاق الحساب مؤقتاً.', ' before the account closes for a while.', ' پیش از بسته شدن موقت حساب.') : '');
+    if (c === 'username_taken') return TT('هذا الاسم مأخوذ، أختار غيره.', 'This name is taken; I choose another.', 'این نام گرفته شده است؛ نام دیگری انتخاب می‌کنم.');
+    if (c === 'email_taken') return TT('هذا البريد مسجّل من قبل، فأسجّل الدخول به.', 'This email already has an account; I sign in with it.', 'این ایمیل قبلاً ثبت شده است؛ با آن وارد می‌شوم.');
+    if (c === 'bad_username') return TT('الاسم من 3 إلى 24 حرفاً: حروف إنجليزية صغيرة وأرقام ونقطة وشرطة سفلية.', 'The name is 3 to 24 characters: small English letters, digits, dot and underscore.', 'نام ۳ تا ۲۴ نویسه است: حروف کوچک انگلیسی، عدد، نقطه و زیرخط.');
+    if (c === 'mail_off') return TT('التسجيل بالبريد لم يُفعَّل بعد؛ أسجّل باسم مستخدم الآن وأضيف البريد لاحقاً.', 'Email sign-up is not on yet; I sign up with a user name for now.', 'ثبت‌نام با ایمیل هنوز فعال نیست؛ فعلاً با نام کاربری ثبت‌نام می‌کنم.');
+    if (c === 'unconfirmed') return TT('لم يتأكّد بريدي بعد: أرسلت رمزاً إليه، فأكتبه.', 'My email is not confirmed yet: I sent a code to it; I type it.', 'ایمیلم هنوز تأیید نشده است: کدی به آن فرستادم؛ آن را می‌نویسم.');
+    if (c === 'expired') return TT('انتهت صلاحية الرمز، أطلب رمزاً جديداً.', 'The code has expired; I ask for a new one.', 'کد منقضی شده است؛ کد تازه می‌خواهم.');
+    if (c === 'not_ready' || c === 'no_function') return TT('الخادم لم يُجهَّز بعد لتسجيل الدخول بالاسم وكلمة المرور.', 'The server is not set up yet for signing in with a name and password.', 'سرور هنوز برای ورود با نام و گذرواژه آماده نشده است.');
+    if (e && e.message === 'wrong key') return TT('لم يفتح هذا الرمز بياناتي. أتأكّد منه وأحاول مرة أخرى.', 'That code did not open my data. I check it and try again.', 'این کد داده‌هایم را باز نکرد. آن را بررسی و دوباره تلاش می‌کنم.');
+    if (e && e.net) return TT('لا اتصال بالإنترنت الآن.', 'No internet connection right now.', 'اکنون اتصال اینترنت نیست.');
+    return errText(e);
+  }
+
+  /* ---------- the sign-in page ---------- */
+  var gateEl = null, gateBody = null, gtab = 'in', gview = '', gateOff = false, gMsg = null;
+  function gateState() {
+    if (!ON) return 'none';
+    if (!ready) return 'wait';
+    var s = sess(), n = jget(K.note, null) || {};
+    if (!s) return n.kind === 'verify' ? 'verify' : n.kind === 'mailcode' ? 'mailcode' : 'out';
+    if (!DK || DK.uid !== s.uid) return 'locked';
+    if (get(K2.ask)) return 'ask';
+    if (onb()) return 'onb';
+    return 'none';
+  }
+  function gbtn(text, cls, fn0) { var b = el('button', 'gbtn ' + (cls || ''), text); b.type = 'button'; if (fn0) b.addEventListener('click', fn0); return b; }
+  function gfield(id, label, type, ac, hint) {
+    var f = el('div', 'gfield'), l = el('label', null, label), i = el('input');
+    l.setAttribute('for', id); i.id = id; i.type = type; i.autocomplete = ac || 'off'; i.dir = type === 'text' && id !== 'gName' ? 'ltr' : 'auto';
+    if (type !== 'text' || id !== 'gName') { i.autocapitalize = 'none'; i.spellcheck = false; }
+    if (type === 'email') i.inputMode = 'email';
+    f.appendChild(l); f.appendChild(i); if (hint) { var h = el('small', 'ghint', hint); h.id = id + 'Hint'; f.appendChild(h); i.setAttribute('aria-describedby', h.id); }
+    return f;
+  }
+  function gform(fields, submitText, onSubmit, after) {
+    var f = el('form', 'gform'); f.noValidate = true;
+    fields.forEach(function (x) { f.appendChild(x); });
+    var err = el('p', 'gerr'); err.setAttribute('role', 'alert');
+    var b = el('button', 'gbtn primary wide', submitText); b.type = 'submit';
+    f.appendChild(err); f.appendChild(b); if (after) f.appendChild(after);
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault(); if (b.disabled) return;
+      var v = {}; Array.prototype.forEach.call(f.querySelectorAll('input'), function (i) { v[i.id] = i.type === 'checkbox' ? i.checked : i.value; });
+      var bad = onSubmit.check ? onSubmit.check(v) : ''; if (bad) { err.textContent = bad; return; }
+      if (!navigator.onLine) { err.textContent = TT('أحتاج الإنترنت لهذه الخطوة.', 'I need the internet for this step.', 'برای این مرحله به اینترنت نیاز دارم.'); return; }
+      b.disabled = true; err.textContent = ''; var old = b.textContent; b.textContent = TT('لحظة…', 'One moment…', 'یک لحظه…'); f.classList.add('busy');
+      Promise.resolve().then(function () { return onSubmit(v); }).then(function () { b.disabled = false; b.textContent = old; f.classList.remove('busy'); paintGate(); },
+        function (e) { b.disabled = false; b.textContent = old; f.classList.remove('busy'); err.textContent = errText2(e); var pw = f.querySelector('input[type=password]'); if (pw && e.code === 'wrong') { pw.value = ''; pw.focus(); } });
+    });
+    return f;
+  }
+  function glink(text, fn0) { var b = el('button', 'glink', text); b.type = 'button'; b.addEventListener('click', fn0); return b; }
+  function gp(text, cls) { return el('p', 'gp' + (cls ? ' ' + cls : ''), text); }
+  function googleBtn() {
+    if (PROVIDERS.indexOf('google') < 0) return null;
+    var b = el('button', 'gbtn google wide'); b.type = 'button';
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9z"/></svg>';
+    b.appendChild(el('span', null, TT('المتابعة مع Google', 'Continue with Google', 'ادامه با Google')));
+    b.addEventListener('click', function () { if (!navigator.onLine) { if (gMsg) gMsg.textContent = TT('أحتاج الإنترنت لأسجّل الدخول.', 'I need the internet to sign in.', 'برای ورود به اینترنت نیاز دارم.'); return; } b.disabled = true; startProvider('google').catch(function () { b.disabled = false; }); });
+    return b;
+  }
+  function orLine() { return el('div', 'gor', TT('أو', 'or', 'یا')); }
+  function idRules(v) { return !normId(v.gId) ? TT('أكتب اسم المستخدم أو البريد.', 'I type my user name or email.', 'نام کاربری یا ایمیلم را می‌نویسم.') : ''; }
+  function newPwRules(pw, again) {
+    if (String(pw).length < 8) return TT('أختار كلمة مرور من 8 أحرف على الأقل.', 'I choose a password of at least 8 characters.', 'گذرواژه‌ای دست‌کم ۸ نویسه انتخاب می‌کنم.');
+    if (again !== undefined && pw !== again) return TT('الكلمتان غير متطابقتين.', 'The two do not match.', 'دو گذرواژه یکی نیستند.');
+    return '';
+  }
+
+  function renderGateOut(n) {
+    var tabs = el('div', 'gtabs'); tabs.setAttribute('role', 'tablist');
+    [['in', TT('تسجيل الدخول', 'Sign in', 'ورود')], ['up', TT('حساب جديد', 'New account', 'حساب تازه')]].forEach(function (x) {
+      var b = el('button', null, x[1]); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', gtab === x[0] ? 'true' : 'false');
+      b.addEventListener('click', function () { if (gtab === x[0]) return; gtab = x[0]; gview = ''; note(null); paintGate(true); }); tabs.appendChild(b);
+    });
+    gateBody.appendChild(tabs);
+    if (n && n.kind === 'msg') { var pm = gp(n.text, n.bad ? 'bad' : 'ok'); pm.setAttribute('role', 'status'); gateBody.appendChild(pm); }
+    var gb = googleBtn();
+    if (gtab === 'in' && gview === 'forgot') {
+      gateBody.appendChild(el('h2', 'gh', TT('نسيت كلمة المرور', 'I forgot my password', 'گذرواژه را فراموش کردم')));
+      gateBody.appendChild(gp(TT('بياناتي مشفّرة بكلمة مروري، فلا يفتحها إلا رمز الاستعادة الذي حفظته يوم أنشأت حسابي. أكتبه مع كلمة مرور جديدة.', 'My data is encrypted with my password, so only the recovery code I saved when I made my account opens it. I type it with a new password.', 'داده‌هایم با گذرواژه‌ام رمزگذاری شده است، پس فقط کد بازیابی‌ای که هنگام ساخت حساب ذخیره کردم آن را باز می‌کند. آن را با گذرواژهٔ تازه می‌نویسم.')));
+      gateBody.appendChild(gform([gfield('gId', TT('اسم المستخدم أو البريد', 'User name or email', 'نام کاربری یا ایمیل'), 'text', 'username'), gfield('gCode', TT('رمز الاستعادة', 'Recovery code', 'کد بازیابی'), 'text', 'off'),
+        gfield('gPw', TT('كلمة مرور جديدة', 'New password', 'گذرواژهٔ تازه'), 'password', 'new-password'), gfield('gPw2', TT('كلمة المرور مرة ثانية', 'The password again', 'گذرواژه دوباره'), 'password', 'new-password')],
+        TT('افتح حسابي', 'Open my account', 'حسابم را باز کن'), Object.assign(function (v) { return reset2(v.gId, v.gCode, v.gPw); }, { check: function (v) { return idRules(v) || (normCode(v.gCode).length < 20 ? TT('أكتب رمز الاستعادة كاملاً.', 'I type the whole recovery code.', 'کد بازیابی را کامل می‌نویسم.') : '') || newPwRules(v.gPw, v.gPw2); } }),
+        glink(TT('رجوع', 'Back', 'بازگشت'), function () { gview = ''; paintGate(true); })));
+      return;
+    }
+    if (gtab === 'in' && gview === 'mail') {
+      gateBody.appendChild(gp(TT('أكتب بريدي، فيصلني رمز من ستة أرقام أدخل به دون كلمة مرور.', 'I type my email and receive a six-digit code to sign in without a password.', 'ایمیلم را می‌نویسم و کدی شش‌رقمی برای ورود بدون گذرواژه دریافت می‌کنم.')));
+      gateBody.appendChild(gform([gfield('gId', TT('البريد', 'Email', 'ایمیل'), 'email', 'email')], TT('أرسل الرمز', 'Send the code', 'کد را بفرست'),
+        Object.assign(function (v) { return mailCode(v.gId); }, { check: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v.gId).trim()) ? '' : TT('أكتب بريداً صحيحاً.', 'I type a valid email.', 'ایمیل درستی می‌نویسم.'); } }),
+        glink(TT('رجوع', 'Back', 'بازگشت'), function () { gview = ''; paintGate(true); })));
+      return;
+    }
+    if (gtab === 'in') {
+      if (gb) { gateBody.appendChild(gb); gateBody.appendChild(orLine()); }
+      var after = el('div', 'glinks');
+      after.appendChild(glink(TT('نسيت كلمة المرور', 'I forgot my password', 'گذرواژه را فراموش کردم'), function () { gview = 'forgot'; paintGate(true); }));
+      if (mailOn) after.appendChild(glink(TT('الدخول برمز على البريد', 'Sign in with a code by email', 'ورود با کد ایمیلی'), function () { gview = 'mail'; paintGate(true); }));
+      gateBody.appendChild(gform([gfield('gId', TT('اسم المستخدم أو البريد', 'User name or email', 'نام کاربری یا ایمیل'), 'text', 'username'), gfield('gPw', TT('كلمة المرور', 'Password', 'گذرواژه'), 'password', 'current-password')],
+        TT('دخول', 'Sign in', 'ورود'), Object.assign(function (v) { return signIn2(v.gId, v.gPw); }, { check: function (v) { return idRules(v) || (!v.gPw ? TT('أكتب كلمة المرور.', 'I type my password.', 'گذرواژه‌ام را می‌نویسم.') : ''); } }), after));
+    } else {
+      if (gb) { gateBody.appendChild(gb); gateBody.appendChild(orLine()); }
+      var fields = [gfield('gUser', TT('اسم المستخدم', 'User name', 'نام کاربری'), 'text', 'username', TT('حروف إنجليزية صغيرة وأرقام، من 3 إلى 24.', 'Small English letters and digits, 3 to 24.', 'حروف کوچک انگلیسی و عدد، ۳ تا ۲۴.'))];
+      if (mailOn) fields.push(gfield('gMail', TT('البريد (اختياري)', 'Email (optional)', 'ایمیل (اختیاری)'), 'email', 'email', TT('للدخول به لاحقاً. يصلني رمز لتأكيده.', 'To sign in with it later. A code comes to confirm it.', 'برای ورود با آن در آینده. کدی برای تأیید آن می‌رسد.')));
+      fields.push(gfield('gPw', TT('كلمة المرور', 'Password', 'گذرواژه'), 'password', 'new-password', TT('8 أحرف على الأقل. هي أيضاً مفتاح بياناتي المشفّرة.', 'At least 8 characters. It is also the key to my encrypted data.', 'دست‌کم ۸ نویسه. کلید داده‌های رمزگذاری‌شده‌ام هم هست.')));
+      fields.push(gfield('gPw2', TT('كلمة المرور مرة ثانية', 'The password again', 'گذرواژه دوباره'), 'password', 'new-password'));
+      var f = gform(fields, TT('أنشئ حسابي', 'Create my account', 'حسابم را بساز'), Object.assign(function (v) { return signUp2(v.gUser, v.gMail || '', v.gPw); },
+        { check: function (v) { return (!USER_RE.test(normId(v.gUser)) ? TT('الاسم من 3 إلى 24 حرفاً: حروف إنجليزية صغيرة وأرقام ونقطة وشرطة سفلية.', 'The name is 3 to 24 characters: small English letters, digits, dot and underscore.', 'نام ۳ تا ۲۴ نویسه است: حروف کوچک انگلیسی، عدد، نقطه و زیرخط.') : '') ||
+          (v.gMail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v.gMail).trim()) ? TT('أكتب بريداً صحيحاً أو أتركه فارغاً.', 'I type a valid email or leave it empty.', 'ایمیل درستی می‌نویسم یا خالی می‌گذارم.') : '') || newPwRules(v.gPw, v.gPw2); } }));
+      // is the name free? (asked once I pause typing)
+      var ui = f.querySelector('#gUser'), hint = f.querySelector('#gUserHint'), tmr = null, base = hint.textContent;
+      ui.addEventListener('input', function () {
+        clearTimeout(tmr); var u = normId(ui.value); hint.className = 'ghint'; hint.textContent = base;
+        if (!u) return; if (!USER_RE.test(u)) { hint.className = 'ghint bad'; hint.textContent = TT('حروف إنجليزية صغيرة وأرقام ونقطة وشرطة سفلية فقط.', 'Only small English letters, digits, dot and underscore.', 'فقط حروف کوچک انگلیسی، عدد، نقطه و زیرخط.'); return; }
+        tmr = setTimeout(function () { fn('name_free', { username: u }).then(function (r) { if (normId(ui.value) !== u) return; hint.className = 'ghint ' + (r && r.free ? 'ok' : 'bad'); hint.textContent = r && r.free ? TT('الاسم متاح ✓', 'The name is free ✓', 'نام آزاد است ✓') : TT('الاسم مأخوذ، أختار غيره.', 'The name is taken; I choose another.', 'نام گرفته شده است؛ دیگری انتخاب می‌کنم.'); }, function () {}); }, 450);
+      });
+      gateBody.appendChild(f);
+      gateBody.appendChild(gp(TT('كلمة المرور لا تغادر جهازي: يشتقّ منها التطبيق ما يُدخلني وما يفتح بياناتي المشفّرة، ولا يقرأ أحد غيري بياناتي.', 'My password never leaves my device: from it the app derives what signs me in and what opens my encrypted data. Nobody else can read my data.', 'گذرواژه‌ام از دستگاهم بیرون نمی‌رود: برنامه از آن چیزی را می‌سازد که وارد می‌کند و داده‌های رمزگذاری‌شده‌ام را باز می‌کند. هیچ‌کس جز من داده‌هایم را نمی‌خواند.'), 'gnote'));
+    }
+  }
+  function renderGateCode(kind) {   // a code by email: to confirm my email, or to sign in
+    var n = jget(K.note, {}) || {};
+    gateBody.appendChild(el('h2', 'gh', kind === 'verify' ? TT('أؤكّد بريدي', 'I confirm my email', 'ایمیلم را تأیید می‌کنم') : TT('رمز الدخول', 'The sign-in code', 'کد ورود')));
+    var p = el('p', 'gp'); p.appendChild(document.createTextNode(TT('أرسلت رمزاً من ستة أرقام إلى ', 'I sent a six-digit code to ', 'کدی شش‌رقمی فرستادم به '))); p.appendChild(el('bdi', null, n.email || n.id || '')); gateBody.appendChild(p);
+    var after = el('div', 'glinks');
+    after.appendChild(glink(TT('أرسل الرمز مرة أخرى', 'Send the code again', 'کد را دوباره بفرست'), function () { fn(kind === 'verify' ? 'resend' : 'mail_code', { id: n.id, kind: kind === 'verify' ? 'verify' : 'login' }).catch(function () {}); }));
+    after.appendChild(glink(TT('رجوع', 'Back', 'بازگشت'), function () { note(null); pendingD = null; paintGate(true); }));
+    var cf = gfield('gOtp', TT('الرمز', 'The code', 'کد'), 'text', 'one-time-code'); cf.querySelector('input').inputMode = 'numeric';
+    gateBody.appendChild(gform([cf], TT('تأكيد', 'Confirm', 'تأیید'), Object.assign(function (v) { return kind === 'verify' ? verifyEmail(v.gOtp) : mailLogin(v.gOtp); },
+      { check: function (v) { return String(v.gOtp).replace(/\D/g, '').length === 6 ? '' : TT('الرمز ستة أرقام.', 'The code is six digits.', 'کد شش رقم است.'); } }), after));
+  }
+  function renderGateLocked(s, n) {   // signed in, but my data key is not on this device yet
+    gateBody.appendChild(el('h2', 'gh', TT('أفتح بياناتي على هذا الجهاز', 'I open my data on this device', 'داده‌هایم را روی این دستگاه باز می‌کنم')));
+    var who2 = el('p', 'gwho'); who2.appendChild(el('bdi', null, s.uname || s.email || '')); gateBody.appendChild(who2);
+    if (n && n.kind === 'choose') {
+      gateBody.appendChild(gp(TT('لم يكتمل تجهيز حسابي. أحاول مرة أخرى.', 'Setting up my account did not finish. I try again.', 'آماده‌سازی حسابم کامل نشد. دوباره تلاش می‌کنم.')));
+      var b = gbtn(TT('أكمل', 'Continue', 'ادامه'), 'primary wide', function () { b.disabled = true; makeVault(null, 'code').then(function (code) { sendRcv(code); maybeAsk(uidNow()); startOnboarding(code); note(null); paintGate(); }, function (e) { b.disabled = false; if (gMsg) gMsg.textContent = errText2(e); }); });
+      gateBody.appendChild(b);
+    } else if (gview === 'over') {
+      var w = el('div', 'gwarn');
+      w.appendChild(gp(TT('دون رمز الاستعادة ودون جهاز آخر مفتوح على حسابي لا يمكن فتح ما في حسابي. أستطيع أن أبدأ من جديد: يُحذف ما في حسابي، وتصبح بيانات هذا الجهاز بيانات الحساب.', 'Without the recovery code and without another open device, what is in my account cannot be opened. I can start over: my account is emptied and this device’s data becomes its data.', 'بدون کد بازیابی و بدون دستگاه باز دیگری، آنچه در حسابم است باز نمی‌شود. می‌توانم از نو شروع کنم: حسابم خالی می‌شود و داده‌های این دستگاه داده‌های حساب می‌شود.')));
+      var b2 = gbtn(TT('أبدأ من جديد', 'Start over', 'از نو شروع می‌کنم'), 'danger wide', function () { b2.disabled = true; startOver('').then(function () { var o = jget(K.note, {}) || {}; if (o.kind === 'code') { startOnboarding(o.code); note(null); } markMerged(uidNow()); paintGate(); }, function (e) { b2.disabled = false; if (gMsg) gMsg.textContent = errText2(e); }); });
+      w.appendChild(b2); w.appendChild(glink(TT('رجوع', 'Back', 'بازگشت'), function () { gview = ''; paintGate(true); })); gateBody.appendChild(w);
+    } else {
+      gateBody.appendChild(gp(TT('على جهازي الآخر: الإعدادات ← حسابي ← إدارة الحساب ← «إضافة جهاز»، ثم أمسح رمز QR بكاميرا هذا الجهاز أو أكتب الرمز هنا. أو أكتب رمز الاستعادة.', 'On my other device: Settings → My account → Manage → “Add a device”, then I scan the QR code with this device’s camera or type the code here. Or I type my recovery code.', 'روی دستگاه دیگرم: تنظیمات ← حساب من ← مدیریت حساب ← «افزودن دستگاه»، سپس کد QR را با دوربین این دستگاه اسکن می‌کنم یا کد را اینجا می‌نویسم. یا کد بازیابی را می‌نویسم.')));
+      gateBody.appendChild(gform([gfield('gCode', TT('رمز الجهاز أو رمز الاستعادة', 'Device code or recovery code', 'کد دستگاه یا کد بازیابی'), 'text', 'off')], TT('افتح بياناتي', 'Open my data', 'داده‌هایم را باز کن'),
+        function (v) { return unlockAny(v.gCode).then(function () { maybeAsk(uidNow()); note(null); syncNow(); }); },
+        glink(TT('ليس معي رمز ولا جهاز آخر', 'I have no code and no other device', 'نه کدی دارم نه دستگاه دیگری'), function () { gview = 'over'; paintGate(true); })));
+    }
+    var out = glink(TT('تسجيل الخروج', 'Sign out', 'خروج'), function () { signOut('local', false).then(function () { paintGate(true); }); });
+    var r = el('div', 'glinks'); r.appendChild(out); gateBody.appendChild(r);
+  }
+  function renderGateAsk() {
+    gateBody.appendChild(el('h2', 'gh', TT('وجدت بيانات على هذا الجهاز', 'I found data on this device', 'داده‌هایی روی این دستگاه یافتم')));
+    gateBody.appendChild(gp(TT('على هذا الجهاز تأشيرات وسجلّ محفوظة من قبل الحساب. أأضيفها إلى حسابي فتجتمع مع ما فيه؟', 'This device holds ticks and a log saved before the account. Do I add them to my account, together with what is already there?', 'روی این دستگاه علامت‌ها و دفترچه‌ای از پیش از حساب ذخیره شده است. آن‌ها را به حسابم بیفزایم تا با آنچه در آن است یکی شود؟')));
+    var r = el('div', 'gcol');
+    r.appendChild(gbtn(TT('أضفها إلى حسابي', 'Add them to my account', 'به حسابم بیفزا'), 'primary wide', function () { answerAsk(true); }));
+    r.appendChild(gbtn(TT('لا، أبدأ من حسابي فقط', 'No, I start from my account only', 'نه، فقط از حسابم شروع می‌کنم'), 'ghost wide', function () { answerAsk(false); }));
+    gateBody.appendChild(r);
+    gateBody.appendChild(gp(TT('إن اخترت «لا» تبقى نسخة منها محفوظة جانباً على هذا الجهاز، فلا يضيع شيء.', 'If I choose “No”, a copy stays aside on this device, so nothing is lost.', 'اگر «نه» را برگزینم، نسخه‌ای کنار روی این دستگاه می‌ماند تا چیزی گم نشود.'), 'gnote'));
+  }
+  // the first steps: my name, language and colour · a lock code · where my Quran reading stands · my recovery code
+  function renderGateOnb() {
+    var o = onb() || {}, A = window.AWRAD_APP || {}, steps = ['hello', 'pin', 'quran', 'code'], i = Math.max(0, steps.indexOf(o.step));
+    var dots = el('div', 'gsteps'); dots.setAttribute('aria-label', TT('الخطوة ', 'Step ', 'گام ') + faNum(i + 1) + TT(' من 4', ' of 4', ' از ۴'));
+    steps.forEach(function (x, k) { var d = el('i', k < i ? 'done' : k === i ? 'on' : ''); dots.appendChild(d); }); gateBody.appendChild(dots);
+    var next = function (st) { return function () { onbStep(st); }; };
+    if (steps[i] === 'hello') {
+      gateBody.appendChild(el('h2', 'gh', TT('أهلاً بك في أوراد', 'Welcome to Awrad', 'به اوراد خوش آمدی')));
+      gateBody.appendChild(gp(TT('ثلاث خطوات قصيرة ويصبح أوراد لك.', 'Three short steps and Awrad is yours.', 'سه گام کوتاه و اوراد از آنِ توست.')));
+      var nf = gfield('gName', TT('بماذا أناديك؟', 'What shall I call you?', 'تو را چه صدا کنم؟'), 'text', 'nickname'); var ni = nf.querySelector('input'); ni.value = (A.name && A.name()) || ''; ni.maxLength = 40; gateBody.appendChild(nf);
+      var lab = el('p', 'glabel', TT('لغة أوراد', 'Language', 'زبان')); gateBody.appendChild(lab);
+      var lg = el('div', 'gseg'); [['ar', 'العربية'], ['fa', 'فارسی'], ['en', 'English']].forEach(function (x) {
+        var b = el('button', null, x[1]); b.type = 'button'; b.lang = x[0]; b.setAttribute('aria-pressed', LANG3() === x[0] ? 'true' : 'false');
+        b.addEventListener('click', function () { if (LANG3() === x[0]) return; if (A.setName) A.setName(ni.value); if (A.setLang) A.setLang(x[0]); }); lg.appendChild(b);
+      }); gateBody.appendChild(lg);
+      gateBody.appendChild(el('p', 'glabel', TT('لون أوراد', 'Colour', 'رنگ')));
+      var pl = el('div', 'gswatches'); [['green', TT('أخضر', 'Green', 'سبز')], ['navy', TT('كحلي', 'Navy', 'سرمه‌ای')], ['burgundy', TT('عنابي', 'Burgundy', 'زرشکی')]].forEach(function (x) {
+        var b = el('button', 'gsw ' + x[0]); b.type = 'button'; b.setAttribute('aria-label', x[1]); b.title = x[1]; b.setAttribute('aria-pressed', (A.palette ? A.palette() : 'green') === x[0] ? 'true' : 'false');
+        b.addEventListener('click', function () { if (A.setPalette) A.setPalette(x[0]); Array.prototype.forEach.call(pl.children, function (c) { c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); }); }); pl.appendChild(b);
+      }); gateBody.appendChild(pl);
+      gateBody.appendChild(gbtn(TT('التالي', 'Next', 'بعدی'), 'primary wide', function () { if (A.setName) A.setName(ni.value); onbStep('pin'); }));
+    } else if (steps[i] === 'pin') {
+      gateBody.appendChild(el('h2', 'gh', TT('قفل أوراد برمز', 'Lock Awrad with a code', 'قفل اوراد با کد')));
+      gateBody.appendChild(gp(TT('رمز من أربعة أرقام يُطلب كلما فتحت أوراد على هذا الجهاز، فلا يرى محاسباتي أحد إن أخذ هاتفي. أغيّره أو ألغيه من الإعدادات متى شئت.', 'A four-digit code asked each time I open Awrad on this device, so nobody sees my reckonings if they pick up my phone. I change or remove it in Settings any time.', 'کدی چهاررقمی که هر بار اوراد را روی این دستگاه باز می‌کنم پرسیده می‌شود، تا اگر کسی گوشی‌ام را برداشت محاسبه‌هایم را نبیند. هر وقت بخواهم در تنظیمات تغییرش می‌دهم یا برمی‌دارم.')));
+      var on = A.lockOn && A.lockOn();
+      if (on) gateBody.appendChild(gp(TT('القفل مفعّل ✓', 'The lock is on ✓', 'قفل فعال است ✓'), 'ok'));
+      var r = el('div', 'gcol');
+      if (!on) r.appendChild(gbtn(TT('أضع رمزاً', 'Set a code', 'کدی می‌گذارم'), 'primary wide', function () { if (A.setLock) A.setLock(function (ok) { if (ok) onbStep('quran'); else paintGate(); }); }));
+      r.appendChild(gbtn(on ? TT('التالي', 'Next', 'بعدی') : TT('لاحقاً', 'Later', 'بعداً'), on ? 'primary wide' : 'ghost wide', next('quran')));
+      r.appendChild(glink(TT('رجوع', 'Back', 'بازگشت'), next('hello'))); gateBody.appendChild(r);
+    } else if (steps[i] === 'quran') {
+      gateBody.appendChild(el('h2', 'gh', TT('ختمتي للقرآن', 'My Quran reading', 'ختم قرآنم')));
+      gateBody.appendChild(gp(TT('من أي صفحة أكمل؟ أوراد يتابع ختمتي صفحةً صفحة من المصحف (604 صفحات). إن كنت أبدأ ختمة جديدة أتركها صفراً.', 'Which page do I continue from? Awrad follows my reading page by page through the 604-page mushaf. Starting a new reading, I leave it at zero.', 'از کدام صفحه ادامه می‌دهم؟ اوراد ختمم را صفحه‌به‌صفحه در مصحف ۶۰۴ صفحه‌ای دنبال می‌کند. اگر ختم تازه‌ای شروع می‌کنم، صفر می‌گذارم.')));
+      var qw = el('div', 'gquran'), cur = A.quranPage ? A.quranPage() : 0;
+      var minus = gbtn('−', 'ghost round', null), plus = gbtn('+', 'ghost round', null), qi = el('input'); qi.type = 'number'; qi.min = 0; qi.max = 604; qi.inputMode = 'numeric'; qi.value = cur; qi.id = 'gQuran'; qi.setAttribute('aria-label', TT('الصفحة', 'Page', 'صفحه'));
+      var clamp = function (v) { return Math.min(604, Math.max(0, Math.round(+v) || 0)); };
+      minus.addEventListener('click', function () { qi.value = clamp(+qi.value - 1); }); plus.addEventListener('click', function () { qi.value = clamp(+qi.value + 1); });
+      qw.appendChild(plus); qw.appendChild(qi); qw.appendChild(minus); gateBody.appendChild(qw);
+      gateBody.appendChild(el('p', 'gp gnote gcenter', TT('من 604', 'of 604', 'از ۶۰۴')));
+      var r2 = el('div', 'gcol');
+      r2.appendChild(gbtn(TT('التالي', 'Next', 'بعدی'), 'primary wide', function () { if (A.setQuranPage) A.setQuranPage(clamp(qi.value)); onbStep('code'); }));
+      r2.appendChild(glink(TT('رجوع', 'Back', 'بازگشت'), next('pin'))); gateBody.appendChild(r2);
+    } else {
+      gateBody.appendChild(el('h2', 'gh', TT('رمز الاستعادة', 'My recovery code', 'کد بازیابی من')));
+      gateBody.appendChild(gp(TT('بياناتي مشفّرة فلا يقرؤها أحد غيري، ولا حتى الخادم. هذا الرمز هو الطريق الوحيد إليها إن نسيت كلمة المرور أو فقدت أجهزتي. أحفظه خارج هذا الجهاز: أصوّره، أو أكتبه في دفتر، أو أنزّله.', 'My data is encrypted, so nobody but me can read it, not even the server. This code is the only way back to it if I forget my password or lose my devices. I keep it outside this device: a photo, a notebook, or a download.', 'داده‌هایم رمزگذاری شده است و هیچ‌کس جز من، حتی سرور، آن را نمی‌خواند. این کد تنها راه بازگشت به آن است اگر گذرواژه را فراموش کنم یا دستگاه‌هایم را گم کنم. آن را بیرون از این دستگاه نگه می‌دارم: عکس، دفترچه یا دانلود.')));
+      var cb = el('div', 'gcode'), cc = el('code', null, o.code || ''); cc.dir = 'ltr'; cb.appendChild(cc); gateBody.appendChild(cb);
+      var acts = el('div', 'gacts'), sm = el('p', 'gp gnote gcenter'); sm.setAttribute('role', 'status');
+      acts.appendChild(gbtn(TT('نسخ', 'Copy', 'کپی'), 'ghost', function () { try { navigator.clipboard.writeText(o.code).then(function () { sm.textContent = TT('نُسخ الرمز.', 'Code copied.', 'کد کپی شد.'); }, function () {}); } catch (e) {} }));
+      if (window.LOCAL_DL) acts.appendChild(gbtn(TT('تنزيل', 'Download', 'دانلود'), 'ghost', function () { var s0 = sess() || {}; window.LOCAL_DL.save({ filename: 'awrad-recovery-code.txt', data: 'Awrad — recovery code\n' + o.code + '\n' + (s0.uname || s0.email || '') + '\n' }).catch(function () {}); }));
+      gateBody.appendChild(acts); gateBody.appendChild(sm);
+      var ok = el('label', 'gcheck'), ci = el('input'); ci.type = 'checkbox'; ci.id = 'gSaved'; ok.appendChild(ci); ok.appendChild(document.createTextNode(' ' + TT('حفظت الرمز في مكان آمن', 'I saved the code somewhere safe', 'کد را جای امنی نگه داشتم'))); gateBody.appendChild(ok);
+      var go = gbtn(TT('ابدأ مع أوراد', 'Start with Awrad', 'با اوراد شروع کن'), 'primary wide', function () { if (!ci.checked) { sm.textContent = TT('أؤكّد أولاً أني حفظت الرمز.', 'I first confirm I saved the code.', 'اول تأیید می‌کنم که کد را نگه داشتم.'); return; } onbDone(); });
+      gateBody.appendChild(go); gateBody.appendChild(glink(TT('رجوع', 'Back', 'بازگشت'), next('quran')));
+    }
+  }
+  function buildGate() {
+    gateEl = el('div', 'gate'); gateEl.id = 'gate'; gateEl.setAttribute('data-raw', ''); gateEl.setAttribute('role', 'main');
+    var hero = el('div', 'ghero');
+    hero.innerHTML = '<svg class="gpat" aria-hidden="true"><defs><pattern id="gpp" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M18 13 L23 18 L18 23 L13 18 Z" fill="none" stroke="#D4B26A" stroke-width="1"/><circle cx="0" cy="0" r="1.4" fill="#D4B26A"/><circle cx="36" cy="0" r="1.4" fill="#D4B26A"/><circle cx="0" cy="36" r="1.4" fill="#D4B26A"/><circle cx="36" cy="36" r="1.4" fill="#D4B26A"/></pattern></defs><rect width="100%" height="100%" fill="url(#gpp)"/></svg>';
+    var inner = el('div', 'ghin');
+    var logo = el('span', 'hlogo glogo'); logo.setAttribute('aria-hidden', 'true'); inner.appendChild(logo);
+    inner.appendChild(el('h1', 'gname', TT('أوراد', 'Awrad', 'اوراد')));
+    inner.appendChild(el('p', 'gtag', TT('البرنامج الشخصي اليومي', 'My daily programme', 'برنامهٔ شخصی روزانه')));
+    var ul = el('ul', 'gfeat');
+    [[TT('أؤشّر يومي في لحظة: صلواتي وأذكاري وقرآني ومتابعاتي', 'I tick my day in a moment: prayers, remembrance, Quran and follow-ups', 'روزم را در یک لحظه علامت می‌زنم: نمازها، اذکار، قرآن و پیگیری‌ها'), 'M5 12l5 5 9-10'],
+     [TT('أرى تقدّمي أسبوعاً بعد أسبوع، وسنتي يوماً بيوم', 'I see my progress week after week, my year day by day', 'پیشرفتم را هفته به هفته و سالم را روز به روز می‌بینم'), 'M4 20V10M10 20V4M16 20v-7M22 20H2'],
+     [TT('بياناتي مشفّرة على جهازي، لا يقرؤها غيري', 'My data is encrypted on my device; nobody else reads it', 'داده‌هایم روی دستگاهم رمزگذاری می‌شود؛ کسی جز من نمی‌خواندش'), 'M6 11V8a6 6 0 0 1 12 0v3M5 11h14v10H5z']].forEach(function (x) {
+      var li = el('li'); li.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + x[1] + '"/></svg>'; li.appendChild(el('span', null, x[0])); ul.appendChild(li);
+    });
+    inner.appendChild(ul); hero.appendChild(inner); gateEl.appendChild(hero);
+    var main = el('div', 'gmain'), card0 = el('section', 'gcard'); gateBody = el('div', 'gbody'); card0.appendChild(gateBody);
+    gMsg = el('p', 'gerr gmsg'); gMsg.setAttribute('role', 'status'); card0.appendChild(gMsg);
+    main.appendChild(card0);
+    var demo = el('div', 'gdemo'); demo.id = 'gDemo';
+    var db = el('button', 'gdemobtn'); db.type = 'button';
+    db.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+    var dt = el('span', 'gdt'); dt.appendChild(el('b', null, TT('جرّب أوراد قبل أن تسجّل', 'Try Awrad before signing up', 'اوراد را پیش از ثبت‌نام امتحان کن'))); dt.appendChild(el('small', null, TT('خمسة أشهر من الالتزام في دقيقة: من 44٪ إلى 78٪', 'Five months of commitment in a minute: from 44% to 78%', 'پنج ماه پایبندی در یک دقیقه: از ۴۴٪ تا ۷۸٪'))); db.appendChild(dt);
+    db.addEventListener('click', openDemo); demo.appendChild(db); main.appendChild(demo);
+    var foot = el('div', 'gfoot');
+    var lg = el('div', 'glang'); [['ar', 'العربية'], ['fa', 'فارسی'], ['en', 'English']].forEach(function (x) { var b = el('button', null, x[1]); b.type = 'button'; b.lang = x[0]; b.setAttribute('aria-pressed', LANG3() === x[0] ? 'true' : 'false'); b.addEventListener('click', function () { if (LANG3() === x[0]) return; try { localStorage.setItem('tracker:lang', x[0]); } catch (e) {} location.reload(); }); lg.appendChild(b); });
+    foot.appendChild(lg);
+    var pv = el('a', 'gpriv', TT('سياسة الخصوصية', 'Privacy policy', 'سیاست حریم خصوصی')); pv.href = 'privacy.html'; foot.appendChild(pv);
+    main.appendChild(foot); gateEl.appendChild(main);
+    document.body.appendChild(gateEl);
+  }
+  function openDemo() {
+    var A = window.AWRAD_APP; if (!A || !A.startDemo) return;
+    gateOff = true; paintGate();
+    A.onDemoEnd = function () { gateOff = false; gtab = sess() ? gtab : 'up'; gview = ''; paintGate(true); };
+    A.startDemo();
+  }
+  var gShown = '';
+  function paintGate(force) {
+    if (!ON) return;
+    var st = gateOff ? 'none' : gateState();
+    var show = st !== 'none';
+    document.documentElement.classList.toggle('gated', show);
+    if (!show) { if (active()) { rtStart(); poll(); } if (gateEl) gateEl.hidden = true; Array.prototype.forEach.call(document.body.children, function (c) { if (c.hasAttribute('data-gate-inert')) { c.inert = false; c.removeAttribute('data-gate-inert'); } }); gShown = ''; return; }
+    if (!gateEl) { if (!document.body) return; buildGate(); }
+    gateEl.hidden = false;
+    Array.prototype.forEach.call(document.body.children, function (c) { if (c !== gateEl && !c.inert && c.tagName !== 'SCRIPT' && !c.classList.contains('lockscreen') && !c.classList.contains('toast')) { c.inert = true; c.setAttribute('data-gate-inert', ''); } });
+    var n = jget(K.note, null), sig = st + '|' + gtab + '|' + gview + '|' + JSON.stringify(n) + '|' + JSON.stringify(onb()) + '|' + mailOn;
+    if (!force && sig === gShown) return;
+    var keepFocus = document.activeElement && gateEl.contains(document.activeElement) ? document.activeElement.id : '';
+    gShown = sig; gateBody.textContent = ''; if (gMsg) gMsg.textContent = '';
+    gateEl.querySelector('#gDemo').hidden = !(st === 'out');
+    gateEl.setAttribute('data-state', st);
+    if (st === 'wait') gateBody.appendChild(gp(TT('لحظة…', 'One moment…', 'یک لحظه…'), 'gcenter'));
+    else if (st === 'out') renderGateOut(n);
+    else if (st === 'verify') renderGateCode('verify');
+    else if (st === 'mailcode') renderGateCode('login');
+    else if (st === 'locked') renderGateLocked(sess(), n);
+    else if (st === 'ask') renderGateAsk();
+    else if (st === 'onb') renderGateOnb();
+    var f = keepFocus && gateEl.querySelector('#' + keepFocus);
+    if (f) f.focus(); else if (st !== 'wait' && window.matchMedia && !window.matchMedia('(pointer: coarse)').matches) { var first = gateBody.querySelector('input'); if (first) first.focus({ preventScroll: true }); }
+    if (window.AWRAD_REANIM) try { window.AWRAD_REANIM(gateBody); } catch (e) {}
+  }
+
+  /* ---------- instant sync: the server tells this device when my row changes ---------- */
+  var ws = null, wsBeat = null, wsRetry = 0, wsTimer = null, wsRef = 0, pollT = null, syncSoon = null;
+  function kick() { clearTimeout(syncSoon); syncSoon = setTimeout(function () { if (active() && window.AWRAD_SAVE && navigator.onLine) window.AWRAD_SAVE.sync(false); }, 350); }
+  function rtStop() { clearInterval(wsBeat); clearTimeout(wsTimer); wsBeat = null; if (ws) { try { ws.onclose = null; ws.close(); } catch (e) {} } ws = null; }
+  function rtStart() {
+    if (ws || !active() || !window.WebSocket || !navigator.onLine) return;
+    token().then(function (at) {
+      if (ws || !active()) return;
+      var uid = uidNow(), sock = ws = new WebSocket(BASE.replace(/^http/, 'ws') + '/realtime/v1/websocket?apikey=' + encodeURIComponent(KEY) + '&vsn=1.0.0');
+      var topic = 'realtime:awrad-' + uid;
+      sock.onopen = function () {
+        wsRetry = 0;
+        sock.send(JSON.stringify({ topic: topic, event: 'phx_join', ref: String(++wsRef), join_ref: '1', payload: { access_token: at, config: { broadcast: { self: false }, presence: { key: '' }, postgres_changes: [{ event: 'UPDATE', schema: 'public', table: 'vaults', filter: 'user_id=eq.' + uid }] } } }));
+        wsBeat = setInterval(function () { try { sock.send(JSON.stringify({ topic: 'phoenix', event: 'heartbeat', payload: {}, ref: String(++wsRef) })); } catch (e) {} }, 25000);
+        wsTimer = setTimeout(function () { rtStop(); rtStart(); }, 45 * 60000);   // a fresh token now and then
+      };
+      sock.onmessage = function (m) { var j = null; try { j = JSON.parse(m.data); } catch (e) {} if (j && j.event === 'postgres_changes') kick(); };
+      sock.onclose = function () { rtStop(); if (active()) { wsRetry = Math.min(wsRetry + 1, 6); wsTimer = setTimeout(rtStart, 1000 * Math.pow(2, wsRetry)); } };
+      sock.onerror = function () { try { sock.close(); } catch (e) {} };
+    }, function () {});
+  }
+  // and, in case the push does not arrive (some networks block it), a quiet look every 30 seconds while I look at the app
+  function poll() { clearInterval(pollT); pollT = setInterval(function () { if (active() && document.visibilityState === 'visible' && navigator.onLine && now() - (+get(K.at) || 0) > 25000) kick(); }, 30000); }
+  window.addEventListener('online', function () { rtStart(); });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') { rtStart(); if (active()) kick(); } });
 
   window.AWRAD_ACCOUNT = { enabled: function () { return ON; }, active: active, pull: pull, push: push, card: card, lastSync: lastSync, repaint: repaint,
     signedIn: function () { return !!sess(); }, email: function () { var s = sess(); return s ? s.email : ''; } };
@@ -2621,7 +3194,7 @@ module.exports = QRCode;
 <title>أوراد - البرنامج الشخصي اليومي</title>
 <link rel="preload" href="fonts/plex-arabic-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/plex-arabic-700.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') { var k = document.createElement('link'); k.rel = 'preload'; k.as = 'script'; k.href = 'i18n/' + l + '.js?v=e736b327'; document.head.appendChild(k); } })();</script>
+<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') { var k = document.createElement('link'); k.rel = 'preload'; k.as = 'script'; k.href = 'i18n/' + l + '.js?v=00c20a1e'; document.head.appendChild(k); } })();</script>
 <style>
 @font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/plex-arabic-400.woff2') format('woff2'); }
 @font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/plex-arabic-500.woff2') format('woff2'); }
@@ -3539,6 +4112,15 @@ body { background-image: var(--tile); }
   .tab[aria-selected="true"] { border-top-color: transparent; background: color-mix(in srgb, var(--gold-soft) 16%, transparent); }
   body { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* the chosen tab: one golden piece that flows from tab to tab, stretching like a drop on the way */
+@media (min-width: 641px) { .tabs { position: relative; } }   /* on phones the bar is already fixed, which holds the piece too */
+.tab { position: relative; z-index: 1; }
+.tabind { position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; border-radius: 999px; background: var(--gold-soft); transition: opacity .2s; }
+.tabs.hasind .tab[aria-selected="true"] { background: transparent; transition: color .18s .12s; }
+.tabs.hasind .tab[aria-selected="true"] svg { transition: color .18s .12s; }
+.tabind.off { opacity: 0; }
+@media (max-width: 640px) { .tabind { border-radius: 16px; background: color-mix(in srgb, var(--gold-soft) 16%, transparent); } }
 </style>
 
 <header>
@@ -3597,7 +4179,7 @@ body { background-image: var(--tile); }
   <footer>المستقبل للإسلام وللشباب المؤمن</footer>
 </div>
 
-<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') document.write('<script src="i18n/' + l + '.js?v=e736b327"><\/script>'); })();</script>
+<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') document.write('<script src="i18n/' + l + '.js?v=00c20a1e"><\/script>'); })();</script>
 <script>
 var LANG = 'ar'; try { var savedLang = localStorage.getItem('tracker:lang'); if (savedLang === 'en' || savedLang === 'fa') LANG = savedLang; } catch (e) {}
 var THEME = 'auto'; try { THEME = localStorage.getItem('tracker:theme') || 'auto'; } catch (e) {}
@@ -3838,6 +4420,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     if (v !== 'log') { muhUnlocked = false; muhLogUndo = null; }
     view = v;
     ['track', 'progress', 'log'].forEach(function (x) { $('tab-' + x).setAttribute('aria-selected', v === x ? 'true' : 'false'); });
+    placeTabInd(true);
     ['track', 'progress', 'log', 'settings'].forEach(function (x) { $('view-' + x).hidden = v !== x; });
     $('gear').setAttribute('aria-pressed', v === 'settings' ? 'true' : 'false');
     if (v === 'progress') renderProgress();
@@ -3856,6 +4439,30 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     cascade(panel, CARDS, kf, 55, 420);
   }
   ['track', 'progress', 'log'].forEach(function (x) { $('tab-' + x).addEventListener('click', function () { setView(x); }); });
+  var tabInd = null, tabAt = null;
+  function placeTabInd(anim) {
+    var tabs = document.querySelector('.tabs'), on = tabs && tabs.querySelector('.tab[aria-selected="true"]');
+    if (!tabs) return;
+    if (!tabInd) { tabInd = document.createElement('span'); tabInd.className = 'tabind'; tabInd.setAttribute('aria-hidden', 'true'); tabs.insertBefore(tabInd, tabs.firstChild); tabs.classList.add('hasind'); }
+    if (!on || !on.offsetWidth) { tabInd.classList.add('off'); return; }   // Settings: no tab is chosen
+    var to = { l: on.offsetLeft, t: on.offsetTop, w: on.offsetWidth, h: on.offsetHeight }, from = tabAt, wasOff = tabInd.classList.contains('off');
+    tabInd.classList.remove('off');
+    tabInd.style.left = to.l + 'px'; tabInd.style.top = to.t + 'px'; tabInd.style.width = to.w + 'px'; tabInd.style.height = to.h + 'px';
+    tabAt = to;
+    tabInd.getAnimations().forEach(function (a) { a.cancel(); });
+    if (!anim || !from || wasOff || REDUCED || !tabInd.animate || (from.l === to.l && from.w === to.w)) return;
+    // the front edge runs ahead, the back edge follows: a drop that stretches, then gathers itself with a little give
+    var a = Math.min(from.l, to.l), bR = Math.max(from.l + from.w, to.l + to.w), right = to.l > from.l;
+    tabInd.animate([
+      { left: from.l + 'px', width: from.w + 'px' },
+      { left: (right ? from.l : a) + 'px', width: (bR - a) * 0.92 + (right ? 0 : 0) + 'px', offset: 0.42 },
+      { left: (right ? to.l + 3 : to.l - 3) + 'px', width: to.w + 'px', offset: 0.82 },
+      { left: to.l + 'px', width: to.w + 'px' }
+    ], { duration: 460, easing: 'cubic-bezier(.45,.05,.25,1)' });
+  }
+  placeTabInd(false);
+  window.addEventListener('resize', function () { tabAt = null; placeTabInd(false); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { tabAt = null; placeTabInd(false); });
   var lastTab = 'track';
   $('gear').addEventListener('click', function () { if (view === 'settings') setView(lastTab); else { lastTab = view; setView('settings'); } });
 
@@ -3885,7 +4492,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       l = l.filter(function (e) { return Array.isArray(e) && typeof e[0] === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e[0]) && valOk(+e[1]); }).map(function (e) { return [e[0], +e[1]]; })
         .sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
       if (l.length) o[k] = l; }); return o; };
-    return { hidden: obj(c.hidden), custom: custom, types: obj(c.types), sections: secs,
+    return { name: typeof c.name === 'string' ? c.name.replace(/[\u0000-\u001f]/g, '').trim().slice(0, 40) : '', hidden: obj(c.hidden), custom: custom, types: obj(c.types), sections: secs,
       targets: weekList(c.targets, okId, function (n) { return n === Math.round(n) && n >= 1 && n <= 7; }),
       hist: weekList(c.hist, function (k) { return okId(String(k).replace(/^sec:/, '')); }, function (n) { return n === 0 || n === 1; }) };
   }  // older saved layout and pins are dropped here
@@ -4499,20 +5106,72 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       Array.prototype.forEach.call((item || row).querySelectorAll('.strip i.on'), function (dot, j) { if (dot.animate) dot.animate([{ transform: 'scale(0)' }, { transform: 'scale(1.15)' }], { duration: 260, delay: t0 + 60 + j * 30, easing: 'cubic-bezier(.3,1.4,.5,1)', fill: 'backwards' }); });
     });
   }
+  // a wide screen: the cards turn over together with the week, like the leaves of a notebook: one after another from the side of the arrow (WK_MODE)
+  var WK_MODE = 'flip';
+  function wideTurn(sx) {
+    var mode = window.AWRAD_WKMODE || WK_MODE, from = -sx;   // from: the side the new week comes from (-1 left, 1 right)
+    var cards = Array.prototype.filter.call(document.querySelectorAll('#list .card, .weekside > *'), function (e) { var r = e.getBoundingClientRect(); return r.height && r.top < innerHeight + 40 && e.animate; });
+    var xs = [], rects = cards.map(function (e) { var r = e.getBoundingClientRect(); if (xs.every(function (x) { return Math.abs(x - r.left) > 40; })) xs.push(r.left); return r; });
+    xs.sort(function (p, q) { return from < 0 ? p - q : q - p; });   // the column nearest the side it comes from first
+    var tops = rects.map(function (r) { return r.top; }).sort(function (p, q) { return p - q; });
+    var EASE = 'cubic-bezier(.22,.61,.36,1)';
+    cards.forEach(function (e, i) {
+      e.getAnimations().forEach(function (an) { an.cancel(); });
+      var r = rects[i], col = 0;
+      xs.forEach(function (x, k) { if (Math.abs(x - r.left) <= 40) col = k; });
+      if (mode === 'flip') {
+        // each leaf turns about its own middle and a touch smaller, so it never reaches into the card beside it
+        e.style.transformOrigin = 'center center';
+        // at night a fading leaf sinks into the dark and the turn is lost: there it turns further and catches the light instead
+        var DK = darkNow(), ang = DK ? 18 : 12;
+        var an = e.animate([{ opacity: DK ? .2 : .3, filter: DK ? 'brightness(1.7)' : 'none', transform: 'perspective(1400px) rotateY(' + (from < 0 ? ang : -ang) + 'deg) scale(' + (DK ? .93 : .95) + ')' }, { opacity: 1, filter: 'none', transform: 'perspective(1400px) rotateY(0deg) scale(1)' }], { duration: 720, delay: col * 170 + Math.min(Math.round((r.top - tops[0]) / 260), 4) * 70, easing: EASE, fill: 'backwards' });
+        an.onfinish = an.oncancel = function () { e.style.transformOrigin = ''; };
+      } else if (mode === 'diag') {
+        var row = Math.min(Math.round((r.top - tops[0]) / 260), 4);
+        e.animate([{ opacity: .3, transform: 'translate(' + (from * 10) + 'px, 12px) scale(.97)' }, { opacity: 1, transform: 'none' }], { duration: 440, delay: (col + row) * 55, easing: EASE, fill: 'backwards' });
+      } else {
+        var off = from * 36;
+        e.animate([{ opacity: .25, transform: 'translateX(' + off + 'px)' }, { opacity: 1, transform: 'translateX(' + (-off * .09) + 'px)', offset: .68 }, { opacity: 1, transform: 'none' }], { duration: 560, delay: col * 75, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'backwards' });
+      }
+    });
+  }
+  function darkNow() { var t = document.documentElement.getAttribute('data-theme'); if (t) return t === 'dark'; try { return matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; } }
+  // the days above turn over the same way as the cards: one leaf after another from the side of the arrow; the chosen day turns with its box
+  function flipDays(from) {
+    if (REDUCED) return;
+    var bs = Array.prototype.slice.call($('days').querySelectorAll('.day'));
+    var order = bs.slice().sort(function (p, q) { return from < 0 ? p.offsetLeft - q.offsetLeft : q.offsetLeft - p.offsetLeft; });
+    var DK = darkNow(), A = DK ? 22 : 16;
+    var rot = function (k) { return 'perspective(900px) rotateY(' + (from < 0 ? A : -A) * k + 'deg) scale(' + (1 - .07 * k) + ')'; };
+    var kf = function (pre) { return [{ opacity: DK ? .2 : .3, filter: DK ? 'brightness(1.7)' : 'none', transform: pre + rot(1) }, { opacity: 1, filter: 'none', transform: pre + rot(0) }]; };
+    var o = function (i) { return { duration: 720, delay: i * 70, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' }; };
+    order.forEach(function (b, i) {
+      if (!b.animate) return;
+      b.getAnimations().forEach(function (a) { a.cancel(); });
+      b.animate(kf(''), o(i));
+      if (dayInd && b === bs[selDay] && dayInd.animate) {
+        var T = 'translate(' + dayInd._x + 'px, ' + dayInd._y + 'px) ';
+        dayInd.animate(kf(T), o(i));
+      }
+    });
+  }
   function go(ws, sd, now) {   // now: render at once, without the page turn (opening a day from the Log)
     if (ws > thisMonday) return; if (key(ws) === key(thisMonday) && sd > (today.getDay() + 6) % 7) sd = (today.getDay() + 6) % 7;
     var fwd = ws > weekStart, moved = key(ws) !== key(weekStart); weekStart = ws; selDay = sd;
     var els = ['list', 'weekside'].map($).filter(Boolean);
     if (now) weekTurn++;
     if (!moved || now || REDUCED || !els[0].animate) { renderHeader(); renderList(); return; }
-    rollDir = fwd ? 1 : -1; renderHeader(); rollDir = 0;
+    var wideNow = window.innerWidth >= 900;
+    rollDir = fwd ? 1 : -1; indSlide = !wideNow; renderHeader(); indSlide = false; rollDir = 0;   // the chosen-day highlight glides to its new day too
     // the new week is drawn at once (no blank moment, nothing below jumps); its cards then slide in one after another from the side of the arrow
     var sx = (document.documentElement.dir === 'rtl' ? 1 : -1) * (fwd ? 1 : -1);
     els.forEach(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = ''; });
     renderList();
     fillWave();
     // never from nothing: on a slow phone the first frames come late, and cards starting invisible read as a blink of an empty page
-    cascade($('view-track'), '.weekside > *, #list .card', [{ opacity: .45, transform: 'translateX(' + (-sx * 16) + 'px)' }, { opacity: 1, transform: 'none' }], 35, 320);
+    if (wideNow) {
+      wideTurn(sx); flipDays(-sx);
+    } else cascade($('view-track'), '.weekside > *, #list .card', [{ opacity: .45, transform: 'translateX(' + (-sx * 16) + 'px)' }, { opacity: 1, transform: 'none' }], 35, 320);
   }
   $('prev').addEventListener('click', function () { go(addDays(weekStart, -7), 0); });
   $('next').addEventListener('click', function () { go(addDays(weekStart, 7), 0); });
@@ -4840,17 +5499,17 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var v = document.createElement('b'); v.textContent = x[1]; gr.appendChild(v);
     });
     tx.appendChild(gr);
-    var nt = document.createElement('span'); nt.className = 'dbnote'; nt.textContent = 'بياناتي محفوظة كما هي، ولا يُحفظ شيء من التجربة.'; tx.appendChild(nt);
+    var nt = document.createElement('span'); nt.className = 'dbnote'; nt.textContent = demo.invite ? 'هكذا يبدو أوراد بعد خمسة أشهر من الالتزام. أتنقّل بين التقدّم والتأشير والسجلّ.' : 'بياناتي محفوظة كما هي، ولا يُحفظ شيء من التجربة.'; tx.appendChild(nt);
     bar.appendChild(tx);
     var bt = document.createElement('div'); bt.className = 'dbbtns';
     var see = document.createElement('button'); see.type = 'button'; see.className = 'dbsee'; see.textContent = 'شاهد التقدّم'; see.addEventListener('click', function () { setView('progress'); });
-    var end = document.createElement('button'); end.type = 'button'; end.className = 'dbend'; end.textContent = 'إنهاء التجربة'; end.addEventListener('click', stopDemo);
+    var end = document.createElement('button'); end.type = 'button'; end.className = 'dbend' + (demo.invite ? ' dbgo' : ''); end.textContent = demo.invite ? 'أبدأ رحلتي' : 'إنهاء التجربة'; end.addEventListener('click', stopDemo);
     bt.appendChild(see); bt.appendChild(end); bar.appendChild(bt);
   }
-  function startDemo() {
+  function startDemo(invite) {
     if (demo || mode === 'loading') return;
     flushSaves();
-    demo = { weeks: weeks, logs: logs, quran: quran, config: config, mode: mode, ws: weekStart, sd: selDay };
+    demo = { weeks: weeks, logs: logs, quran: quran, config: config, mode: mode, ws: weekStart, sd: selDay, invite: invite === true };
     var g = demoData();
     mode = 'demo'; weeks = g.weeks; logs = g.logs; quran = cleanQuran(g.quran); config = normConfig(g.config); applyConfig();
     START = firstWeek() || weekStart;
@@ -4870,7 +5529,19 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     document.documentElement.classList.remove('is-demo');
     paintDemoBar(); renderHeader(); lastSig = ''; renderList(); paintQuran();
     setView('track');
+    if (d.invite && window.AWRAD_APP && typeof window.AWRAD_APP.onDemoEnd === 'function') window.AWRAD_APP.onDemoEnd();
   }
+  // for the sign-in page and the first-run steps of the installed app (they live outside this script)
+  window.AWRAD_APP = Object.assign(window.AWRAD_APP || {}, {
+    lang: function () { return LANG; }, setLang: setLang,
+    palette: function () { return document.documentElement.getAttribute('data-palette') || 'green'; }, setPalette: setPalette,
+    name: function () { return config.name || ''; }, setName: function (n) { config.name = String(n || '').trim().slice(0, 40); saveConfig(); },
+    quranPage: function () { return quran.page; },
+    setQuranPage: function (n) { n = Math.min(604, Math.max(0, Math.round(+n) || 0)); quran.page = n; quran.start = quran.start || {}; quran.start[key(today)] = absPage(); quran.rev = (quran.rev || 0) + 1; saveQuran(); paintQuran(); },
+    lockOn: lockOn, setLock: function (done) { showLock('set', function (ok) { if (done) done(!!ok); }); },
+    startDemo: function () { startDemo(true); }, stopDemo: stopDemo, inDemo: function () { return !!demo; },
+    hasLocalData: function () { try { return Object.keys(localStorage).some(function (k) { return /^tracker:(\d{4}-\d{2}-\d{2}|logs$|quran$|config$)/.test(k) && (localStorage.getItem(k) || '').length > 4; }); } catch (e) { return false; } }
+  });
 
   /* ---------- laptop: Progress and Log cards in two columns that stay level ----------
      A plain two-column grid lines its rows up, so one tall card (many areas) leaves a hole beside it. Here each card, in order,
