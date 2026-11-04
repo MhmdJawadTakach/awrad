@@ -5170,14 +5170,15 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     var DUR = 1000, WIPE = 'cubic-bezier(.65,0,.35,1)', sideB = from < 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)', last = 0;
     // each window has its own thin gold edge: it crosses the window from the side of the arrow; behind it the old week melts into a haze,
     // and the new one beneath comes into focus. The windows nearest the arrow go first.
-    function wipe(w, delay, plain) {   // plain: no gold edge (the day boxes)
+    function wipe(w, delay, plain) {   // plain: no gold edge and no wipe, only the haze (the day boxes)
       if (getComputedStyle(w).position === 'static') w.style.position = 'relative';
       w.style.overflow = 'hidden';
       var edge = document.createElement('i'); edge.className = 'wkedge'; edge.setAttribute('aria-hidden', 'true');
       edge.style.cssText = 'position:absolute;z-index:9;top:0;bottom:0;width:2px;pointer-events:none;background:linear-gradient(transparent,var(--gold) 20%,var(--gold) 80%,transparent);box-shadow:0 0 10px var(--gold);' + (from < 0 ? 'left:0' : 'right:0');
       var o = { duration: DUR, delay: delay, easing: WIPE, fill: 'both' };
       if (!plain) w.appendChild(edge);
-      w.animate([{ clipPath: 'inset(0 0 0 0)', filter: 'blur(0)', opacity: 1 }, { filter: 'blur(4px)', opacity: .6, offset: .6 }, { clipPath: sideB, filter: 'blur(7px)', opacity: 0 }], o);
+      if (plain) w.animate([{ filter: 'blur(0)', opacity: 1 }, { filter: 'blur(7px)', opacity: 0 }], { duration: DUR * .7, delay: delay, easing: 'ease-in-out', fill: 'both' });   // the day boxes only melt away
+      else w.animate([{ clipPath: 'inset(0 0 0 0)', filter: 'blur(0)', opacity: 1 }, { filter: 'blur(4px)', opacity: .6, offset: .6 }, { clipPath: sideB, filter: 'blur(7px)', opacity: 0 }], o);
       if (!plain) edge.animate([{ transform: 'translateX(0)', opacity: 1 }, { opacity: 1, offset: .85 }, { transform: 'translateX(' + (from < 0 ? w.offsetWidth : -w.offsetWidth) + 'px)', opacity: 0 }], o);
       last = Math.max(last, delay);
     }
