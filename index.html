@@ -5769,7 +5769,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     var fi = document.createElement('i'); fi.style.width = num(demo.growth[1]) + '%'; ln.appendChild(fi);
     var mk = document.createElement('s'); mk.style.insetInlineStart = num(demo.growth[0]) + '%'; ln.appendChild(mk);
     tx.appendChild(ln); bar.appendChild(tx);
-    var help = document.createElement('button'); help.type = 'button'; help.className = 'dbsee dbhelp'; help.textContent = '؟'; help.setAttribute('aria-label', 'جولة في أوراد'); help.title = 'جولة في أوراد'; help.addEventListener('click', function () { tourStart(); }); bar.appendChild(help);
+    var help = document.createElement('button'); help.type = 'button'; help.className = 'dbsee dbhelp'; help.textContent = LANG === 'en' ? '?' : '؟'; help.setAttribute('aria-label', 'جولة في أوراد'); help.title = 'جولة في أوراد'; help.addEventListener('click', function () { tourStart(); }); bar.appendChild(help);
     var see = document.createElement('button'); see.type = 'button'; see.className = 'dbsee'; see.setAttribute('aria-label', 'شاهد التقدّم'); see.title = 'شاهد التقدّم'; see.appendChild(svg('M4 20V10M10 20V4M16 20v-7M22 20H2')); see.addEventListener('click', function () { setView('progress'); }); bar.appendChild(see);
     var end = document.createElement('button'); end.type = 'button'; end.className = 'dbend' + (demo.invite ? ' dbgo' : '');
     var et = document.createElement('span'); et.textContent = demo.invite ? 'أبدأ رحلتي' : 'إنهاء التجربة'; end.appendChild(et); end.appendChild(svg('M15 6l-6 6 6 6'));
