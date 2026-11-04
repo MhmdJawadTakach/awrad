@@ -5155,13 +5155,41 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       }
     });
   }
+  // a wide screen: the old week is kept for a moment as a still picture over its place, and the new one takes over from it
+  function weekSnap() {
+    return ['days', 'list', 'weekside'].map($).filter(Boolean).map(function (el) {
+      var c = el.cloneNode(true), host = el.parentNode;
+      if (getComputedStyle(host).position === 'static') host.style.position = 'relative';   // first, so the place is measured from it
+      c.setAttribute('aria-hidden', 'true'); c.setAttribute('inert', ''); c.classList.add('wkghost');
+      c.style.cssText += ';position:absolute;margin:0;pointer-events:none;z-index:3;left:' + el.offsetLeft + 'px;top:' + el.offsetTop + 'px;width:' + el.offsetWidth + 'px;height:' + el.offsetHeight + 'px';
+      host.appendChild(c);   // after the real one, so the page still finds the real one by its name
+      return { ghost: c, el: el };
+    });
+  }
+  function weekSwap(olds, from) {
+    var DUR = 1000, WIPE = 'cubic-bezier(.65,0,.35,1)';
+    (olds || []).forEach(function (o) {
+      var g = o.ghost, el = o.el, a;
+      // a thin gold edge crosses from the side of the arrow; behind it the old week melts into a haze, and the new one beneath comes into focus
+      var sideB = from < 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)';
+      g.style.background = 'var(--bg)';
+      var edge = document.createElement('i'); edge.className = 'wkedge';
+      edge.style.cssText = 'position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(transparent,var(--gold),transparent);box-shadow:0 0 12px var(--gold);' + (from < 0 ? 'left:0' : 'right:0');
+      g.appendChild(edge);
+      a = g.animate([{ clipPath: 'inset(0 0 0 0)', filter: 'blur(0)', opacity: 1 }, { filter: 'blur(5px)', opacity: .55, offset: .6 }, { clipPath: sideB, filter: 'blur(8px)', opacity: 0 }], { duration: DUR, easing: WIPE, fill: 'forwards' });
+      edge.animate([{ transform: 'translateX(0)', opacity: 1 }, { opacity: 1, offset: .85 }, { transform: 'translateX(' + (from < 0 ? g.offsetWidth : -g.offsetWidth) + 'px)', opacity: 0 }], { duration: DUR, easing: WIPE, fill: 'forwards' });
+      el.animate([{ opacity: .2, filter: 'blur(6px)', transform: 'scale(.99)' }, { opacity: 1, filter: 'blur(0)', transform: 'none' }], { duration: 900, delay: 150, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' });
+      a.onfinish = a.oncancel = function () { g.remove(); };
+      setTimeout(function () { if (g.parentNode) g.remove(); }, DUR + 400);
+    });
+  }
   function go(ws, sd, now) {   // now: render at once, without the page turn (opening a day from the Log)
     if (ws > thisMonday) return; if (key(ws) === key(thisMonday) && sd > (today.getDay() + 6) % 7) sd = (today.getDay() + 6) % 7;
     var fwd = ws > weekStart, moved = key(ws) !== key(weekStart); weekStart = ws; selDay = sd;
     var els = ['list', 'weekside'].map($).filter(Boolean);
     if (now) weekTurn++;
     if (!moved || now || REDUCED || !els[0].animate) { renderHeader(); renderList(); return; }
-    var wideNow = window.innerWidth >= 900;
+    var wideNow = window.innerWidth >= 900, olds = wideNow ? weekSnap() : null;
     rollDir = fwd ? 1 : -1; indSlide = !wideNow; renderHeader(); indSlide = false; rollDir = 0;   // the chosen-day highlight glides to its new day too
     // the new week is drawn at once (no blank moment, nothing below jumps); its cards then slide in one after another from the side of the arrow
     var sx = (document.documentElement.dir === 'rtl' ? 1 : -1) * (fwd ? 1 : -1);
@@ -5170,7 +5198,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     fillWave();
     // never from nothing: on a slow phone the first frames come late, and cards starting invisible read as a blink of an empty page
     if (wideNow) {
-      wideTurn(sx); flipDays(-sx);
+      weekSwap(olds, -sx);
     } else cascade($('view-track'), '.weekside > *, #list .card', [{ opacity: .45, transform: 'translateX(' + (-sx * 16) + 'px)' }, { opacity: 1, transform: 'none' }], 35, 320);
   }
   $('prev').addEventListener('click', function () { go(addDays(weekStart, -7), 0); });
