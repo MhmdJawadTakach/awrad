@@ -4180,7 +4180,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   function plainDigits(t) { return t.replace(/[\u200e\u200f\u061c\u2066-\u2069]/g, '').replace(/[\u0660-\u0669\u06F0-\u06F9]/g, function (c) { return String((c.charCodeAt(0) - 0x660) % 0x90 % 16); }).trim(); }   // the page may show these in Persian digits
   function rollIn(el, dir, delay) {
     if (!el.animate || REDUCED) return;
-    el.animate([{ opacity: 0, transform: 'translateY(' + (dir > 0 ? 0.5 : -0.5) + 'em)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: delay || 0, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' });
+    el.animate([{ opacity: .35, transform: 'translateY(' + (dir > 0 ? 0.4 : -0.4) + 'em)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: delay || 0, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' });
   }
   function renderHeader() {
     var lab = $('weekLabel'), txt = fShort.format(weekStart) + ' – ' + fLong.format(addDays(weekStart, 6));
@@ -4388,7 +4388,8 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     els.forEach(function (e) { e.getAnimations().forEach(function (a) { a.cancel(); }); e.style.pointerEvents = ''; });
     renderList();
     fillWave();
-    cascade($('view-track'), '.weekside > *, #list .card', [{ opacity: 0, transform: 'translateX(' + (-sx * 22) + 'px)' }, { opacity: 1, transform: 'none' }], 40, 340);
+    // never from nothing: on a slow phone the first frames come late, and cards starting invisible read as a blink of an empty page
+    cascade($('view-track'), '.weekside > *, #list .card', [{ opacity: .45, transform: 'translateX(' + (-sx * 16) + 'px)' }, { opacity: 1, transform: 'none' }], 35, 320);
   }
   $('prev').addEventListener('click', function () { go(addDays(weekStart, -7), 0); });
   $('next').addEventListener('click', function () { go(addDays(weekStart, 7), 0); });
