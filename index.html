@@ -4121,6 +4121,8 @@ body { background-image: var(--tile); }
 .tabs.hasind .tab[aria-selected="true"] svg { transition: color .18s .12s; }
 .tabind.off { opacity: 0; }
 @media (max-width: 640px) { .tabind { border-radius: 16px; background: color-mix(in srgb, var(--gold-soft) 16%, transparent); } }
+.wkghost .day { background: none !important; border-color: transparent !important; box-shadow: none !important; }
+.wkghost .day::before, .wkghost .day::after { display: none !important; }
 </style>
 
 <header>
@@ -5177,7 +5179,13 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       edge.style.cssText = 'position:absolute;z-index:9;top:0;bottom:0;width:2px;pointer-events:none;background:linear-gradient(transparent,var(--gold) 20%,var(--gold) 80%,transparent);box-shadow:0 0 10px var(--gold);' + (from < 0 ? 'left:0' : 'right:0');
       var o = { duration: DUR, delay: delay, easing: WIPE, fill: 'both' };
       if (!plain) w.appendChild(edge);
-      if (plain) w.animate([{ filter: 'blur(0)', opacity: 1 }, { filter: 'blur(7px)', opacity: 0 }], { duration: DUR * .7, delay: delay, easing: 'ease-in-out', fill: 'both' });   // the day boxes only melt away
+      if (plain) {   // a day box stays as it is; only its words and numbers melt away, and the new ones come into focus in it
+        var hz = { duration: DUR * .7, delay: delay, easing: 'ease-in-out', fill: 'both' };
+        Array.prototype.forEach.call(w.children, function (c) { c.animate([{ filter: 'blur(0)', opacity: 1 }, { filter: 'blur(6px)', opacity: 0 }], hz); });
+        var live = $('days').querySelectorAll('.day')[Array.prototype.indexOf.call(w.parentNode.querySelectorAll('.day'), w)];
+        var ic = dayInd && dayInd.querySelectorAll('.dayindc')[Array.prototype.indexOf.call(w.parentNode.querySelectorAll('.day'), w)];
+        [live, ic].forEach(function (x) { if (x) Array.prototype.forEach.call(x.children, function (c) { c.animate([{ filter: 'blur(6px)', opacity: 0 }, { filter: 'blur(0)', opacity: 1 }], { duration: DUR * .75, delay: delay + 120, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' }); }); });
+      }
       else w.animate([{ clipPath: 'inset(0 0 0 0)', filter: 'blur(0)', opacity: 1 }, { filter: 'blur(4px)', opacity: .6, offset: .6 }, { clipPath: sideB, filter: 'blur(7px)', opacity: 0 }], o);
       if (!plain) edge.animate([{ transform: 'translateX(0)', opacity: 1 }, { opacity: 1, offset: .85 }, { transform: 'translateX(' + (from < 0 ? w.offsetWidth : -w.offsetWidth) + 'px)', opacity: 0 }], o);
       last = Math.max(last, delay);
@@ -5195,7 +5203,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       if (ind) ind.remove();   // the chosen day's highlight is the live one beneath, not a copy
       if (g.id === 'days') days = Array.prototype.slice.call(g.querySelectorAll('.day'));
       else Array.prototype.forEach.call(g.querySelectorAll('.card'), function (c) { if (!c.parentNode.closest('.card') && c.offsetHeight && c.getBoundingClientRect().top < innerHeight + 40) cards.push(c); });
-      o.el.animate([{ opacity: .2, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: 900, delay: 150, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' });
+      if (g.id !== 'days') o.el.animate([{ opacity: .2, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0)' }], { duration: 900, delay: 150, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' });
     });
     order(days, 60, true); order(cards, 140);
     setTimeout(function () { (olds || []).forEach(function (o) { if (o.ghost.parentNode) o.ghost.remove(); }); }, DUR + last + 60);
