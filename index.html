@@ -2688,18 +2688,24 @@ h1 { margin: 0; font-size: 24px; font-weight: 700; text-wrap: balance; }
 .wkmid .thisweek:hover { background: color-mix(in srgb, var(--gold-soft) 22%, transparent); }
 
 .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; padding-block: 12px 4px; }
-.day { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 12px; padding: 8px 2px; min-height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
+.day { border: 1px solid transparent; background: transparent; color: var(--ink); border-radius: 12px; padding: 8px 2px; min-height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
 .day .dn { font-size: 11.5px; font-weight: 500; color: var(--muted); }
-.days { position: relative; }
-.day { position: relative; z-index: 1; }
+.days { position: relative; isolation: isolate; }
+/* a day's box is drawn underneath (::before), its name and number on top: the chosen-day highlight slides between the two, so it is never hidden behind the other days */
+.day { position: relative; }
+.day::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; border: 1px solid var(--line); background: var(--surface); box-sizing: border-box; transition: transform .12s, background-color .15s, border-color .15s, box-shadow .15s; }
+.day .dn, .day .dd { position: relative; z-index: 1; }
 .day .dd, #weekLabel .lp { display: inline-block; }
-.dayglide { position: absolute; z-index: 0; border-radius: 12px; background: var(--band); box-shadow: 0 0 0 1px var(--gold-soft); border: 1px solid var(--gold-soft); box-sizing: border-box; pointer-events: none; }
-.day.glidewait[aria-pressed="true"] { background: transparent; border-color: transparent; box-shadow: none; }
+/* the chosen day's highlight is one lasting piece that slides under the days (drawn by the compositor, so a busy phone does not make it stutter) */
+.dayind { position: absolute; left: 0; top: 0; z-index: 0; border-radius: 12px; background: var(--band); box-shadow: 0 0 0 1px var(--gold-soft); border: 1px solid var(--gold-soft); box-sizing: border-box; pointer-events: none; z-index: 0; will-change: transform; }
+.days.hasind .day[aria-pressed="true"]::before { background: transparent; border-color: transparent; box-shadow: none; transition: none; }
+.days.hasind .day[aria-pressed="true"] { transition: color .18s .1s; }
 .day .dd { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.day.today { border-color: var(--gold); }
+.day.today::before { border-color: var(--gold); }
 .day.later { opacity: .45; cursor: default; }
 #next:disabled { opacity: .35; cursor: default; }
-.day[aria-pressed="true"] { background: var(--band); border-color: var(--gold-soft); color: var(--band-ink); box-shadow: 0 0 0 1px var(--gold-soft); }
+.day[aria-pressed="true"] { color: var(--band-ink); }
+.day[aria-pressed="true"]::before { background: var(--band); border-color: var(--gold-soft); box-shadow: 0 0 0 1px var(--gold-soft); }
 .day[aria-pressed="true"] .dn { color: var(--gold-soft); }
 .status { font-size: 12px; color: var(--muted); text-align: center; min-height: 20px; padding-block: 6px 0; }
 
@@ -3432,9 +3438,10 @@ html[dir="rtl"] .ring > svg { transform: rotate(-90deg) scaleY(-1); }
 
 .alert.warn.anim svg { animation: pop .45s .3s; }
 .item .logform { animation: rise .2s cubic-bezier(.2,.8,.2,1); }
-.day, .swatch, .btn, .seg button, .addlog, .iconbtn, .tab { transition: transform .12s, background-color .15s, color .15s, border-color .15s, box-shadow .15s; }
-.day:active, .btn:active, .seg button:active, .addlog:active, .iconbtn:active, .swatch:active { transform: scale(.94); }
-@media (hover: hover) { .day:hover { border-color: var(--gold); } }
+.swatch, .btn, .seg button, .addlog, .iconbtn, .tab { transition: transform .12s, background-color .15s, color .15s, border-color .15s, box-shadow .15s; }
+.day:active::before, .btn:active, .seg button:active, .addlog:active, .iconbtn:active, .swatch:active { transform: scale(.94); }
+@media (hover: hover) { .day:not(:disabled):hover::before { border-color: var(--gold); } }
+.day { transition: color .15s; }
 @media (hover: hover) { .row:hover .iic { transform: rotate(-6deg) scale(1.05); color: var(--gold-ink); background: color-mix(in srgb, var(--gold-soft) 12%, var(--chip)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold-soft) 22%, transparent); } }
 .iic { transition: transform .2s ease-out, background-color .2s, color .2s, box-shadow .2s; }
 .box { transition: background-color .15s, border-color .15s; }
@@ -4203,7 +4210,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
         if (!twHide) tw.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 260, delay: 60, easing: 'ease-out', fill: 'backwards' });
       }
     }
-    var days = $('days'); days.textContent = '';
+    var days = $('days'); Array.prototype.slice.call(days.querySelectorAll('.day')).forEach(function (x) { x.remove(); });   // the highlight stays: it slides
     for (var i = 0; i < 7; i++) {
       var d = addDays(weekStart, i), b = document.createElement('button');
       b.type = 'button'; b.className = 'day' + (key(d) === key(today) ? ' today' : '');
@@ -4213,26 +4220,27 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
       var dd = document.createElement('span'); dd.className = 'dd'; dd.textContent = dayNum(d);
       b.appendChild(dn); b.appendChild(dd);
       if (d > today) { b.disabled = true; b.classList.add('later'); }   // a day still to come cannot be ticked
-      b.addEventListener('click', (function (idx) { return function () { if (idx === selDay) return; var from = days.children[selDay]; var fr = from && { left: from.offsetLeft }; selDay = idx; renderHeader(); renderList(); glideDay(fr); }; })(i));
-      days.appendChild(b);
+      b.addEventListener('click', (function (idx) { return function () { if (idx === selDay) return; selDay = idx; indSlide = true; renderHeader(); indSlide = false;
+        // the list is drawn in the next frame, once the highlight is on its way
+        var t = ++dayTurn; requestAnimationFrame(function () { requestAnimationFrame(function () { if (t === dayTurn) renderList(); }); }); }; })(i));
+      days.insertBefore(b, dayInd && dayInd.parentNode === days ? dayInd : null);
       if (rollDir) rollIn(dd, rollDir, i * 22);   // the dates roll, day after day
     }
     $('next').disabled = key(weekStart) >= key(thisMonday);
+    placeInd(indSlide);
   }
-  function glideDay(fr) {
-    var days = $('days'), to = days.children[selDay]; if (!fr || !to || REDUCED || !to.animate) return;
-    // layout positions, not screen boxes: a pressed day is drawn a little smaller while the finger is on it, and that threw the glide off on phones
-    var tr = { left: to.offsetLeft, top: to.offsetTop, width: to.offsetWidth, height: to.offsetHeight };
-    var g = document.createElement('span'); g.className = 'dayglide'; g.setAttribute('aria-hidden', 'true');
-    g.style.left = tr.left + 'px'; g.style.top = tr.top + 'px'; g.style.width = tr.width + 'px'; g.style.height = tr.height + 'px';
-    days.appendChild(g); to.classList.add('glidewait');
-    var a = g.animate([{ transform: 'translateX(' + (fr.left - tr.left) + 'px)' }, { transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.3,.7,.2,1)' });
-    // the day's number stays dark on the light page until the highlight reaches it, then turns light on it (never light on light, nor dark on dark)
-    var ink = getComputedStyle(days).color, light = getComputedStyle(to).color;
-    to.animate([{ color: ink }, { color: ink, offset: .5 }, { color: light }], { duration: 300, easing: 'linear' });
-    // the highlight hands over to the day in the same frame: no fade in between (that read as a blink)
-    a.onfinish = a.oncancel = function () { to.style.transition = 'none'; to.classList.remove('glidewait'); g.remove(); void to.offsetWidth; to.style.transition = ''; };
+  var dayInd = null, indSlide = false, dayTurn = 0;
+  function placeInd(slide) {
+    var days = $('days'), b = days.querySelectorAll('.day')[selDay]; if (!b) return;
+    if (!dayInd) { dayInd = document.createElement('span'); dayInd.className = 'dayind'; dayInd.setAttribute('aria-hidden', 'true'); }
+    if (dayInd.parentNode !== days) { days.appendChild(dayInd); slide = false; }
+    days.classList.add('hasind');
+    var from = dayInd.style.transform, to = 'translate(' + b.offsetLeft + 'px, ' + b.offsetTop + 'px)';
+    dayInd.style.width = b.offsetWidth + 'px'; dayInd.style.height = b.offsetHeight + 'px'; dayInd.style.transform = to;
+    dayInd.getAnimations().forEach(function (a) { a.cancel(); });
+    if (slide && from && from !== to && !REDUCED && dayInd.animate) dayInd.animate([{ transform: from }, { transform: to }], { duration: 320, easing: 'cubic-bezier(.3,.7,.2,1)' });
   }
+  if (window.ResizeObserver) try { new ResizeObserver(function () { placeInd(false); }).observe($('days')); } catch (e) {}
   function isOn(id, i) { return !!cur()[id + '_' + i]; }
   function renderList() {
     var list = $('list'); list.textContent = '';
