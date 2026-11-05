@@ -12,8 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="أوراد">
 <meta name="application-name" content="أوراد">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=5d569cc1">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=5d569cc1">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=74ea74ea">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=74ea74ea">
 <style>
 body { margin: 0; }
 [hidden] { display: none !important; }
@@ -229,6 +229,13 @@ html[dir="rtl"] .gdemobtn > svg { transform: scaleX(-1); }
 .gopt { font-weight: 400; color: var(--muted); font-size: 12px; }
 .acctabout { padding: 4px 0 8px; }
 .acctwait { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+.gspark { display: block; width: 100%; max-width: 260px; height: 46px; margin-top: 8px; direction: ltr; }
+.gspark .gspa { fill: rgba(184, 145, 63, .16); }
+.gspark .gspl { fill: none; stroke: #B8913F; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.gmoment { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 28px; text-align: center; background: #1B3A2E; color: #F3EBD6; font: 600 20px/1.7 var(--font, inherit); opacity: 0; transition: opacity .35s ease; }
+.gmoment.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .gmoment { transition: none; } }
 
 </style>
 <script>
@@ -1753,6 +1760,7 @@ module.exports = QRCode;
   }
   var ready = false;
   Promise.all([keyLoaded, arrived]).then(function () { return tryLink().catch(function () {}); }).then(function () { ready = true; repaint(); if (active() && window.AWRAD_SAVE) setTimeout(function () { window.AWRAD_SAVE.sync(false).then(checkAbout, function () {}); }, 0); });
+  if (ON) setTimeout(function () { demoFromLink(0); }, 0);
   if (ON) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { paintGate(); hello(); }); else setTimeout(function () { paintGate(); hello(); }, 0); }
 
   /* ---------- the steps ---------- */
@@ -2698,7 +2706,10 @@ module.exports = QRCode;
     var demo = el('div', 'gdemo'); demo.id = 'gDemo';
     var db = el('button', 'gdemobtn'); db.type = 'button';
     db.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
-    var dt = el('span', 'gdt'); dt.appendChild(el('b', null, TT('جرّب أوراد قبل أن تسجّل', 'Try Awrad before signing up', 'اوراد را پیش از ثبت‌نام امتحان کن'))); dt.appendChild(el('small', null, TT('خمسة أشهر من الالتزام في دقيقة: من 44٪ إلى 78٪', 'Five months of commitment in a minute: from 44% to 78%', 'پنج ماه پایبندی در یک دقیقه: از ۴۴٪ تا ۷۸٪'))); db.appendChild(dt);
+    var dt = el('span', 'gdt'); dt.appendChild(el('b', null, TT('جرّب أوراد قبل أن تسجّل', 'Try Awrad before signing up', 'اوراد را پیش از ثبت‌نام امتحان کن')));     var pv = (window.AWRAD_APP && window.AWRAD_APP.demoPreview) ? window.AWRAD_APP.demoPreview() : { from: '', to: '', series: [] };
+    dt.appendChild(el('small', null, TT('خمسة أشهر من الالتزام في دقيقة: من ' + pv.from + ' إلى ' + pv.to, 'Five months of commitment in a minute: from ' + pv.from + ' to ' + pv.to, 'پنج ماه پایبندی در یک دقیقه: از ' + pv.from + ' تا ' + pv.to)));
+    var sp = sparkline(pv.series); if (sp) dt.appendChild(sp);
+    db.appendChild(dt);
     db.addEventListener('click', openDemo); demo.appendChild(db); main.appendChild(demo);
     var foot = el('div', 'gfoot');
     var lg = el('div', 'glang'); [['ar', 'العربية'], ['fa', 'فارسی'], ['en', 'English']].forEach(function (x) { var b = el('button', null, x[1]); b.type = 'button'; b.lang = x[0]; b.setAttribute('aria-pressed', LANG3() === x[0] ? 'true' : 'false'); b.addEventListener('click', function () { if (LANG3() === x[0]) return; try { localStorage.setItem('tracker:lang', x[0]); } catch (e) {} location.reload(); }); lg.appendChild(b); });
@@ -2707,11 +2718,40 @@ module.exports = QRCode;
     main.appendChild(foot); gateEl.appendChild(main);
     document.body.appendChild(gateEl);
   }
+  // the curve of the demo's five months, drawn small on the sign-in card (the figures are the demo's own)
+  function sparkline(series) {
+    var pts = []; (series || []).forEach(function (v, k) { if (v != null && isFinite(v)) pts.push([k, Math.max(0, Math.min(1, v))]); });
+    if (pts.length < 2) return null;
+    var n = Math.max(1, (series.length - 1)), W = 240, H = 46, NS = 'http://www.w3.org/2000/svg';
+    var xy = pts.map(function (p) { return [(p[0] / n) * W, H - 4 - p[1] * (H - 10)]; });
+    var line = 'M' + xy.map(function (q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join(' L');
+    var svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('class', 'gspark'); svg.setAttribute('aria-hidden', 'true');
+    var a = document.createElementNS(NS, 'path'); a.setAttribute('d', line + ' L' + W + ' ' + H + ' L0 ' + H + ' Z'); a.setAttribute('class', 'gspa'); svg.appendChild(a);
+    var l = document.createElementNS(NS, 'path'); l.setAttribute('d', line); l.setAttribute('class', 'gspl'); svg.appendChild(l);
+    return svg;
+  }
+  // a short moment after «أبدأ رحلتي», before the sign-in page comes back
+  function moment(text, done) {
+    var m = el('div', 'gmoment'); m.setAttribute('role', 'status'); m.textContent = text; document.body.appendChild(m);
+    requestAnimationFrame(function () { m.classList.add('on'); });
+    setTimeout(function () { m.classList.remove('on'); setTimeout(function () { m.remove(); if (done) done(); }, 380); }, 1900);
+  }
   function openDemo() {
     var A = window.AWRAD_APP; if (!A || !A.startDemo) return;
     gateOff = true; paintGate();
-    A.onDemoEnd = function () { gateOff = false; gtab = sess() ? gtab : 'up'; gview = ''; paintGate(true); };
+    A.onDemoEnd = function (how) {
+      var back = function () { gateOff = false; gtab = how === 'signin' ? 'in' : (sess() ? gtab : 'up'); gview = ''; paintGate(true); };
+      if (how === 'start') moment(TT('رأيت خمسة أشهر من الالتزام. رحلتك تبدأ اليوم.', 'You have seen five months of commitment. Your journey starts today.', 'پنج ماه پایبندی را دیدی. سفرت از امروز آغاز می‌شود.'), back);
+      else back();
+    };
     A.startDemo();
+  }
+  // a refresh during the demo brings it back: the link keeps the demo (#demo)
+  function demoFromLink(n) {
+    if (location.hash !== '#demo') return;
+    var A = window.AWRAD_APP;
+    if (A && A.startDemo && A.ready && A.ready() && !(A.inDemo && A.inDemo())) { openDemo(); return; }
+    if (n < 80) setTimeout(function () { demoFromLink(n + 1); }, 100);
   }
   var gShown = '';
   function paintGate(force) {
@@ -3376,7 +3416,7 @@ module.exports = QRCode;
 <title>أوراد - البرنامج الشخصي اليومي</title>
 <link rel="preload" href="fonts/plex-arabic-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/plex-arabic-700.woff2" as="font" type="font/woff2" crossorigin>
-<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') { var k = document.createElement('link'); k.rel = 'preload'; k.as = 'script'; k.href = 'i18n/' + l + '.js?v=5d569cc1'; document.head.appendChild(k); } })();</script>
+<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') { var k = document.createElement('link'); k.rel = 'preload'; k.as = 'script'; k.href = 'i18n/' + l + '.js?v=74ea74ea'; document.head.appendChild(k); } })();</script>
 <style>
 @font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/plex-arabic-400.woff2') format('woff2'); }
 @font-face { font-family: 'IBM Plex Sans Arabic'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/plex-arabic-500.woff2') format('woff2'); }
@@ -4104,6 +4144,26 @@ html.is-demo .wrap:not(.hd) { padding-bottom: 96px; }
 .tourtip::before { content: ""; position: absolute; width: 12px; height: 12px; background: var(--surface); transform: rotate(45deg); left: var(--ax, 50%); margin-left: -6px; }
 .tourtip.below::before { top: -6px; } .tourtip.above::before { bottom: -6px; }
 @media (prefers-reduced-motion: reduce) { .tourspot, .tourtip { transition: none; } .demobar, .demobar .dbline i { animation: none; } }
+.demobar .dbhelp { width: auto; padding: 0 11px; gap: 6px; display: flex; align-items: center; }
+.demobar .dbhl { font-size: 13px; font-weight: 700; white-space: nowrap; }
+.demobar .dbback { flex: none; background: none; border: 0; color: #E9CF8C; font: 600 13px var(--font); text-decoration: underline; text-underline-offset: 3px; min-height: 42px; padding: 0 4px; cursor: pointer; }
+.tourtip.nopoint::before { display: none; }
+.tourtip .thint { font-size: 12.5px; color: var(--muted); margin-inline-end: auto; }
+.tourtip .tsum { margin: 0 0 12px; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13px; }
+.tourtip .tsum li { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
+.tourtip .tsum b { font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  .demobar .dbhl { display: none; }
+  .demobar .dbhelp { width: 42px; padding: 0; }
+  .demobar .dbback { font-size: 12.5px; }
+  html.is-demo header .brandtxt h1 .nmrest { display: none; }
+  html.is-demo .hijriline, html.is-demo .todayline { font-size: 11.5px; }
+  /* the demo bar on a phone: the words on the first row, the buttons under them */
+  .demobar { flex-wrap: wrap; row-gap: 8px; }
+  .demobar .dbtx { flex: 1 1 100%; order: -1; }
+  .demobar .dbend { margin-inline-start: auto; }
+  html.is-demo .wrap:not(.hd) { padding-bottom: 236px; }
+}
 .view-in .stack > *, .view-in .pcol > *, .view-in .weekside > *, .view-in .weeknav, .view-in .days { animation: rise .28s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * 35ms); }
 .view-in .stack > .pcols { animation: none; }
 .slide-next { animation: slideFromL .24s cubic-bezier(.2,.8,.2,1); }
@@ -4340,7 +4400,7 @@ body { background-image: var(--tile); }
     <div class="brand">
       <span class="hlogo" aria-hidden="true"></span>
       <div class="brandtxt">
-        <h1>أوراد - <span class="nmrest">البرنامج الشخصي اليومي</span></h1>
+        <h1>أوراد<span class="nmrest"> - البرنامج الشخصي اليومي</span></h1>
         <p class="hijriline" id="hijriLine"></p>
         <p class="todayline" id="todayLine"></p>
       </div>
@@ -4390,7 +4450,7 @@ body { background-image: var(--tile); }
   <footer>المستقبل للإسلام وللشباب المؤمن</footer>
 </div>
 
-<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') document.write('<script src="i18n/' + l + '.js?v=5d569cc1"><\/script>'); })();</script>
+<script>(function () { var l; try { l = localStorage.getItem('tracker:lang'); } catch (e) {} if (l === 'fa' || l === 'en') document.write('<script src="i18n/' + l + '.js?v=74ea74ea"><\/script>'); })();</script>
 <script>
 var LANG = 'ar'; try { var savedLang = localStorage.getItem('tracker:lang'); if (savedLang === 'en' || savedLang === 'fa') LANG = savedLang; } catch (e) {}
 var THEME = 'auto'; try { THEME = localStorage.getItem('tracker:theme') || 'auto'; } catch (e) {}
@@ -5256,6 +5316,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     if (addDays(weekStart, i) > today) { renderList(); return; }
     var c = cur(), k = id + '_' + i;
     if (on) c[k] = true; else delete c[k];
+    if (on && tour && tour.wait) setTimeout(tourTicked, 0);
     var secIdx = (ALL.filter(function (x) { return x.id === id; })[0] || {}).sec;
     var wasSecDone = $('sec-' + secIdx) && $('sec-' + secIdx).classList.contains('done');
     paintStates(); lastSig = listSig(); renderSide();
@@ -5292,7 +5353,7 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     }
   }
   function scheduleSave() {
-    if (mode === 'demo') { setStatus('تجربة: لا يُحفظ شيء'); return; }
+    if (mode === 'demo') return;   // nothing is kept, and the bar already says so: no line under the days
     pendingWeeks[key(weekStart)] = 1;
     if (mode === 'db') setStatus('جارٍ الحفظ…');
     clearTimeout(saveTimer);
@@ -5752,6 +5813,22 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     var a = rate(first, addDays(first, 27)), b = rate(addDays(today, -28), addDays(today, -1));   // the last four full weeks of days (today is still going)
     return [pct(a), pct(b)];
   }
+  var demoPrev = null;
+  // the sign-in page and the demo bar read the same figures: the demo's own numbers, worked out once
+  function demoPreview() {
+    if (demoPrev) return demoPrev;
+    var sv = { mode: mode, weeks: weeks, logs: logs, quran: quran, config: config, START: START }, out = { from: '—', to: '—', series: [] };
+    try {
+      var g = demoData();
+      mode = 'demo'; weeks = g.weeks; logs = g.logs; quran = cleanQuran(g.quran); config = normConfig(g.config); START = firstWeek() || weekStart;
+      out.from = pctT(rate(g.first, addDays(g.first, 27)));
+      out.to = pctT(rate(addDays(today, -28), addDays(today, -1)));
+      for (var k = 0; k < 22; k++) { var st = addDays(g.first, k * 7); if (st > today) break; out.series.push(rate(st, addDays(st, 6))); }
+    } catch (e) {}
+    mode = sv.mode; weeks = sv.weeks; logs = sv.logs; quran = sv.quran; config = sv.config; START = sv.START; dayMemo = {};
+    demoPrev = out;
+    return out;
+  }
   function paintDemoBar() {
     var bar = $('demobar'); if (!bar) return;
     bar.textContent = ''; bar.hidden = !demo; if (!demo) return;
@@ -5769,21 +5846,39 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     var fi = document.createElement('i'); fi.style.width = num(demo.growth[1]) + '%'; ln.appendChild(fi);
     var mk = document.createElement('s'); mk.style.insetInlineStart = num(demo.growth[0]) + '%'; ln.appendChild(mk);
     tx.appendChild(ln); bar.appendChild(tx);
-    var help = document.createElement('button'); help.type = 'button'; help.className = 'dbsee dbhelp'; help.textContent = LANG === 'en' ? '?' : '؟'; help.setAttribute('aria-label', 'جولة في أوراد'); help.title = 'جولة في أوراد'; help.addEventListener('click', function () { tourStart(); }); bar.appendChild(help);
+    var help = document.createElement('button'); help.type = 'button'; help.className = 'dbsee dbhelp'; help.textContent = LANG === 'en' ? '?' : '؟'; var hl = document.createElement('span'); hl.className = 'dbhl'; hl.textContent = 'أعد الجولة'; help.appendChild(hl); help.setAttribute('aria-label', 'جولة في أوراد'); help.title = 'جولة في أوراد'; help.addEventListener('click', function () { tourStart(); }); bar.appendChild(help);
     var see = document.createElement('button'); see.type = 'button'; see.className = 'dbsee'; see.setAttribute('aria-label', 'شاهد التقدّم'); see.title = 'شاهد التقدّم'; see.appendChild(svg('M4 20V10M10 20V4M16 20v-7M22 20H2')); see.addEventListener('click', function () { setView('progress'); }); bar.appendChild(see);
+    if (demo.invite) { var back = document.createElement('button'); back.type = 'button'; back.className = 'dbback'; back.textContent = 'لديّ حساب'; back.addEventListener('click', function () { stopDemo('signin'); }); bar.appendChild(back); }
     var end = document.createElement('button'); end.type = 'button'; end.className = 'dbend' + (demo.invite ? ' dbgo' : '');
     var et = document.createElement('span'); et.textContent = demo.invite ? 'أبدأ رحلتي' : 'إنهاء التجربة'; end.appendChild(et); end.appendChild(svg('M15 6l-6 6 6 6'));
-    end.addEventListener('click', stopDemo); bar.appendChild(end);
+    end.addEventListener('click', function () { stopDemo('start'); }); bar.appendChild(end);
   }
   /* ---------- a short guided tour of the demo: one part lit at a time, a word beside it ---------- */
   var tour = null;
   var TOUR = [
     ['#days', 'أيام الأسبوع', 'أضغط يوماً لأرى ما أنجزته فيه، والسهمان ينقلانني بين الأسابيع.', 'track'],
-    ['#list .item', 'التأشير', 'بلمسة أشّر ما أنجزته اليوم، والنقاط بجانبه تُظهر الأسبوع كلّه.', 'track'],
-    ['#tab-progress', 'التقدّم', 'هنا أرى التزامي أسبوعاً بعد أسبوع، وكيف ارتفع من الشهر الأول إلى الأخير.', null],
-    ['#tab-log', 'السجلّ', 'هنا قراءتي ووسائطي ونومي ومحاسبتي اليومية.', null],
-    ['#demobar .dbend', 'أبدأ رحلتي', 'حين أكون جاهزاً أبدأ رحلتي. لا يُحفظ شيء من التجربة.', null]
+    [firstOpenItem, 'التأشير', 'جرّب الآن: بلمسة واحدة أشّر أحد هذه البنود، والنقاط بجانبه تُظهر الأسبوع كلّه.', 'track', 'tick'],
+    ['#progress', 'التقدّم', 'هنا أرى التزامي أسبوعاً بعد أسبوع، وكيف ارتفع من الشهر الأول إلى الأخير.', 'progress'],
+    ['#logview', 'السجلّ', 'هنا قراءتي ووسائطي ونومي ومحاسبتي اليومية.', 'log'],
+    ['#demobar .dbend', 'أبدأ رحلتي', 'حين أكون جاهزاً أبدأ رحلتي. لا يُحفظ شيء من التجربة.', 'track', 'end']
   ];
+  // the first item of today that is not ticked yet: the one the visitor is asked to tick
+  function firstOpenItem() {
+    var rows = document.querySelectorAll('#list .item');
+    for (var k = 0; k < rows.length; k++) { var cb = $('c-' + rows[k].id.slice(3)); if (cb && !cb.checked && !cb.disabled) return rows[k]; }
+    return null;
+  }
+  function tourTarget(st) { return typeof st[0] === 'function' ? st[0]() : document.querySelector(st[0]); }
+  // the last step shows what the five months came to, read off the demo as it stands
+  function tourSummary(tip) {
+    var pages = 0; Object.keys(quran.days || {}).forEach(function (k) { pages += +quran.days[k] || 0; });
+    var ul = document.createElement('ul'); ul.className = 'tsum';
+    [['صفحات قرأتها في خمسة أشهر', String(pages)], ['أطول سلسلة', daysT(streaks(.8).best)]].forEach(function (r) {
+      var li = document.createElement('li'), a = document.createElement('span'), b = document.createElement('b');
+      a.textContent = r[0]; b.textContent = LANG === 'fa' ? faNum(r[1]) : r[1]; li.appendChild(a); li.appendChild(b); ul.appendChild(li);
+    });
+    tip.appendChild(ul);
+  }
   function tourEnd() {
     if (!tour) return;
     window.removeEventListener('resize', tour.place); window.removeEventListener('scroll', tour.place, true); document.removeEventListener('keydown', tour.key);
@@ -5792,62 +5887,89 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
   function tourStart() {
     tourEnd(); if (!demo) return;
     var spot = document.createElement('div'); spot.className = 'tourspot'; spot.setAttribute('aria-hidden', 'true');
-    var tip = document.createElement('div'); tip.className = 'tourtip below'; tip.setAttribute('role', 'dialog'); tip.setAttribute('aria-live', 'polite');
+    var tip = document.createElement('div'); tip.className = 'tourtip below'; tip.setAttribute('role', 'dialog'); tip.setAttribute('aria-live', 'polite'); tip.setAttribute('aria-labelledby', 'tourTitle');
     document.body.appendChild(spot); document.body.appendChild(tip);
-    tour = { i: 0, spot: spot, tip: tip };
+    tour = { i: 0, spot: spot, tip: tip, wait: false };
     tour.place = function () {
       if (!tour) return;
-      var st = TOUR[tour.i], t = document.querySelector(st[0]); if (!t) return;
+      var t = tourTarget(TOUR[tour.i]); if (!t) return;
       var r = t.getBoundingClientRect(), pad = 6, W = innerWidth, H = innerHeight;
       spot.style.left = (r.left - pad) + 'px'; spot.style.top = (r.top - pad) + 'px'; spot.style.width = (r.width + pad * 2) + 'px'; spot.style.height = (r.height + pad * 2) + 'px';
       spot.style.borderRadius = Math.min(22, parseFloat(getComputedStyle(t).borderTopLeftRadius) + pad || 16) + 'px';
-      var tw = tip.offsetWidth, th = tip.offsetHeight, below = r.bottom + pad + 14 + th < H - 8 || r.top - pad - 14 - th < 8;
+      var tw = tip.offsetWidth, th = tip.offsetHeight, fitsBelow = r.bottom + pad + 14 + th < H - 8, fitsAbove = r.top - pad - 14 - th >= 8, below = fitsBelow || !fitsAbove;
       var x = Math.max(12, Math.min(W - tw - 12, r.left + r.width / 2 - tw / 2)), y = below ? r.bottom + pad + 12 : r.top - pad - 12 - th;
-      tip.classList.toggle('below', below); tip.classList.toggle('above', !below);
+      if (!fitsBelow && !fitsAbove) y = H - th - 12;   // a tall part of the page: the card waits at the foot of the screen, without its pointer
+      tip.classList.toggle('nopoint', !fitsBelow && !fitsAbove); tip.classList.toggle('below', below); tip.classList.toggle('above', !below);
       tip.style.left = x + 'px'; tip.style.top = Math.max(8, y) + 'px';
       tip.style.setProperty('--ax', Math.max(18, Math.min(tw - 18, r.left + r.width / 2 - x)) + 'px');
     };
-    tour.key = function (e) { if (e.key === 'Escape') tourEnd(); };
+    // the keys: Escape closes, the arrows move on and back (direction-aware), Tab stays inside the card
+    tour.key = function (e) {
+      if (!tour) return;
+      if (e.key === 'Escape') { tourEnd(); return; }
+      if (e.key === 'Tab') {
+        var bs = [].slice.call(tip.querySelectorAll('button')); if (!bs.length) return;
+        e.preventDefault(); var at = bs.indexOf(document.activeElement), k = at < 0 ? 0 : (at + (e.shiftKey ? bs.length - 1 : 1)) % bs.length; bs[k].focus(); return;
+      }
+      var ltr = document.documentElement.getAttribute('dir') === 'ltr', fwd = ltr ? 'ArrowRight' : 'ArrowLeft', back = ltr ? 'ArrowLeft' : 'ArrowRight';
+      if (e.key === fwd || e.key === 'ArrowDown') { var nb = tip.querySelector('.tnext'); if (nb) { e.preventDefault(); nb.click(); } }
+      else if (e.key === back || e.key === 'ArrowUp') { if (tour.i > 0) { e.preventDefault(); tour.i--; tourShow(); } }
+    };
     window.addEventListener('resize', tour.place); window.addEventListener('scroll', tour.place, true); document.addEventListener('keydown', tour.key);
     tourShow();
+  }
+  // at the ticking step the tour waits for one tick, then goes on by itself
+  function tourTicked() {
+    if (!tour || !tour.wait) return;
+    tour.wait = false;
+    var h = tour.tip.querySelector('h3'), p = tour.tip.querySelector('p');
+    if (h) h.textContent = 'أحسنت!'; if (p) p.textContent = 'هكذا يسير الأمر.';
+    var i = tour.i;
+    setTimeout(function () { if (tour && tour.i === i) { tour.i++; tourShow(); } }, 1000);
   }
   function tourShow() {
     if (!tour) return;
     var st = TOUR[tour.i], tip = tour.tip;
     if (st[3] && view !== st[3]) setView(st[3]);
-    var t = document.querySelector(st[0]); if (!t) { if (tour.i < TOUR.length - 1) { tour.i++; tourShow(); } else tourEnd(); return; }
+    var t = tourTarget(st); if (!t) { if (tour.i < TOUR.length - 1) { tour.i++; tourShow(); } else tourEnd(); return; }
+    tour.wait = st[4] === 'tick';
     tip.textContent = '';
-    var h = document.createElement('h3'); h.textContent = st[1]; tip.appendChild(h);
+    var h = document.createElement('h3'); h.id = 'tourTitle'; h.textContent = st[1]; tip.appendChild(h);
     var p = document.createElement('p'); p.textContent = st[2]; tip.appendChild(p);
+    if (st[4] === 'end') tourSummary(tip);
     var f = document.createElement('div'); f.className = 'tfoot';
     var dots = document.createElement('span'); dots.className = 'tdots'; dots.setAttribute('aria-label', (tour.i + 1) + ' / ' + TOUR.length);
     TOUR.forEach(function (x, k) { var d = document.createElement('i'); if (k === tour.i) d.className = 'on'; dots.appendChild(d); }); f.appendChild(dots);
     var last = tour.i === TOUR.length - 1;
     if (!last) { var sk = document.createElement('button'); sk.type = 'button'; sk.className = 'tskip'; sk.textContent = 'تخطَّ'; sk.addEventListener('click', tourEnd); f.appendChild(sk); }
-    var nx = document.createElement('button'); nx.type = 'button'; nx.className = 'tnext'; nx.textContent = last ? 'فهمت' : 'التالي';
-    nx.addEventListener('click', function () { if (last) { tourEnd(); return; } tour.i++; tourShow(); }); f.appendChild(nx);
+    if (tour.wait) { var hint = document.createElement('span'); hint.className = 'thint'; hint.textContent = 'أشّر بنداً للمتابعة'; f.appendChild(hint); }
+    else { var nx = document.createElement('button'); nx.type = 'button'; nx.className = 'tnext'; nx.textContent = last ? 'فهمت' : 'التالي';
+      nx.addEventListener('click', function () { if (last) { tourEnd(); return; } tour.i++; tourShow(); }); f.appendChild(nx); }
     tip.appendChild(f);
     var r = t.getBoundingClientRect();
-    if (r.top < 70 || r.bottom > innerHeight - 200) { t.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' }); setTimeout(tour.place, 420); }
-    tour.place(); setTimeout(function () { if (tour) tour.place(); }, 60);
-    try { nx.focus({ preventScroll: true }); } catch (e) {}
+    if (r.top < 70 || r.bottom > innerHeight - 200) { t.scrollIntoView({ block: r.height > innerHeight * .6 ? 'start' : 'center', behavior: REDUCED ? 'auto' : 'smooth' }); setTimeout(function () { if (tour) tour.place(); }, 420); }
+    tour.place(); setTimeout(function () { if (tour) tour.place(); }, 60); setTimeout(function () { if (tour) tour.place(); }, 520);   // the page may still be sliding in
+    var first = tip.querySelector('.tnext') || tip.querySelector('.tskip'); if (first) try { first.focus({ preventScroll: true }); } catch (e) {}
   }
   function startDemo(invite) {
     if (demo || mode === 'loading') return;
     flushSaves();
     demo = { weeks: weeks, logs: logs, quran: quran, config: config, mode: mode, ws: weekStart, sd: selDay, invite: invite === true };
-    var g = demoData();
+    var pv = demoPreview(), g = demoData();
     mode = 'demo'; weeks = g.weeks; logs = g.logs; quran = cleanQuran(g.quran); config = normConfig(g.config); applyConfig();
     START = firstWeek() || weekStart;
-    demo.growth = demoGrowth(g.first);
+    demo.growth = [pv.from, pv.to];
     weekStart = thisMonday; selDay = (today.getDay() + 6) % 7; openForm = null;
     document.documentElement.classList.add('is-demo');
-    setStatus('تجربة: لا يُحفظ شيء');
+    setStatus('');   // the bar already says that nothing is kept: no second line under the days
     paintDemoBar(); renderHeader(); lastSig = ''; renderList(); paintQuran();
     setView('track');   // the demo opens on «Tick», where the days are filled in
-    setTimeout(function () { if (demo) tourStart(); }, 900);   // and a short tour shows the way
+    if (demo.invite) { try { history.replaceState(null, '', '#demo'); } catch (e) {} }   // a refresh brings the visitor back to the demo
+    // the guided tour runs by itself the first time on this device; after that the «?» button brings it back
+    var seen = false; try { seen = localStorage.getItem('tracker:tour') === '1'; } catch (e) {}
+    if (!seen) setTimeout(function () { if (demo) { try { localStorage.setItem('tracker:tour', '1'); } catch (e) {} tourStart(); } }, 900);
   }
-  function stopDemo() {
+  function stopDemo(how) {
     if (!demo) return;
     tourEnd();
     var d = demo; demo = null; mode = d.mode;
@@ -5855,9 +5977,10 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     if (mode === 'local') { weeks = {}; fallback(); } else if (mode === 'db') setStatus('يُحفظ تلقائياً');   // read back what is kept on this device, in case it changed meanwhile (sync)
     weekStart = d.ws; selDay = d.sd; openForm = null; START = firstWeek() || weekStart;
     document.documentElement.classList.remove('is-demo');
+    if (location.hash === '#demo') { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
     paintDemoBar(); renderHeader(); lastSig = ''; renderList(); paintQuran();
     setView('track');
-    if (d.invite && window.AWRAD_APP && typeof window.AWRAD_APP.onDemoEnd === 'function') window.AWRAD_APP.onDemoEnd();
+    if (d.invite && window.AWRAD_APP && typeof window.AWRAD_APP.onDemoEnd === 'function') window.AWRAD_APP.onDemoEnd(how === 'signin' ? 'signin' : 'start');
   }
   // for the sign-in page and the first-run steps of the installed app (they live outside this script)
   window.AWRAD_APP = Object.assign(window.AWRAD_APP || {}, {
@@ -5870,7 +5993,8 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     lockOn: lockOn, setLock: function (done) { showLock('set', function (ok) { if (done) done(!!ok); }); },
     dropLock: function () { if (lockEl && lockEl.getAttribute('data-kind') !== 'set') { setInert(false); lockEl.remove(); lockEl = null; } },
     clearLock: function () { saveLock(null); try { localStorage.removeItem(FAIL_KEY); localStorage.removeItem(AWAY_KEY); } catch (e) {} if (window.AWRAD_APP.dropLock) window.AWRAD_APP.dropLock(); },
-    startDemo: function () { startDemo(true); }, stopDemo: stopDemo, inDemo: function () { return !!demo; },
+    startDemo: function () { startDemo(true); }, stopDemo: function () { stopDemo('start'); }, inDemo: function () { return !!demo; },
+    demoPreview: function () { return demoPreview(); }, ready: function () { return mode !== 'loading'; },
     hasLocalData: function () { try { return Object.keys(localStorage).some(function (k) { return /^tracker:(\d{4}-\d{2}-\d{2}|logs$|quran$|config$)/.test(k) && (localStorage.getItem(k) || '').length > 4; }); } catch (e) { return false; } }
   });
 
