@@ -5441,14 +5441,14 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
     });
   }
   function weekSwap(olds, from) {
-    var DUR = 1000, WIPE = 'cubic-bezier(.65,0,.35,1)', sideB = from < 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)', last = 0;
-    // each window has its own thin gold edge: it crosses the window from the side of the arrow; behind it the old week melts into a haze,
+    var DUR = 1000, WIPE = 'cubic-bezier(.65,0,.35,1)', sideB = 'inset(100% 0 0 0)', last = 0;   // the wipe comes from the top and goes down, whichever way the arrow points
+    // each window has its own thin gold edge: it crosses the window from the top down; behind it the old week melts into a haze,
     // and the new one beneath comes into focus. The windows nearest the arrow go first.
     function wipe(w, delay, plain) {   // plain: no gold edge and no wipe, only the haze (the day boxes)
       if (getComputedStyle(w).position === 'static') w.style.position = 'relative';
       w.style.overflow = 'hidden';
       var edge = document.createElement('i'); edge.className = 'wkedge'; edge.setAttribute('aria-hidden', 'true');
-      edge.style.cssText = 'position:absolute;z-index:9;top:0;bottom:0;width:2px;pointer-events:none;background:linear-gradient(transparent,var(--gold) 20%,var(--gold) 80%,transparent);box-shadow:0 0 10px var(--gold);' + (from < 0 ? 'left:0' : 'right:0');
+      edge.style.cssText = 'position:absolute;z-index:9;left:0;right:0;top:0;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--gold) 20%,var(--gold) 80%,transparent);box-shadow:0 0 10px var(--gold);';
       var o = { duration: DUR, delay: delay, easing: WIPE, fill: 'both' };
       if (!plain) w.appendChild(edge);
       if (plain) {   // a day box stays as it is; only its words and numbers melt away, and the new ones come into focus in it
@@ -5459,14 +5459,14 @@ document.documentElement.setAttribute('dir', LANG === 'en' ? 'ltr' : 'rtl'); doc
         [live, ic].forEach(function (x) { if (x) Array.prototype.forEach.call(x.children, function (c) { c.animate([{ filter: 'blur(6px)', opacity: 0 }, { filter: 'blur(0)', opacity: 1 }], { duration: DUR * .75, delay: delay + 120, easing: 'cubic-bezier(.22,.61,.36,1)', fill: 'backwards' }); }); });
       }
       else w.animate([{ clipPath: 'inset(0 0 0 0)', filter: 'blur(0)', opacity: 1 }, { filter: 'blur(4px)', opacity: .6, offset: .6 }, { clipPath: sideB, filter: 'blur(7px)', opacity: 0 }], o);
-      if (!plain) edge.animate([{ transform: 'translateX(0)', opacity: 1 }, { opacity: 1, offset: .85 }, { transform: 'translateX(' + (from < 0 ? w.offsetWidth : -w.offsetWidth) + 'px)', opacity: 0 }], o);
+      if (!plain) edge.animate([{ transform: 'translateY(0)', opacity: 1 }, { opacity: 1, offset: .85 }, { transform: 'translateY(' + w.offsetHeight + 'px)', opacity: 0 }], o);
       last = Math.max(last, delay);
     }
-    var X = function (w) { return w.getBoundingClientRect().left; };
-    // order the windows by column across the whole page, the column nearest the arrow first
+    var Y = function (w) { return w.getBoundingClientRect().top; };
+    // order the windows by row down the whole page, the top row first
     function order(ws, step, plain) {
-      var lefts = ws.map(X);
-      var cols = lefts.filter(function (x, i) { return lefts.findIndex(function (y) { return Math.abs(y - x) < 40; }) === i; }).sort(function (p, q) { return from < 0 ? p - q : q - p; });
+      var lefts = ws.map(Y);
+      var cols = lefts.filter(function (x, i) { return lefts.findIndex(function (y) { return Math.abs(y - x) < 40; }) === i; }).sort(function (p, q) { return p - q; });
       ws.forEach(function (w, i) { wipe(w, Math.max(0, cols.findIndex(function (x) { return Math.abs(x - lefts[i]) < 40; })) * step, plain); });
     }
     var cards = [], days = [];
